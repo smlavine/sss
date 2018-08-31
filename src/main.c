@@ -5,7 +5,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#define CFG_PATH "assets/cfg"
+#define CFG_PATH "rsc/cfg"
 #define WIN_TITLE "Sassy Square Sally"
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
