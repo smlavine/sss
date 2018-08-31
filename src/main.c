@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #define CFG_PATH "rsc/cfg"
-#define LVL_PATH "lvl/1"
+#define LVL_PATH "lvl/2"
 #define WIN_TITLE "Sassy Square Sally"
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
