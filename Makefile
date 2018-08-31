@@ -18,7 +18,7 @@ OBJ=src/main.o     \
     src/coll.o
 DST=sss
 
-LVL=lvl/1  lvl/2
+LVL=lvl/1  lvl/2  lvl/3
 LC=lvl/lvl.luac
 
 all: $(DST) $(LVL)
