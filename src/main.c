@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #define CFG_PATH "rsc/cfg"
+#define LVL_PATH "lvl/1"
 #define WIN_TITLE "Sassy Square Sally"
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
@@ -16,11 +17,13 @@
 #include "camera.h"
 #include "image.h"
 #include "renderer.h"
+#include "batch.h"
+#include "state.h"
 
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
+static StateInput mkStateInput(GLFWwindow *win);
 
-int main(void)
-{
+int main(void) {
     int windowed, winW, winH, vsync, aa;
     FILE *f = fopen(CFG_PATH, "r");
     fscanf(f, "%d%d%d", &windowed, &winW, &winH);
@@ -29,36 +32,24 @@ int main(void)
 
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
-
     rendererInit();
+    StateInput stateInput = mkStateInput(win);
+    State *state = stateNew(LVL_PATH, &stateInput);
 
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEvents();
-
-        int w, h;
-        float matrix[4][4];
-        glfwGetFramebufferSize(win, &w, &h);
-        rendererViewport(0, 0, w, h);
-        Camera2D camera = camera2D((float)w / (float)h);
-        camera2Dmatrix(&camera, matrix);
-        rendererPipelineWorld(matrix, NULL, NULL, NULL);
-
-        const RendererVertex triangle[] = {
-            {-1, -1, 0, 0, 0, 255,   0,   0, 255},
-            { 0,  1, 0, 0, 0,   0, 255,   0, 255},
-            { 1, -1, 0, 0, 0,   0,   0, 255, 255}
-        };
-        rendererDraw(RENDERER_DRAW_MODE_TRIANGLES, sizeof(triangle)/sizeof(triangle[0]), triangle);
-
+        stateInput = mkStateInput(win);
+        stateUpdate(state, &stateInput);
+        stateDraw(state);
         glfwSwapBuffers(win);
     }
 
+    stateDel(state);
     rendererExit();
     glfwTerminate();
 }
 
-static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa)
-{
+static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa) {
     GLFWwindow *win;
     int width, height;
     GLFWmonitor *monitor;
@@ -97,5 +88,11 @@ static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof,
     glfwSwapInterval(vsync ? 1 : 0);
 
     return win;
+}
+
+static StateInput mkStateInput(GLFWwindow *win) {
+    StateInput in;
+    glfwGetFramebufferSize(win, &in.winW, &in.winH);
+    return in;
 }
 

@@ -164,7 +164,10 @@ end
 
 local function main()
     local img = parsePlainPPM(io.read("a"))
-    print("1.0 1.0 1.0 1.0\n") -- background color
+    print("255 255 255 255\n") -- background color
+    print("255   0   0 255\n") -- hero color
+    print("  0   0   0 255\n") -- wall color
+    print("255 255   0 255\n") -- coin color
     print(("%d %d\n"):format(img.w, img.h))
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.WALL] = true})) .. "\n")
