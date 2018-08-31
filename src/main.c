@@ -11,7 +11,7 @@
 #define OGL_VMAJ 2
 #define OGL_VMIN 0
 
-static GLFWwindow*mkWin(int w,int h,const char *t,bool f,int api,int prof,int V,int v,bool vsync,int aa);
+static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
 
 int main(void)
 {
@@ -23,20 +23,24 @@ int main(void)
 
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
+
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEvents();
     }
+
     glfwTerminate();
 }
 
-static GLFWwindow*mkWin(int w,int h,const char *t,bool f,int api,int prof,int V,int v,bool vsync,int aa)
+static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa)
 {
     GLFWwindow *win;
     int width, height;
     GLFWmonitor *monitor;
 
     glfwWindowHint(GLFW_CLIENT_API, api);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, prof);
+    if (api == GLFW_OPENGL_API) {
+        glfwWindowHint(GLFW_OPENGL_PROFILE, prof);
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, V);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, v);
     glfwWindowHint(GLFW_SAMPLES, aa);
