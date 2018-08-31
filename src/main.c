@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include "math.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -10,6 +11,11 @@
 #define OGL_PROF 0
 #define OGL_VMAJ 2
 #define OGL_VMIN 0
+
+#include "matrix.h"
+#include "camera.h"
+#include "image.h"
+#include "renderer.h"
 
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
 
@@ -24,10 +30,30 @@ int main(void)
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
 
+    rendererInit();
+
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEvents();
+
+        int w, h;
+        float matrix[4][4];
+        glfwGetFramebufferSize(win, &w, &h);
+        rendererViewport(0, 0, w, h);
+        Camera2D camera = camera2D((float)w / (float)h);
+        camera2Dmatrix(&camera, matrix);
+        rendererPipelineWorld(matrix, NULL, NULL, NULL);
+
+        const RendererVertex triangle[] = {
+            {-1, -1, 0, 0, 0, 255,   0,   0, 255},
+            { 0,  1, 0, 0, 0,   0, 255,   0, 255},
+            { 1, -1, 0, 0, 0,   0,   0, 255, 255}
+        };
+        rendererDraw(RENDERER_DRAW_MODE_TRIANGLES, sizeof(triangle)/sizeof(triangle[0]), triangle);
+
+        glfwSwapBuffers(win);
     }
 
+    rendererExit();
     glfwTerminate();
 }
 
