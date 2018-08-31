@@ -18,6 +18,8 @@
 #include "image.h"
 #include "renderer.h"
 #include "batch.h"
+#include "bitmap.h"
+#include "coll.h"
 #include "state.h"
 
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
@@ -37,7 +39,7 @@ int main(void) {
     State *state = stateNew(LVL_PATH, &stateInput);
 
     while (!glfwWindowShouldClose(win)) {
-        glfwWaitEvents();
+        glfwPollEvents();
         stateInput = mkStateInput(win);
         stateUpdate(state, &stateInput);
         stateDraw(state);
@@ -93,6 +95,10 @@ static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof,
 static StateInput mkStateInput(GLFWwindow *win) {
     StateInput in;
     glfwGetFramebufferSize(win, &in.winW, &in.winH);
+    in.time = glfwGetTime();
+    in.keyUp = glfwGetKey(win, GLFW_KEY_W) || glfwGetKey(win, GLFW_KEY_UP);
+    in.keyLeft = glfwGetKey(win, GLFW_KEY_A) || glfwGetKey(win, GLFW_KEY_LEFT);
+    in.keyRight = glfwGetKey(win, GLFW_KEY_D) || glfwGetKey(win, GLFW_KEY_RIGHT);
     return in;
 }
 

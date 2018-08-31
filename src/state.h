@@ -4,14 +4,7 @@
         type *arr; \
     } type##Array
 
-typedef struct {
-    int w, h;
-} StateLvl;
-
-typedef struct {
-    int x, y, w, h;
-} StateRect;
-STATE_DEFINE_ARRAY(StateRect);
+STATE_DEFINE_ARRAY(Coll2Drect);
 
 #define STATE_COLOR_COUNT 4
 enum {
@@ -22,16 +15,37 @@ enum {
 };
 
 typedef struct {
+    float tickDuration;
+    float horVel, jumpVel, gravAcc, termVel;
+} StatePhysics;
+
+typedef struct {
+    Coll2Drect r;
+    float vVel;
+} StateHero;
+
+typedef struct {
+    bool taken;
+    Coll2Drect r;
+} StatePickable;
+STATE_DEFINE_ARRAY(StatePickable);
+
+typedef struct {
+    uint64_t tick;
+    double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
+    StatePhysics physics;
     int winW, winH;
-    StateLvl lvl;
-    StateRect hero;
+    Bitmap lvl;
+    StateHero hero;
     BatchDrawCall bg, fg;
-    StateRectArray coin;
+    StatePickableArray coin;
 } State;
 
 typedef struct {
     int winW, winH;
+    float time;
+    bool keyUp, keyLeft, keyRight;
 } StateInput;
 
 State *stateNew(const char *path, const StateInput *in);

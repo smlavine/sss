@@ -6,7 +6,16 @@ CFLAGS=-c -s -O
 LDFLAGS=-s
 LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile -llz4
 
-OBJ=src/main.o src/state.o src/bio.o src/image.o src/renderer.o src/batch.o
+OBJ=src/main.o     \
+    src/sdata.o    \
+    src/sdraw.o    \
+    src/supdate.o  \
+    src/bio.o      \
+    src/image.o    \
+    src/renderer.o \
+    src/batch.o    \
+    src/bitmap.o   \
+    src/coll.o
 DST=sss
 
 LVL=lvl/1
@@ -17,12 +26,40 @@ all: $(DST) $(LVL)
 $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
-main.o: matrix.h camera.h image.h renderer.h batch.h state.h
-state.o: matrix.h camera.h image.h renderer.h batch.h state.h
-bio.o: bio.h
-image.o: bio.h image.h
-renderer.o: image.h renderer.h
-batch.o: image.h renderer.h batch.h
+src/main.o: src/matrix.h   \
+            src/camera.h   \
+            src/image.h    \
+            src/renderer.h \
+            src/batch.h    \
+            src/bitmap.h   \
+            src/coll.h     \
+            src/state.h
+src/sdata.o: src/image.h    \
+             src/renderer.h \
+             src/batch.h    \
+             src/bitmap.h   \
+             src/coll.h     \
+             src/state.h
+src/sdraw.o: src/matrix.h   \
+             src/camera.h   \
+             src/image.h    \
+             src/renderer.h \
+             src/batch.h    \
+             src/bitmap.h   \
+             src/coll.h     \
+             src/state.h
+src/supdate.o: src/image.h    \
+               src/renderer.h \
+               src/batch.h    \
+               src/bitmap.h   \
+               src/coll.h     \
+               src/state.h
+src/bio.o: src/bio.h
+src/image.o: src/bio.h src/image.h
+src/renderer.o: src/image.h src/renderer.h
+src/batch.o: src/image.h src/renderer.h src/batch.h
+src/bitmap.o: src/bio.h src/bitmap.h
+src/coll.o: src/bitmap.h src/coll.h
 .c.o:
 	$(CC) -o $@ $(CFLAGS) $<
 

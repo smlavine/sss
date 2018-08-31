@@ -8,6 +8,10 @@ PIXEL.COIN = "255 255   0"
 PIXEL.WALL = "  0   0   0"
 
 
+local SOLID_PIXELS = {}
+SOLID_PIXELS[PIXEL.WALL] = true
+
+
 local function copyBmp(b)
     local bmp = {["w"] = b.w, ["h"] = b.h}
     for x = 1, bmp.w do
@@ -164,11 +168,17 @@ end
 
 local function main()
     local img = parsePlainPPM(io.read("a"))
-    print("255 255 255 255\n") -- background color
-    print("255   0   0 255\n") -- hero color
-    print("  0   0   0 255\n") -- wall color
+    print("255 255 255 255") -- background color
+    print("255   0   0 255") -- hero color
+    print("  0   0   0 255") -- wall color
     print("255 255   0 255\n") -- coin color
-    print(("%d %d\n"):format(img.w, img.h))
+    print(" 0.02") -- tick duration
+    print(" 0.20") -- hero horizontal velocity
+    print(" 0.17") -- jump velocity
+    print("-0.01") -- gravity acceleration
+    print(" 0.50\n") -- terminal velocity
+    print(("%d %d"):format(img.w, img.h))
+    print(bmpStr(pixelBmp(img, SOLID_PIXELS)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.WALL] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
