@@ -36,7 +36,7 @@ typedef struct {
     uint8_t color[STATE_COLOR_COUNT][4];
     StatePhysics physics;
     int winW, winH;
-    Bitmap lvl;
+    Bmp lvl;
     StateHero hero;
     BatchDrawCall bg, fg;
     StatePickableArray coin;

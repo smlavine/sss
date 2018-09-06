@@ -9,5 +9,5 @@
 #include "batch.h"
 #include "matrix.h"
 #include "cam.h"
-#include "bitmap.h"
+#include "bmp.h"
 #include "coll.h"

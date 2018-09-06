@@ -30,7 +30,7 @@ static void update(State *state, const StateInput *in) {
     }
     state->hero.r.y += state->hero.vVel;
 
-    Coll2Dpen p = coll2DbitmapRect(state->lvl, state->hero.r);
+    Coll2Dpen p = coll2DbmpRect(state->lvl, state->hero.r);
     state->hero.r.y += p.south;
     state->hero.r.y -= p.north;
     state->hero.r.x += p.west;

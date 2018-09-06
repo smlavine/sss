@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <math.h>
 
-#include "bitmap.h"
+#include "bmp.h"
 #include "coll.h"
 
 #define MINNONNEG(x,y) ((x)<0?(y):(y)<0?(x):(x)<(y)?(x):(y))
@@ -12,13 +12,13 @@
 
 static void collRay(Coll2Dray a, Coll2Dray b, float *la, float *lb);
 
-Coll2Dpen coll2DbitmapRect(const Bitmap b, Coll2Drect r) {
+Coll2Dpen coll2DbmpRect(const Bmp b, Coll2Drect r) {
     // TODO: assert(r.w == 1)
     // TODO: assert(r.h == 1)
-    int southWest = bitmapGet(&b, (uint32_t)r.x,     (uint32_t)r.y,     0);
-    int southEast = bitmapGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y,     0);
-    int northWest = bitmapGet(&b, (uint32_t)r.x,     (uint32_t)r.y + 1, 0);
-    int northEast = bitmapGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y + 1, 0);
+    int southWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y,     0);
+    int southEast = bmpGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y,     0);
+    int northWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y + 1, 0);
+    int northEast = bmpGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y + 1, 0);
 
     if (r.x + r.w <= (size_t)r.x + 1) {
         southEast = northEast = false;

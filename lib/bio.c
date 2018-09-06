@@ -14,7 +14,7 @@ double bioF32(BioF32 n) {
 }
 
 BioF32 bioToF32(double n) {
-    uint32_t sign = n >= 0 ? 0 : 1;
+    uint32_t sign = (n >= 0) ? 0 : 1;
     n = fabs(n);
     uint32_t integer = (uint32_t)n;
     uint32_t fraction = (uint32_t)((n - integer) * (UINT32_MAX + 1.0) + 0.5);
@@ -35,7 +35,9 @@ const void *bioReadU8v(const void *p, size_t n, uint8_t *x) {
 const void *bioReadU32LE(const void *p, uint32_t *x) {
     const uint8_t *n = p;
     *x = 0;
-    for (int i = 0; i < 4; ++i) *x += (uint32_t)(n[i] << 8 * i);
+    for (int i = 0; i < 4; ++i) {
+        *x += (uint32_t)(n[i] << 8 * i);
+    }
     return n + 4;
 }
 
@@ -57,7 +59,9 @@ void *bioWriteU8v(void *p, size_t n, const uint8_t *x) {
 
 void *bioWriteU32LE(void *p, uint32_t x) {
     uint8_t *n = p;
-    for (int i = 0; i < 2; ++i) n[i] = (uint8_t)((x >> i * 8) % 256);
+    for (int i = 0; i < 2; ++i) {
+        n[i] = (uint8_t)((x >> i * 8) % 256);
+    }
     return n + 2;
 }
 
@@ -81,7 +85,9 @@ uint32_t bioScanU32LE(void *f) {
     uint32_t x = 0;
     uint8_t n[4];
     fread(n, 4, 1, f);
-    for (int i = 0; i < 4; ++i) x += (uint32_t)(n[i] << i * 8);
+    for (int i = 0; i < 4; ++i) {
+        x += (uint32_t)(n[i] << i * 8);
+    }
     return x;
 }
 
@@ -102,7 +108,9 @@ void bioPrintU8v(void *f, size_t n, const uint8_t *x) {
 
 void bioPrintU32LE(void *f, uint32_t x) {
     uint8_t n[4];
-    for (int i = 0; i < 4; ++i) n[i] = (uint8_t)((x >> i * 8) % 256);
+    for (int i = 0; i < 4; ++i) {
+        n[i] = (uint8_t)((x >> i * 8) % 256);
+    }
     fwrite(n, 4, 1, f);
 }
 

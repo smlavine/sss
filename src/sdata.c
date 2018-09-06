@@ -36,12 +36,12 @@ State *stateNew(const char *path, const StateInput *in) {
     fscanf(f, "%f%f%f%f%f", &p->tickDuration, &p->horVel, &p->jumpVel, &p->gravAcc, &p->termVel);
 
     fscanf(f, "%" SCNu32 "%" SCNu32, &state->lvl.w, &state->lvl.h);
-    bitmapNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
+    bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
     for (int y = state->lvl.h - 1; y >= 0; --y) {
         for (int x = 0; x < (int)state->lvl.w; ++x) {
             int b;
             fscanf(f, "%d", &b);
-            bitmapSet(&state->lvl, x, y, 0, b);
+            bmpSet(&state->lvl, x, y, 0, b);
         }
     }
 
@@ -62,7 +62,7 @@ State *stateNew(const char *path, const StateInput *in) {
 }
 
 State *stateDel(State *state) {
-    bitmapDel(&state->lvl, false);
+    bmpDel(&state->lvl, false);
     free(state->coin.arr);
     batchDrawCallDel(&state->bg, false);
     free(state);

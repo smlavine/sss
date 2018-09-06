@@ -14,7 +14,7 @@ OBJ=src/main.o     \
     lib/image.o    \
     lib/renderer.o \
     lib/batch.o    \
-    lib/bitmap.o   \
+    lib/bmp.o      \
     lib/coll.o
 DST=sss
 
@@ -31,8 +31,8 @@ lib/bio.o: lib/bio.h
 lib/image.o: lib/bio.h lib/image.h
 lib/renderer.o: lib/image.h lib/renderer.h
 lib/batch.o: lib/image.h lib/renderer.h lib/batch.h
-lib/bitmap.o: lib/bio.h lib/bitmap.h
-lib/coll.o: lib/bitmap.h lib/coll.h
+lib/bmp.o: lib/bio.h lib/bmp.h
+lib/coll.o: lib/bmp.h lib/coll.h
 .c.o:
 	$(CC) -o $@ $(CFLAGS) $<
 
