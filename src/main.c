@@ -1,6 +1,4 @@
-#include <stdbool.h>
 #include <stdio.h>
-#include "math.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -13,13 +11,7 @@
 #define OGL_VMAJ 2
 #define OGL_VMIN 0
 
-#include "matrix.h"
-#include "camera.h"
-#include "image.h"
-#include "renderer.h"
-#include "batch.h"
-#include "bitmap.h"
-#include "coll.h"
+#include "../lib/dragon.h"
 #include "state.h"
 
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);

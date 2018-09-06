@@ -1,15 +1,4 @@
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <math.h>
-
-#include "matrix.h"
-#include "camera.h"
-#include "image.h"
-#include "renderer.h"
-#include "batch.h"
-#include "bitmap.h"
-#include "coll.h"
+#include "../lib/dragon.h"
 #include "state.h"
 
 static void batchRect(BatchDrawCall *c, Coll2Drect r, const uint8_t *color);

@@ -1,13 +1,7 @@
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
 
-#include "image.h"
-#include "renderer.h"
-#include "batch.h"
-#include "bitmap.h"
-#include "coll.h"
+#include "../lib/dragon.h"
 #include "state.h"
 
 static void update(State *state, const StateInput *in);

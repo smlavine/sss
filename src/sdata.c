@@ -1,13 +1,8 @@
-#include <stdbool.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "image.h"
-#include "renderer.h"
-#include "batch.h"
-#include "bitmap.h"
-#include "coll.h"
+#include "../lib/dragon.h"
 #include "state.h"
 
 #define SCAN_ARRAY(f, item, fn) \

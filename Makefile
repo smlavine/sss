@@ -10,12 +10,12 @@ OBJ=src/main.o     \
     src/sdata.o    \
     src/sdraw.o    \
     src/supdate.o  \
-    src/bio.o      \
-    src/image.o    \
-    src/renderer.o \
-    src/batch.o    \
-    src/bitmap.o   \
-    src/coll.o
+    lib/bio.o      \
+    lib/image.o    \
+    lib/renderer.o \
+    lib/batch.o    \
+    lib/bitmap.o   \
+    lib/coll.o
 DST=sss
 
 LVL=lvl/1  lvl/2  lvl/3
@@ -26,40 +26,13 @@ all: $(DST) $(LVL)
 $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
-src/main.o: src/matrix.h   \
-            src/camera.h   \
-            src/image.h    \
-            src/renderer.h \
-            src/batch.h    \
-            src/bitmap.h   \
-            src/coll.h     \
-            src/state.h
-src/sdata.o: src/image.h    \
-             src/renderer.h \
-             src/batch.h    \
-             src/bitmap.h   \
-             src/coll.h     \
-             src/state.h
-src/sdraw.o: src/matrix.h   \
-             src/camera.h   \
-             src/image.h    \
-             src/renderer.h \
-             src/batch.h    \
-             src/bitmap.h   \
-             src/coll.h     \
-             src/state.h
-src/supdate.o: src/image.h    \
-               src/renderer.h \
-               src/batch.h    \
-               src/bitmap.h   \
-               src/coll.h     \
-               src/state.h
-src/bio.o: src/bio.h
-src/image.o: src/bio.h src/image.h
-src/renderer.o: src/image.h src/renderer.h
-src/batch.o: src/image.h src/renderer.h src/batch.h
-src/bitmap.o: src/bio.h src/bitmap.h
-src/coll.o: src/bitmap.h src/coll.h
+src/main.o src/sdata.o src/sdraw.o src/supdate.o: src/state.h
+lib/bio.o: lib/bio.h
+lib/image.o: lib/bio.h lib/image.h
+lib/renderer.o: lib/image.h lib/renderer.h
+lib/batch.o: lib/image.h lib/renderer.h lib/batch.h
+lib/bitmap.o: lib/bio.h lib/bitmap.h
+lib/coll.o: lib/bitmap.h lib/coll.h
 .c.o:
 	$(CC) -o $@ $(CFLAGS) $<
 
