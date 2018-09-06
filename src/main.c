@@ -3,6 +3,9 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include "../lib/dragon.h"
+#include "state.h"
+
 #define CFG_PATH "rsc/cfg"
 #define LVL_PATH "lvl/3"
 #define WIN_TITLE "Sassy Square Sally"
@@ -10,9 +13,6 @@
 #define OGL_PROF 0
 #define OGL_VMAJ 2
 #define OGL_VMIN 0
-
-#include "../lib/dragon.h"
-#include "state.h"
 
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
 static StateInput mkStateInput(GLFWwindow *win);

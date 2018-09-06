@@ -38,7 +38,7 @@ typedef struct {
     int winW, winH;
     Bmp lvl;
     StateHero hero;
-    BatchDrawCall bg, fg;
+    BatchCall bg, fg;
     StatePickableArray coin;
 } State;
 

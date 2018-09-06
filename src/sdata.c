@@ -50,7 +50,7 @@ State *stateNew(const char *path, const StateInput *in) {
     CollRectArray wall;
     SCAN_ARRAY(f, wall, scanRect);
     for (size_t i = 0; i < wall.n; ++i) {
-        batchDrawCallRect2D(&state->bg, wall.arr[i].x, wall.arr[i].y, wall.arr[i].w, wall.arr[i].h, state->color[STATE_COLOR_WALL]);
+        batchCallRect(&state->bg, wall.arr[i], state->color[STATE_COLOR_WALL]);
     }
     free(wall.arr);
 
@@ -64,7 +64,7 @@ State *stateNew(const char *path, const StateInput *in) {
 State *stateDel(State *state) {
     bmpDel(&state->lvl, false);
     free(state->coin.arr);
-    batchDrawCallDel(&state->bg, false);
+    batchCallDel(&state->bg, false);
     free(state);
     return NULL;
 }

@@ -1,8 +1,6 @@
 #include "../lib/dragon.h"
 #include "state.h"
 
-static void batchRect(BatchDrawCall *c, CollRect r, const uint8_t *color);
-
 void stateDraw(State *state) {
     float matrix[4][4];
     rendererViewport(0, 0, state->winW, state->winH);
@@ -18,16 +16,12 @@ void stateDraw(State *state) {
     rendererClear(bgColor);
     rendererDrawIndexed(RENDERER_DRAW_MODE_TRIANGLES, state->bg.ni, state->bg.i, state->bg.v);
 
-    batchRect(&state->fg, state->hero.r, state->color[STATE_COLOR_HERO]);
+    batchCallRect(&state->fg, state->hero.r, state->color[STATE_COLOR_HERO]);
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken) {
-            batchRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
+            batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
         }
     }
     rendererDrawIndexed(RENDERER_DRAW_MODE_TRIANGLES, state->fg.ni, state->fg.i, state->fg.v);
-    batchDrawCallClear(&state->fg);
-}
-
-static void batchRect(BatchDrawCall *c, CollRect r, const uint8_t *color) {
-    batchDrawCallRect2D(c, r.x, r.y, r.w, r.h, color);
+    batchCallClear(&state->fg);
 }

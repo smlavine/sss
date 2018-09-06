@@ -8,9 +8,11 @@
 #include "bio.h"
 
 Image *imageCopy(const Image *src, Image *dst) {
-    if (!dst) dst = malloc(sizeof(*dst));
+    if (!dst) {
+        dst = malloc(sizeof(*dst));
+    }
     dst = memcpy(dst, src, sizeof(*dst));
-    dst->filename = strcpy(malloc((uint32_t)strlen(src->filename)), src->filename);
+    dst->id = strcpy(malloc((uint32_t)strlen(src->id)), src->id);
     size_t imageSize = dst->w * dst->h * sizeof(*dst->p);
     dst->p = malloc(imageSize);
     dst->p = memcpy(dst->p, src->p, imageSize);
@@ -18,20 +20,22 @@ Image *imageCopy(const Image *src, Image *dst) {
 }
 
 Image *imageDel(Image *image, bool freeHandle) {
-    free(image->filename);
+    free(image->id);
     free(image->p);
     if (freeHandle) free(image);
     return NULL;
 }
 
 Image *imageRead(const void *p, Image *image) {
-    if (!image) image = malloc(sizeof(*image));
+    if (!image) {
+        image = malloc(sizeof(*image));
+    }
 
-    uint32_t filenameLength;
-    p = bioReadU32LE(p, &filenameLength);
-    image->filename = malloc(filenameLength + 1);
-    p = bioReadU8v(p, filenameLength, (uint8_t*)image->filename);
-    image->filename[filenameLength] = '\0';
+    uint32_t idLength;
+    p = bioReadU32LE(p, &idLength);
+    image->id = malloc(idLength + 1);
+    p = bioReadU8v(p, idLength, (uint8_t*)image->id);
+    image->id[idLength] = '\0';
 
     p = bioReadU32LE(p, &image->w);
     p = bioReadU32LE(p, &image->h);
@@ -50,9 +54,9 @@ Image *imageRead(const void *p, Image *image) {
 }
 
 void *imageWrite(const Image *image, void *p) {
-    uint32_t filenameLength = (uint32_t)strlen(image->filename);
-    p = bioWriteU32LE(p, filenameLength);
-    p = bioWriteU8v(p, filenameLength, (const uint8_t*)image->filename);
+    uint32_t idLength = (uint32_t)strlen(image->id);
+    p = bioWriteU32LE(p, idLength);
+    p = bioWriteU8v(p, idLength, (const uint8_t*)image->id);
 
     p = bioWriteU32LE(p, image->w);
     p = bioWriteU32LE(p, image->h);
@@ -78,12 +82,14 @@ void imageSave(const Image *image, const char *path) {
 }
 
 Image *imageLoadFromFile(void *file, bool close, Image *image) {
-    if (!image) image = malloc(sizeof(*image));
+    if (!image) {
+        image = malloc(sizeof(*image));
+    }
 
-    uint32_t filenameLength = bioScanU32LE(file);
-    image->filename = malloc(filenameLength + 1);
-    bioScanU8v(file, filenameLength, (uint8_t*)image->filename);
-    image->filename[filenameLength] = '\0';
+    uint32_t idLength = bioScanU32LE(file);
+    image->id = malloc(idLength + 1);
+    bioScanU8v(file, idLength, (uint8_t*)image->id);
+    image->id[idLength] = '\0';
 
     image->w = bioScanU32LE(file);
     image->h = bioScanU32LE(file);
@@ -98,15 +104,17 @@ Image *imageLoadFromFile(void *file, bool close, Image *image) {
         }
     }
 
-    if (close) fclose(file);
+    if (close) {
+        fclose(file);
+    }
 
     return image;
 }
 
 void imageSaveToFile(const Image *image, void *file, bool close) {
-    uint32_t filenameLength = (uint32_t)strlen(image->filename);
-    bioPrintU32LE(file, filenameLength);
-    bioPrintU8v(file, filenameLength, (const uint8_t*)image->filename);
+    uint32_t idLength = (uint32_t)strlen(image->id);
+    bioPrintU32LE(file, idLength);
+    bioPrintU8v(file, idLength, (const uint8_t*)image->id);
 
     bioPrintU32LE(file, image->w);
     bioPrintU32LE(file, image->h);
@@ -120,11 +128,13 @@ void imageSaveToFile(const Image *image, void *file, bool close) {
         }
     }
 
-    if (close) fclose(file);
+    if (close) {
+        fclose(file);
+    }
 }
 
 size_t imageSize(const Image *image) {
-    return 4 + strlen(image->filename) + 4 * 2 + image->w * image->h * 4;
+    return 4 + strlen(image->id) + 4 * 2 + image->w * image->h * 4;
 }
 
 void imageSet(Image *image, uint32_t x, uint32_t y, ImagePixel p) {
