@@ -12,7 +12,7 @@
         item.arr[i] = fn(f); \
     }
 
-static Coll2Drect scanRect(FILE *f);
+static CollRect scanRect(FILE *f);
 static StatePickable scanPickable(FILE *f);
 
 State *stateNew(const char *path, const StateInput *in) {
@@ -47,7 +47,7 @@ State *stateNew(const char *path, const StateInput *in) {
 
     fscanf(f, "%f%f%f%f", &state->hero.r.x, &state->hero.r.y, &state->hero.r.w, &state->hero.r.h);
 
-    Coll2DrectArray wall;
+    CollRectArray wall;
     SCAN_ARRAY(f, wall, scanRect);
     for (size_t i = 0; i < wall.n; ++i) {
         batchDrawCallRect2D(&state->bg, wall.arr[i].x, wall.arr[i].y, wall.arr[i].w, wall.arr[i].h, state->color[STATE_COLOR_WALL]);
@@ -69,8 +69,8 @@ State *stateDel(State *state) {
     return NULL;
 }
 
-static Coll2Drect scanRect(FILE *f) {
-    Coll2Drect r;
+static CollRect scanRect(FILE *f) {
+    CollRect r;
     fscanf(f, "%f%f%f%f", &r.x, &r.y, &r.w, &r.h);
     return r;
 }

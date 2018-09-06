@@ -10,9 +10,9 @@
 
 #define PI 3.14159
 
-static void collRay(Coll2Dray a, Coll2Dray b, float *la, float *lb);
+static void collRay(CollRay a, CollRay b, float *la, float *lb);
 
-Coll2Dpen coll2DbmpRect(const Bmp b, Coll2Drect r) {
+CollPen collBmpRect(const Bmp b, CollRect r) {
     // TODO: assert(r.w == 1)
     // TODO: assert(r.h == 1)
     int southWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y,     0);
@@ -114,7 +114,7 @@ Coll2Dpen coll2DbmpRect(const Bmp b, Coll2Drect r) {
             break; // diagonal south east north west
     }
 
-    Coll2Dpen p;
+    CollPen p;
     p.is = south | north | west | east;
     p.south = south ? penSouth : 0;
     p.north = north ? penNorth : 0;
@@ -124,13 +124,13 @@ Coll2Dpen coll2DbmpRect(const Bmp b, Coll2Drect r) {
     return p;
 }
 
-Coll2Dpen coll2Drect(Coll2Drect a, Coll2Drect b) {
+CollPen collRect(CollRect a, CollRect b) {
     if (a.x + a.w <= b.x || a.x >= b.x + b.w
      || a.y + a.h <= b.y || a.y >= b.y + b.h
      || a.w <= 0 || a.h <= 0 || b.w <= 0 || b.h <= 0) {
-        return (Coll2Dpen){false, 0, 0, 0, 0};
+        return (CollPen){false, 0, 0, 0, 0};
     } else {
-        Coll2Dpen p = {true, 0, 0, 0, 0};
+        CollPen p = {true, 0, 0, 0, 0};
         if (a.x < b.x) {
             float penEast = a.x + a.w - b.x;
             if (a.y < b.y) {
@@ -170,27 +170,27 @@ Coll2Dpen coll2Drect(Coll2Drect a, Coll2Drect b) {
     }
 }
 
-float coll2DrayLine(Coll2Dray r, Coll2Dline line) {
+float collRayLine(CollRay r, CollLine line) {
     float rl, ll;
     // TODO: ensure length is never negative and remove this check
     if (line.len < 0) {
         line.angle = fmodf(line.angle + PI, PI * 2);
         line.len = fabsf(line.len);
     }
-    collRay(r, (Coll2Dray){line.x, line.y, line.angle}, &rl, &ll);
+    collRay(r, (CollRay){line.x, line.y, line.angle}, &rl, &ll);
     return ll >= 0 && rl >= 0 && ll <= line.len ? rl : -1;
 }
 
-float coll2DrayRect(Coll2Dray r, Coll2Drect rect) {
+float collRayRect(CollRay r, CollRect R) {
     float l1, l2, l3, l4;
-    l1 = coll2DrayLine(r, (Coll2Dline){rect.x,rect.y,0, rect.w});
-    l2 = coll2DrayLine(r, (Coll2Dline){rect.x+rect.w, rect.y, PI/2, rect.h});
-    l3 = coll2DrayLine(r, (Coll2Dline){rect.x+rect.w, rect.y+rect.h, PI, rect.w});
-    l4 = coll2DrayLine(r, (Coll2Dline){rect.x, rect.y+rect.h, PI*3/2, rect.h});
+    l1 = collRayLine(r, (CollLine){R.x,       R.y,       0,          R.w});
+    l2 = collRayLine(r, (CollLine){R.x + R.w, R.y,       PI / 2,     R.h});
+    l3 = collRayLine(r, (CollLine){R.x + R.w, R.y + R.h, PI,         R.w});
+    l4 = collRayLine(r, (CollLine){R.x,       R.y + R.h, PI * 3 / 2, R.h});
     return MINNONNEG(l1, MINNONNEG(l2, MINNONNEG(l3, l4)));
 }
 
-static void collRay(Coll2Dray a, Coll2Dray b, float *la, float *lb) {
+static void collRay(CollRay a, CollRay b, float *la, float *lb) {
     float ca = cosf(a.angle);
     float cb = cosf(b.angle);
     float sa = sinf(a.angle);

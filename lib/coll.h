@@ -1,21 +1,21 @@
 typedef struct {
     float x, y, w, h;
-} Coll2Drect;
+} CollRect;
 
 typedef struct {
     bool is;
     float south, north, west, east;
-} Coll2Dpen;
+} CollPen;
 
 typedef struct {
     float x, y, angle;
-} Coll2Dray;
+} CollRay;
 
 typedef struct {
     float x, y, angle, len;
-} Coll2Dline;
+} CollLine;
 
-Coll2Dpen coll2DbmpRect(const Bmp b, Coll2Drect r);
-Coll2Dpen coll2Drect(Coll2Drect a, Coll2Drect b);
-float coll2DrayLine(Coll2Dray r, Coll2Dline line);
-float coll2DrayRect(Coll2Dray r, Coll2Drect rect);
+CollPen collBmpRect(const Bmp b, CollRect r);
+CollPen collRect(CollRect a, CollRect b);
+float collRayLine(CollRay r, CollLine line);
+float collRayRect(CollRay r, CollRect rect);

@@ -4,7 +4,7 @@
         type *arr; \
     } type##Array
 
-STATE_DEFINE_ARRAY(Coll2Drect);
+STATE_DEFINE_ARRAY(CollRect);
 
 #define STATE_COLOR_COUNT 4
 enum {
@@ -20,13 +20,13 @@ typedef struct {
 } StatePhysics;
 
 typedef struct {
-    Coll2Drect r;
+    CollRect r;
     float vVel;
 } StateHero;
 
 typedef struct {
     bool taken;
-    Coll2Drect r;
+    CollRect r;
 } StatePickable;
 STATE_DEFINE_ARRAY(StatePickable);
 

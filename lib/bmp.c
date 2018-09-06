@@ -11,7 +11,9 @@ static bool getbit(uint8_t byte, int i);
 static uint8_t setbit(uint8_t byte, int i, bool value);
 
 Bmp *bmpNew(uint32_t w, uint32_t h, uint32_t l, Bmp *b) {
-    if (!b) b = malloc(sizeof(b));
+    if (!b) {
+        b = malloc(sizeof(*b));
+    }
     b->w = w;
     b->h = h;
     b->l = l;
@@ -24,7 +26,9 @@ Bmp *bmpNew(uint32_t w, uint32_t h, uint32_t l, Bmp *b) {
 }
 
 Bmp *bmpCopy(const Bmp *src, Bmp *dst) {
-    if (!dst) dst = malloc(sizeof(*dst));
+    if (!dst) {
+        dst = malloc(sizeof(*dst));
+    }
     memcpy(dst, src, sizeof(*dst));
 
     size_t b = dst->w * dst->h * dst->l / 8;
@@ -46,7 +50,9 @@ Bmp *bmpDel(Bmp *bmp, bool freeHandle) {
 }
 
 Bmp *bmpRead(const void *p, Bmp *bmp) {
-    if (!bmp) bmp = malloc(sizeof(*bmp));
+    if (!bmp) {
+        bmp = malloc(sizeof(*bmp));
+    }
 
     p = bioReadU32LE(p, &bmp->w);
     p = bioReadU32LE(p, &bmp->h);
@@ -86,7 +92,9 @@ void bmpSave(const Bmp *bmp, const char *path) {
 }
 
 Bmp *bmpLoadFromFile(void *file, bool close, Bmp *bmp) {
-    if (!bmp) bmp = malloc(sizeof(*bmp));
+    if (!bmp) {
+        bmp = malloc(sizeof(*bmp));
+    }
 
     bmp->w = bioScanU32LE(file);
     bmp->h = bioScanU32LE(file);

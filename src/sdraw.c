@@ -1,7 +1,7 @@
 #include "../lib/dragon.h"
 #include "state.h"
 
-static void batchRect(BatchDrawCall *c, Coll2Drect r, const uint8_t *color);
+static void batchRect(BatchDrawCall *c, CollRect r, const uint8_t *color);
 
 void stateDraw(State *state) {
     float matrix[4][4];
@@ -28,6 +28,6 @@ void stateDraw(State *state) {
     batchDrawCallClear(&state->fg);
 }
 
-static void batchRect(BatchDrawCall *c, Coll2Drect r, const uint8_t *color) {
+static void batchRect(BatchDrawCall *c, CollRect r, const uint8_t *color) {
     batchDrawCallRect2D(c, r.x, r.y, r.w, r.h, color);
 }

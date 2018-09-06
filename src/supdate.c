@@ -1,11 +1,12 @@
 #include <stdlib.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "../lib/dragon.h"
 #include "state.h"
 
 static void update(State *state, const StateInput *in);
-static bool stateOpBumpCollision(const State *s, Coll2Dpen p);
+static bool stateOpBumpCollision(const State *s, CollPen p);
 static void sleepSome(double t);
 
 void stateUpdate(State *state, const StateInput *in) {
@@ -30,14 +31,14 @@ static void update(State *state, const StateInput *in) {
     }
     state->hero.r.y += state->hero.vVel;
 
-    Coll2Dpen p = coll2DbmpRect(state->lvl, state->hero.r);
+    CollPen p = collBmpRect(state->lvl, state->hero.r);
     state->hero.r.y += p.south;
     state->hero.r.y -= p.north;
     state->hero.r.x += p.west;
     state->hero.r.x -= p.east;
 
     for (size_t i = 0; i < state->coin.n; ++i) {
-        if (!state->coin.arr[i].taken && coll2Drect(state->hero.r, state->coin.arr[i].r).is) {
+        if (!state->coin.arr[i].taken && collRect(state->hero.r, state->coin.arr[i].r).is) {
             state->coin.arr[i].taken = true;
         }
     }
@@ -77,7 +78,7 @@ static void update(State *state, const StateInput *in) {
     }
 }
 
-static bool stateOpBumpCollision(const State *s, Coll2Dpen p) {
+static bool stateOpBumpCollision(const State *s, CollPen p) {
     if (p.is && s->hero.vVel <= 0 && p.south > 0) {
         return true;
     }
