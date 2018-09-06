@@ -6,9 +6,9 @@ static void batchRect(BatchDrawCall *c, Coll2Drect r, const uint8_t *color);
 void stateDraw(State *state) {
     float matrix[4][4];
     rendererViewport(0, 0, state->winW, state->winH);
-    Camera2D camera = camera2D((float)state->winW / (float)state->winH);
-    camera2DsetMinRect(&camera, 0, 0, state->lvl.w, state->lvl.h);
-    camera2Dmatrix(&camera, matrix);
+    Cam camera = cam((float)state->winW / (float)state->winH);
+    camSetMinRect(&camera, 0, 0, state->lvl.w, state->lvl.h);
+    camMatrix(&camera, matrix);
     rendererPipelineWorld(matrix, NULL, NULL, NULL);
 
     float bgColor[4];

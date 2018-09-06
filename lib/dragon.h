@@ -8,6 +8,6 @@
 #include "renderer.h"
 #include "batch.h"
 #include "matrix.h"
-#include "camera.h"
+#include "cam.h"
 #include "bitmap.h"
 #include "coll.h"
