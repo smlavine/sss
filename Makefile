@@ -1,9 +1,9 @@
 .POSIX:
 .SUFFIXES:.lua .luac .ppm
 
-CC=c99
-CFLAGS=-c -s -O
-LDFLAGS=-s
+CC=cc
+CFLAGS=-c -O -I/usr/local/include -I/usr/X11R6/include
+LDFLAGS=-s -L/usr/local/lib -L/usr/X11R6/lib
 LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile -llz4
 
 OBJ=src/main.o     \
@@ -64,11 +64,11 @@ src/coll.o: src/bitmap.h src/coll.h
 	$(CC) -o $@ $(CFLAGS) $<
 
 .lua.luac:
-	luac5.3 -o $@ $<
+	luac53 -o $@ $<
 
 $(LVL): $(LC)
 .ppm:
-	lua5.3 -- $(LC) < $< > $@
+	lua53 -- $(LC) < $< > $@
 
 clean:
 	rm -f $(OBJ) $(LC)

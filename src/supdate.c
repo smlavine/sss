@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <threads.h>
 #include <time.h>
 
 #include "image.h"
@@ -96,5 +95,5 @@ static void sleepSome(double t) {
     unsigned long long nanoseconds = (t - seconds) * 1000000000;
     struct timespec needed = {seconds, nanoseconds};
     struct timespec remaining;
-    thrd_sleep(&needed, &remaining);
+    nanosleep(&needed, &remaining);
 }
