@@ -7,7 +7,6 @@
 #include "state.h"
 
 #define CFG_PATH "rsc/cfg"
-#define LVL_PATH "lvl/3"
 #define WIN_TITLE "Sassy Square Sally"
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
@@ -17,7 +16,7 @@
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
 static StateInput mkStateInput(GLFWwindow *win);
 
-int main(void) {
+int main(int argc, char **argv) {
     int windowed, winW, winH, vsync, aa;
     FILE *f = fopen(CFG_PATH, "r");
     fscanf(f, "%d%d%d", &windowed, &winW, &winH);
@@ -28,7 +27,7 @@ int main(void) {
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
     rInit();
     StateInput stateInput = mkStateInput(win);
-    State *state = stateNew(LVL_PATH, &stateInput);
+    State *state = stateNew(argv[argc - 1], &stateInput);
 
     while (!glfwWindowShouldClose(win)) {
         glfwPollEvents();
