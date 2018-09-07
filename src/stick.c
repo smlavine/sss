@@ -32,6 +32,11 @@ static void tick(State *state, const StateInput *in) {
         state->hero.r.x -= state->physics.horVel;
     }
     state->hero.r.y += state->hero.vVel;
+    state->hero.r.x += state->hero.envVelX;
+    state->hero.r.y += state->hero.envVelY;
+
+    // Update environmental velocities
+    stateOpEnvEnergy(state, &state->hero.envVelX, &state->hero.envVelY);
 
     // Check if ejected; cooldown and trigger the ejectors
     bool ejected = false;
@@ -49,7 +54,7 @@ static void tick(State *state, const StateInput *in) {
     }
 
     // Fix hero position
-    CollPen p = collBmpRect(state->lvl, state->hero.r);
+    CollPen p = stateOpColl(state, state->hero.r);
     state->hero.r.y += p.south;
     state->hero.r.y -= p.north;
     state->hero.r.x += p.west;
@@ -64,7 +69,7 @@ static void tick(State *state, const StateInput *in) {
 
     // Update vertical velocity
     bool jump = false;
-    if (in->keyUp && stateOpBumpCollision(state,p)) {
+    if (in->keyUp && stateOpBumpCollision(state, p)) {
         jump = true;
     }
     if (p.south > 0 && state->hero.vVel < 0) {

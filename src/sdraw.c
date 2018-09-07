@@ -24,6 +24,10 @@ void stateDraw(State *state) {
             batchCallRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_PASSIVE_EJECTOR]);
         }
     }
+    for (size_t i = 0; i < state->pulsator.n; ++i) {
+        CollRect r = stateOpPulsator(state, i);
+        batchCallRect(&state->fg, r, state->color[STATE_COLOR_PULSATOR]);
+    }
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken) {
             batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
