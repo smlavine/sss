@@ -13,6 +13,9 @@
 static void collRay(CollRay a, CollRay b, float *la, float *lb);
 
 CollPen collBmpRect(const Bmp b, CollRect r) {
+    if (r.x < 0 || r.y < 0 || r.x >= b.w - 1 || r.y >= b.h - 1) {
+        return (CollPen){false,0,0,0,0};
+    }
     // TODO: assert(r.w == 1)
     // TODO: assert(r.h == 1)
     int southWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y,     0);
