@@ -33,6 +33,21 @@ static void tick(State *state, const StateInput *in) {
     }
     state->hero.r.y += state->hero.vVel;
 
+    // Check if ejected; cooldown and trigger the ejectors
+    bool ejected = false;
+    for (size_t i = 0; i < state->ejector.n; ++i) {
+        if (state->ejector.arr[i].cooldown > 0) {
+            --state->ejector.arr[i].cooldown;
+        }
+        if (!state->ejector.arr[i].cooldown) {
+            CollPen p = collRect(state->hero.r, state->ejector.arr[i].r);
+            if (stateOpBumpCollision(state, p)) {
+                ejected = true;
+                state->ejector.arr[i].cooldown = state->physics.ejectorCooldownTickCount;
+            }
+        }
+    }
+
     // Fix hero position
     CollPen p = collBmpRect(state->lvl, state->hero.r);
     state->hero.r.y += p.south;
@@ -58,7 +73,9 @@ static void tick(State *state, const StateInput *in) {
     if (p.north > 0 && state->hero.vVel > 0) {
         state->hero.vVel = 0;
     }
-    if (jump) {
+    if (ejected) {
+        state->hero.vVel = state->physics.ejectionVel;
+    } else if (jump) {
         state->hero.vVel = state->physics.jumpVel;
     }
     state->hero.vVel += state->physics.gravAcc;

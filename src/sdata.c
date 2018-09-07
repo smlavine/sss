@@ -13,6 +13,7 @@
     }
 
 static CollRect scanRect(FILE *f);
+static StateEjector scanEjector(FILE *f);
 static StatePickable scanPickable(FILE *f);
 
 State *stateNew(const char *path, const StateInput *in) {
@@ -34,6 +35,7 @@ State *stateNew(const char *path, const StateInput *in) {
 
     StatePhysics *p = &state->physics;
     fscanf(f, "%f%f%f%f%f", &p->tickDuration, &p->horVel, &p->jumpVel, &p->gravAcc, &p->termVel);
+    fscanf(f, "%d%f", &p->ejectorCooldownTickCount, &p->ejectionVel);
 
     fscanf(f, "%" SCNu32 "%" SCNu32, &state->lvl.w, &state->lvl.h);
     bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
@@ -45,7 +47,7 @@ State *stateNew(const char *path, const StateInput *in) {
         }
     }
 
-    fscanf(f, "%f%f%f%f", &state->hero.r.x, &state->hero.r.y, &state->hero.r.w, &state->hero.r.h);
+    state->hero.r = scanRect(f);
 
     CollRectArray wall;
     SCAN_ARRAY(f, wall, scanRect);
@@ -54,6 +56,7 @@ State *stateNew(const char *path, const StateInput *in) {
     }
     free(wall.arr);
 
+    SCAN_ARRAY(f, state->ejector, scanEjector);
     SCAN_ARRAY(f, state->coin, scanPickable);
 
     fclose(f);
@@ -63,8 +66,9 @@ State *stateNew(const char *path, const StateInput *in) {
 
 State *stateDel(State *state) {
     bmpDel(&state->lvl, false);
-    free(state->coin.arr);
     batchCallDel(&state->bg, false);
+    free(state->ejector.arr);
+    free(state->coin.arr);
     free(state);
     return NULL;
 }
@@ -73,6 +77,13 @@ static CollRect scanRect(FILE *f) {
     CollRect r;
     fscanf(f, "%f%f%f%f", &r.x, &r.y, &r.w, &r.h);
     return r;
+}
+
+static StateEjector scanEjector(FILE *f) {
+    StateEjector e;
+    e.cooldown = 0;
+    e.r = scanRect(f);
+    return e;
 }
 
 static StatePickable scanPickable(FILE *f) {

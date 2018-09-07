@@ -17,6 +17,13 @@ void stateDraw(State *state) {
     rDrawIndexed(R_DRAW_MODE_TRIANGLES, state->bg.ni, state->bg.i, state->bg.v);
 
     batchCallRect(&state->fg, state->hero.r, state->color[STATE_COLOR_HERO]);
+    for (size_t i = 0; i < state->ejector.n; ++i) {
+        if (state->ejector.arr[i].cooldown) {
+            batchCallRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_ACTIVE_EJECTOR]);
+        } else {
+            batchCallRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_PASSIVE_EJECTOR]);
+        }
+    }
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken) {
             batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);

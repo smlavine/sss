@@ -6,23 +6,33 @@
 
 STATE_DEFINE_ARRAY(CollRect);
 
-#define STATE_COLOR_COUNT 4
+#define STATE_COLOR_COUNT 6
 enum {
     STATE_COLOR_BACKGROUND,
     STATE_COLOR_HERO,
     STATE_COLOR_WALL,
+    STATE_COLOR_PASSIVE_EJECTOR,
+    STATE_COLOR_ACTIVE_EJECTOR,
     STATE_COLOR_COIN
 };
 
 typedef struct {
     float tickDuration;
     float horVel, jumpVel, gravAcc, termVel;
+    int ejectorCooldownTickCount;
+    float ejectionVel;
 } StatePhysics;
 
 typedef struct {
     CollRect r;
     float vVel;
 } StateHero;
+
+typedef struct {
+    int cooldown;
+    CollRect r;
+} StateEjector;
+STATE_DEFINE_ARRAY(StateEjector);
 
 typedef struct {
     bool taken;
@@ -35,10 +45,11 @@ typedef struct {
     double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
     StatePhysics physics;
+    BatchCall bg, fg;
     int winW, winH;
     Bmp lvl;
     StateHero hero;
-    BatchCall bg, fg;
+    StateEjectorArray ejector;
     StatePickableArray coin;
 } State;
 
