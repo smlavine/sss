@@ -12,7 +12,7 @@ OBJ=src/main.o     \
     src/supdate.o  \
     lib/bio.o      \
     lib/image.o    \
-    lib/renderer.o \
+    lib/r.o        \
     lib/batch.o    \
     lib/bmp.o      \
     lib/coll.o
@@ -29,8 +29,8 @@ $(DST): $(OBJ)
 src/main.o src/sdata.o src/sdraw.o src/supdate.o: src/state.h
 lib/bio.o: lib/bio.h
 lib/image.o: lib/bio.h lib/image.h
-lib/renderer.o: lib/image.h lib/renderer.h
-lib/batch.o: lib/image.h lib/renderer.h lib/batch.h
+lib/r.o: lib/image.h lib/r.h
+lib/batch.o: lib/image.h lib/r.h lib/batch.h
 lib/bmp.o: lib/bio.h lib/bmp.h
 lib/coll.o: lib/bmp.h lib/coll.h
 .c.o:

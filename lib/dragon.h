@@ -5,7 +5,7 @@
 
 #include "bio.h"
 #include "image.h"
-#include "renderer.h"
+#include "r.h"
 #include "matrix.h"
 #include "cam.h"
 #include "bmp.h"

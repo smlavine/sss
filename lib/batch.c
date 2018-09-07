@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "image.h"
-#include "renderer.h"
+#include "r.h"
 #include "bmp.h"
 #include "coll.h"
 #include "batch.h"
@@ -72,15 +72,15 @@ BatchCall *batchCallDel(BatchCall *call, bool freeHandle) {
     return NULL;
 }
 
-void batchDraw(const Batch *b, RendererDrawMode mode) {
+void batchDraw(const Batch *b, RDrawMode mode) {
     for (size_t i = 0; i < b->n; ++i) {
-        rendererTextureActivate(b->array[i].t);
-        rendererDrawIndexed(mode, b->array[i].ni, b->array[i].i, b->array[i].v);
+        rTexActivate(b->array[i].t);
+        rDrawIndexed(mode, b->array[i].ni, b->array[i].i, b->array[i].v);
     }
 }
 
 void batchCall
-(BatchCall*call,size_t ni,const uint16_t*i,size_t nv,const RendererVertex*v) {
+(BatchCall*call,size_t ni,const uint16_t*i,size_t nv,const RVertex*v) {
     if (call->mi < call->ni + ni) {
         if (call->mi == 0) {
             call->mi = 1;
@@ -124,7 +124,7 @@ void batchCallRect(BatchCall *call, CollRect r, const uint8_t rgba[4]) {
         (uint16_t)call->nv + 3,
         (uint16_t)call->nv + 0
     };
-    const RendererVertex v[] = {
+    const RVertex v[] = {
         {r.x,       r.y,       0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
         {r.x + r.w, r.y,       0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
         {r.x + r.w, r.y + r.h, 0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
@@ -146,7 +146,7 @@ void batchCallLine(BatchCall *call,CollLine l,float t,const uint8_t rgba[4]) {
         (uint16_t)call->nv + 3,
         (uint16_t)call->nv + 0
     };
-    const RendererVertex v[] = {
+    const RVertex v[] = {
         {l.x - dx, l.y + dy, 0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
         {l.x + dx, l.y - dy, 0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
         {x2 + dx, y2 - dy, 0, 0, 0, rgba[0], rgba[1], rgba[2], rgba[3]},

@@ -26,7 +26,7 @@ int main(void) {
 
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
-    rendererInit();
+    rInit();
     StateInput stateInput = mkStateInput(win);
     State *state = stateNew(LVL_PATH, &stateInput);
 
@@ -39,7 +39,7 @@ int main(void) {
     }
 
     stateDel(state);
-    rendererExit();
+    rExit();
     glfwTerminate();
 }
 
