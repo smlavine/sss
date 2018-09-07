@@ -28,6 +28,10 @@ void stateDraw(State *state) {
         CollRect r = stateOpPulsator(state, i);
         batchCallRect(&state->fg, r, state->color[STATE_COLOR_PULSATOR]);
     }
+    for (size_t i = 0; i < state->shrinker.n; ++i) {
+        CollRect r = stateOpShrinker(state, i);
+        batchCallRect(&state->fg, r, state->color[STATE_COLOR_SHRINKER]);
+    }
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken) {
             batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);

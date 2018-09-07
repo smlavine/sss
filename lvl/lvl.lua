@@ -9,6 +9,7 @@ PIXEL.WALL                = "  0   0   0"
 PIXEL.EJECTOR             = "128   0   0"
 PIXEL.PULSATOR_CONTRACTED = "120 120 120"
 PIXEL.PULSATOR_EXPANDED   = "120 120 122"
+PIXEL.SHRINKER            = "192 192 192"
 
 
 local SOLID_PIXELS = {}
@@ -192,6 +193,7 @@ local function main()
     print("128   0   0 255") -- passive ejector color
     print("255 128 128 255") -- active ejector color
     print("  0   0   0 255") -- pulsator color
+    print("192 192 192 255") -- shrinker color
     print("255 255   0 255\n") -- coin color
     print(" 0.02") -- tick duration
     print(" 0.20") -- hero horizontal velocity
@@ -200,14 +202,16 @@ local function main()
     print(" 0.50") -- terminal velocity
     print("   10") -- ejector cooldown tick count
     print(" 0.33") -- ejector ejection velocity
-    print("120") -- pulsator table size
-    print(("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0\n") -- pulsator table
+    print("  120") -- pulsator table size
+    print(("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0") -- pulsator table
+    print("   20\n") -- shrinker shrinking tick count
     print(("%d %d"):format(img.w, img.h))
     print(bmpStr(pixelBmp(img, SOLID_PIXELS)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.WALL] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.EJECTOR] = true})) .. "\n")
     print(pulsatorArrStr(img, PIXEL.PULSATOR_CONTRACTED, 0, PIXEL.PULSATOR_EXPANDED, 60) .. "\n")
+    print(rectArrStr(findPixelRects(img, {[PIXEL.SHRINKER] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
 end
 

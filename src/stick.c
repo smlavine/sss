@@ -53,6 +53,19 @@ static void tick(State *state, const StateInput *in) {
         }
     }
 
+    // Shrink and trigger shrinkers
+    for (size_t i = 0; i < state->shrinker.n; ++i) {
+        if (state->shrinker.arr[i].ticksLeft > 0) {
+            --state->shrinker.arr[i].ticksLeft;
+        }
+        if (state->shrinker.arr[i].ticksLeft >= 0) {
+            continue;
+        }
+        if (collRect(state->hero.r, stateOpShrinker(state, i)).is) {
+            state->shrinker.arr[i].ticksLeft = state->physics.shrinkerShrinkingTickCount;
+        }
+    }
+
     // Fix hero position
     CollPen p = stateOpColl(state, state->hero.r);
     state->hero.r.y += p.south;

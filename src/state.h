@@ -6,7 +6,7 @@
 
 STATE_DEFINE_ARRAY(CollRect);
 
-#define STATE_COLOR_COUNT 7
+#define STATE_COLOR_COUNT 8
 enum {
     STATE_COLOR_BACKGROUND,
     STATE_COLOR_HERO,
@@ -14,6 +14,7 @@ enum {
     STATE_COLOR_PASSIVE_EJECTOR,
     STATE_COLOR_ACTIVE_EJECTOR,
     STATE_COLOR_PULSATOR,
+    STATE_COLOR_SHRINKER,
     STATE_COLOR_COIN
 };
 
@@ -25,6 +26,7 @@ typedef struct {
     float ejectionVel;
     size_t pulsatorTableSize;
     float *pulsatorTable;
+    int shrinkerShrinkingTickCount;
 } StatePhysics;
 
 typedef struct {
@@ -46,6 +48,12 @@ typedef struct {
 STATE_DEFINE_ARRAY(StatePulsator);
 
 typedef struct {
+    int ticksLeft;
+    CollRect r;
+} StateShrinker;
+STATE_DEFINE_ARRAY(StateShrinker);
+
+typedef struct {
     bool taken;
     CollRect r;
 } StatePickable;
@@ -62,6 +70,7 @@ typedef struct {
     StateHero hero;
     StateEjectorArray ejector;
     StatePulsatorArray pulsator;
+    StateShrinkerArray shrinker;
     StatePickableArray coin;
 } State;
 
@@ -80,3 +89,4 @@ bool stateOpGameOver(const State *state);
 CollPen stateOpColl(const State *state, CollRect r);
 void stateOpEnvEnergy(const State *state, float *velX, float *velY);
 CollRect stateOpPulsator(const State *state, size_t i);
+CollRect stateOpShrinker(const State *state, size_t i);
