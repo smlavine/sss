@@ -5,24 +5,26 @@
 #include "../lib/dragon.h"
 #include "state.h"
 
-static void update(State *state, const StateInput *in);
-static bool stateOpBumpCollision(const State *s, CollPen p);
+static void tick(State *state, const StateInput *in);
 static void sleepSome(double t);
 
-void stateUpdate(State *state, const StateInput *in) {
+void stateTick(State *state, const StateInput *in) {
     while (in->time - state->lastTime > state->physics.tickDuration) {
-        update(state, in);
+        tick(state, in);
     }
     sleepSome(in->time - state->lastTime);
 }
 
-static void update(State *state, const StateInput *in) {
+static void tick(State *state, const StateInput *in) {
+    // Update state with data received from input
     state->winW = in->winW;
     state->winH = in->winH;
 
+    // Advance time
     state->lastTime += state->physics.tickDuration;
     ++state->tick;
 
+    // Update hero position
     if (in->keyRight) {
         state->hero.r.x += state->physics.horVel;
     }
@@ -31,18 +33,21 @@ static void update(State *state, const StateInput *in) {
     }
     state->hero.r.y += state->hero.vVel;
 
+    // Fix hero position
     CollPen p = collBmpRect(state->lvl, state->hero.r);
     state->hero.r.y += p.south;
     state->hero.r.y -= p.north;
     state->hero.r.x += p.west;
     state->hero.r.x -= p.east;
 
+    // Collect coins
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken && collRect(state->hero.r, state->coin.arr[i].r).is) {
             state->coin.arr[i].taken = true;
         }
     }
 
+    // Update vertical velocity
     bool jump = false;
     if (in->keyUp && stateOpBumpCollision(state,p)) {
         jump = true;
@@ -63,26 +68,10 @@ static void update(State *state, const StateInput *in) {
         state->hero.vVel = state->physics.termVel;
     }
 
-    bool allCoinsTaken = true;
-    for (size_t i = 0; i < state->coin.n; ++i) {
-        if (!state->coin.arr[i].taken) {
-            allCoinsTaken = false;
-        }
-    }
-
-    if (allCoinsTaken) {
+    // Check if it's over
+    if (stateOpGameOver(state)) {
         exit(EXIT_SUCCESS);
     }
-    if ((p.south > 0 && p.north > 0) || (p.west > 0 && p.east > 0)) {
-        exit(EXIT_FAILURE);
-    }
-}
-
-static bool stateOpBumpCollision(const State *s, CollPen p) {
-    if (p.is && s->hero.vVel <= 0 && p.south > 0) {
-        return true;
-    }
-    return false;
 }
 
 static void sleepSome(double t) {

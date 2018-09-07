@@ -78,6 +78,6 @@ static CollRect scanRect(FILE *f) {
 static StatePickable scanPickable(FILE *f) {
     StatePickable p;
     p.taken = false;
-    fscanf(f, "%f%f%f%f", &p.r.x, &p.r.y, &p.r.w, &p.r.h);
+    p.r = scanRect(f);
     return p;
 }

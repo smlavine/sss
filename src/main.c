@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     while (!glfwWindowShouldClose(win)) {
         glfwPollEvents();
         stateInput = mkStateInput(win);
-        stateUpdate(state, &stateInput);
+        stateTick(state, &stateInput);
         stateDraw(state);
         glfwSwapBuffers(win);
     }
@@ -92,4 +92,3 @@ static StateInput mkStateInput(GLFWwindow *win) {
     in.keyRight = glfwGetKey(win, GLFW_KEY_D) || glfwGetKey(win, GLFW_KEY_RIGHT);
     return in;
 }
-
