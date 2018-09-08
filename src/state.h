@@ -8,7 +8,7 @@
 
 STATE_DEFINE_ARRAY(CollRect);
 
-#define STATE_COLOR_COUNT 9
+#define STATE_COLOR_COUNT 10
 enum {
     STATE_COLOR_BACKGROUND,
     STATE_COLOR_HERO,
@@ -18,7 +18,8 @@ enum {
     STATE_COLOR_PULSATOR,
     STATE_COLOR_SHRINKER,
     STATE_COLOR_COIN,
-    STATE_COLOR_GRAVITON
+    STATE_COLOR_GRAVITON,
+    STATE_COLOR_JUMPITON
 };
 
 typedef struct {
@@ -31,6 +32,7 @@ typedef struct {
     float *pulsatorTable;
     int shrinkingTickCount;
     bool invertedGravity;
+    float jumpitonVel;
 } StatePhysics;
 
 typedef struct {
@@ -84,7 +86,7 @@ typedef struct {
     StateEjectorArray ejector;
     StatePulsatorArray pulsator;
     StateShrinkerArray shrinker;
-    StatePickableArray coin, graviton;
+    StatePickableArray coin, graviton, jumpiton;
     StateKeyArray key;
 } State;
 

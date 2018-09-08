@@ -44,6 +44,7 @@ State *stateNew(const char *path, const StateInput *in) {
         fscanf(f, "%f", &p->pulsatorTable[i]);
     }
     fscanf(f, "%d", &p->shrinkingTickCount);
+    fscanf(f, "%f", &p->jumpitonVel);
 
     fscanf(f, "%" SCNu32 "%" SCNu32, &state->lvl.w, &state->lvl.h);
     bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
@@ -69,6 +70,7 @@ State *stateNew(const char *path, const StateInput *in) {
     SCAN_ARRAY(f, state->shrinker, scanShrinker);
     SCAN_ARRAY(f, state->coin, scanPickable);
     SCAN_ARRAY(f, state->graviton, scanPickable);
+    SCAN_ARRAY(f, state->jumpiton, scanPickable);
     SCAN_ARRAY(f, state->key, scanKey);
 
     fclose(f);

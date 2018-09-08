@@ -11,6 +11,7 @@ PIXEL.PULSATOR_CONTRACTED = "120 120 120"
 PIXEL.PULSATOR_EXPANDED   = "120 120 122"
 PIXEL.SHRINKER            = "192 192 192"
 PIXEL.GRAVITON            = "  0   0 255"
+PIXEL.JUMPITON            = "128   2   2"
 
 
 local KEY_PIXEL = {}
@@ -223,7 +224,8 @@ local function main()
     print("  0   0   0 255") -- pulsator color
     print("192 192 192 255") -- shrinker color
     print("255 255   0 255") -- coin color
-    print("  0   0 255 255\n") -- graviton color
+    print("  0   0 255 255") -- graviton color
+    print("128   0   0 255\n") -- jumpiton color
     print(" 0.02") -- tick duration
     print(" 0.20") -- hero horizontal velocity
     print(" 0.17") -- jump velocity
@@ -233,7 +235,8 @@ local function main()
     print(" 0.33") -- ejector ejection velocity
     print("  120") -- pulsator table size
     print(("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0") -- pulsator table
-    print("   20\n") -- shrinking tick count
+    print("   20") -- shrinking tick count
+    print(" 0.22\n") -- jumpiton velocity
     print(("%d %d"):format(img.w, img.h))
     print(bmpStr(pixelBmp(img, SOLID_PIXEL)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
@@ -243,6 +246,7 @@ local function main()
     print(rectArrStr(findPixelRects(img, {[PIXEL.SHRINKER] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.GRAVITON] = true})) .. "\n")
+    print(rectArrStr(findPixelRects(img, {[PIXEL.JUMPITON] = true})) .. "\n")
     print(keyArrStr(img, KEY_PIXEL))
 end
 
