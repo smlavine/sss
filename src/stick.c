@@ -80,6 +80,14 @@ static void tick(State *state, const StateInput *in) {
         }
     }
 
+    // Collect gravitons
+    for (size_t i = 0; i < state->graviton.n; ++i) {
+        if (!state->graviton.arr[i].taken && collRect(state->hero.r, state->graviton.arr[i].r).is) {
+            state->graviton.arr[i].taken = true;
+            state->physics.invertedGravity = !state->physics.invertedGravity;
+        }
+    }
+
     // Collect keys, shrink locks
     for (size_t i = 0; i < state->key.n; ++i) {
         if (state->key.arr[i].ticksLeft > 0) {
@@ -115,11 +123,11 @@ static void tick(State *state, const StateInput *in) {
         state->hero.vVel = 0;
     }
     if (ejected) {
-        state->hero.vVel = state->physics.ejectionVel;
+        state->hero.vVel = state->physics.invertedGravity ? -state->physics.ejectionVel : state->physics.ejectionVel;
     } else if (jump) {
-        state->hero.vVel = state->physics.jumpVel;
+        state->hero.vVel = state->physics.invertedGravity ? -state->physics.jumpVel : state->physics.jumpVel;
     }
-    state->hero.vVel += state->physics.gravAcc;
+    state->hero.vVel += state->physics.invertedGravity ? -state->physics.gravAcc : state->physics.gravAcc;
     if (state->hero.vVel < -state->physics.termVel) {
         state->hero.vVel = -state->physics.termVel;
     } else if (state->hero.vVel > state->physics.termVel) {

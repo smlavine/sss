@@ -37,6 +37,11 @@ void stateDraw(State *state) {
             batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
         }
     }
+    for (size_t i = 0; i < state->graviton.n; ++i) {
+        if (!state->graviton.arr[i].taken) {
+            batchCallRect(&state->fg, state->graviton.arr[i].r, state->color[STATE_COLOR_GRAVITON]);
+        }
+    }
     for (size_t i = 0; i < state->key.n; ++i) {
         for (size_t j = 0; j < state->key.arr[i].key.n; ++j) {
             if (!state->key.arr[i].key.arr[j].taken) {

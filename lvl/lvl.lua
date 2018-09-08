@@ -10,6 +10,7 @@ PIXEL.EJECTOR             = "128   0   0"
 PIXEL.PULSATOR_CONTRACTED = "120 120 120"
 PIXEL.PULSATOR_EXPANDED   = "120 120 122"
 PIXEL.SHRINKER            = "192 192 192"
+PIXEL.GRAVITON            = "  0   0 255"
 
 
 local KEY_PIXEL = {}
@@ -221,7 +222,8 @@ local function main()
     print("255 128 128 255") -- active ejector color
     print("  0   0   0 255") -- pulsator color
     print("192 192 192 255") -- shrinker color
-    print("255 255   0 255\n") -- coin color
+    print("255 255   0 255") -- coin color
+    print("  0   0 255 255\n") -- graviton color
     print(" 0.02") -- tick duration
     print(" 0.20") -- hero horizontal velocity
     print(" 0.17") -- jump velocity
@@ -240,6 +242,7 @@ local function main()
     print(pulsatorArrStr(img, PIXEL.PULSATOR_CONTRACTED, 0, PIXEL.PULSATOR_EXPANDED, 60) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.SHRINKER] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
+    print(rectArrStr(findPixelRects(img, {[PIXEL.GRAVITON] = true})) .. "\n")
     print(keyArrStr(img, KEY_PIXEL))
 end
 

@@ -68,6 +68,7 @@ State *stateNew(const char *path, const StateInput *in) {
     SCAN_ARRAY(f, state->pulsator, scanPulsator);
     SCAN_ARRAY(f, state->shrinker, scanShrinker);
     SCAN_ARRAY(f, state->coin, scanPickable);
+    SCAN_ARRAY(f, state->graviton, scanPickable);
     SCAN_ARRAY(f, state->key, scanKey);
 
     fclose(f);
@@ -83,6 +84,7 @@ State *stateDel(State *state) {
     free(state->pulsator.arr);
     free(state->shrinker.arr);
     free(state->coin.arr);
+    free(state->graviton.arr);
     for (size_t i = 0; i < state->key.n; ++i) {
         free(state->key.arr[i].key.arr);
         free(state->key.arr[i].lock.arr);

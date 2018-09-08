@@ -8,7 +8,9 @@ static void addChangingRectVel(CollRect h, CollRect r0, CollRect r, float *velX,
 static CollRect multipliedRect(CollRect r, float m);
 
 bool stateOpBumpCollision(const State *state, CollPen p) {
-    if (p.is && state->hero.vVel <= 0 && p.south > 0) {
+    if (p.is && state->physics.invertedGravity && state->hero.vVel >= 0 && p.north > 0) {
+        return true;
+    } else if (p.is && !state->physics.invertedGravity && state->hero.vVel <= 0 && p.south > 0) {
         return true;
     }
     return false;
