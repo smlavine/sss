@@ -1,3 +1,5 @@
+// TODO: add inAir counter and allow to jump if it's only a few ticks
+
 #define STATE_DEFINE_ARRAY(type) \
     typedef struct { \
         size_t n; \
@@ -26,7 +28,7 @@ typedef struct {
     float ejectionVel;
     size_t pulsatorTableSize;
     float *pulsatorTable;
-    int shrinkerShrinkingTickCount;
+    int shrinkingTickCount;
 } StatePhysics;
 
 typedef struct {
@@ -60,6 +62,15 @@ typedef struct {
 STATE_DEFINE_ARRAY(StatePickable);
 
 typedef struct {
+    uint8_t keyColor[4];
+    uint8_t lockColor[4];
+    StatePickableArray key;
+    int ticksLeft;
+    CollRectArray lock;
+} StateKey;
+STATE_DEFINE_ARRAY(StateKey);
+
+typedef struct {
     uint64_t tick;
     double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
@@ -72,6 +83,7 @@ typedef struct {
     StatePulsatorArray pulsator;
     StateShrinkerArray shrinker;
     StatePickableArray coin;
+    StateKeyArray key;
 } State;
 
 typedef struct {
@@ -90,3 +102,4 @@ CollPen stateOpColl(const State *state, CollRect r);
 void stateOpEnvEnergy(const State *state, float *velX, float *velY);
 CollRect stateOpPulsator(const State *state, size_t i);
 CollRect stateOpShrinker(const State *state, size_t i);
+CollRect stateOpKeyLock(const State *state, size_t i, size_t j);

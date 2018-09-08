@@ -17,6 +17,7 @@ static StateEjector scanEjector(FILE *f);
 static StatePulsator scanPulsator(FILE *f);
 static StateShrinker scanShrinker(FILE *f);
 static StatePickable scanPickable(FILE *f);
+static StateKey scanKey(FILE *f);
 
 State *stateNew(const char *path, const StateInput *in) {
     State *state = calloc(1, sizeof(*state));
@@ -30,7 +31,7 @@ State *stateNew(const char *path, const StateInput *in) {
 
     for (int i = 0; i < STATE_COLOR_COUNT; ++i) {
         for (int j = 0; j < 4; ++j) {
-            fscanf(f, "%" SCNd8, &state->color[i][j]);
+            fscanf(f, "%" SCNu8, &state->color[i][j]);
         }
     }
 
@@ -42,7 +43,7 @@ State *stateNew(const char *path, const StateInput *in) {
     for (size_t i = 0; i < p->pulsatorTableSize; ++i) {
         fscanf(f, "%f", &p->pulsatorTable[i]);
     }
-    fscanf(f, "%d", &p->shrinkerShrinkingTickCount);
+    fscanf(f, "%d", &p->shrinkingTickCount);
 
     fscanf(f, "%" SCNu32 "%" SCNu32, &state->lvl.w, &state->lvl.h);
     bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
@@ -67,6 +68,7 @@ State *stateNew(const char *path, const StateInput *in) {
     SCAN_ARRAY(f, state->pulsator, scanPulsator);
     SCAN_ARRAY(f, state->shrinker, scanShrinker);
     SCAN_ARRAY(f, state->coin, scanPickable);
+    SCAN_ARRAY(f, state->key, scanKey);
 
     fclose(f);
 
@@ -81,6 +83,11 @@ State *stateDel(State *state) {
     free(state->pulsator.arr);
     free(state->shrinker.arr);
     free(state->coin.arr);
+    for (size_t i = 0; i < state->key.n; ++i) {
+        free(state->key.arr[i].key.arr);
+        free(state->key.arr[i].lock.arr);
+    }
+    free(state->key.arr);
     free(state);
     return NULL;
 }
@@ -117,4 +124,18 @@ static StatePickable scanPickable(FILE *f) {
     p.taken = false;
     p.r = scanRect(f);
     return p;
+}
+
+static StateKey scanKey(FILE *f) {
+    StateKey k;
+    for (int i = 0; i < 4; ++i) {
+        fscanf(f, "%" SCNu8, &k.keyColor[i]);
+    }
+    for (int i = 0; i < 4; ++i) {
+        fscanf(f, "%" SCNu8, &k.lockColor[i]);
+    }
+    SCAN_ARRAY(f, k.key, scanPickable);
+    k.ticksLeft = -1;
+    SCAN_ARRAY(f, k.lock, scanRect);
+    return k;
 }

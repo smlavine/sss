@@ -37,6 +37,20 @@ void stateDraw(State *state) {
             batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
         }
     }
+    for (size_t i = 0; i < state->key.n; ++i) {
+        for (size_t j = 0; j < state->key.arr[i].key.n; ++j) {
+            if (!state->key.arr[i].key.arr[j].taken) {
+                batchCallRect(&state->fg, state->key.arr[i].key.arr[j].r, state->key.arr[i].keyColor);
+            }
+        }
+        if (state->key.arr[i].ticksLeft == 0) {
+            continue;
+        }
+        for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
+            CollRect r = stateOpKeyLock(state, i, j);
+            batchCallRect(&state->fg, r, state->key.arr[i].lockColor);
+        }
+    }
     rDrawIndexed(R_DRAW_MODE_TRIANGLES, state->fg.ni, state->fg.i, state->fg.v);
     batchCallClear(&state->fg);
 }

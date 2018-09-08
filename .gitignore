@@ -1,4 +1,5 @@
 sss
+*.core
 *.o
 *.luac
 lvl/1
@@ -10,3 +11,4 @@ lvl/6
 lvl/7
 lvl/8
 lvl/9
+lvl/10

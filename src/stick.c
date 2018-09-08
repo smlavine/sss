@@ -62,7 +62,7 @@ static void tick(State *state, const StateInput *in) {
             continue;
         }
         if (collRect(state->hero.r, stateOpShrinker(state, i)).is) {
-            state->shrinker.arr[i].ticksLeft = state->physics.shrinkerShrinkingTickCount;
+            state->shrinker.arr[i].ticksLeft = state->physics.shrinkingTickCount;
         }
     }
 
@@ -77,6 +77,29 @@ static void tick(State *state, const StateInput *in) {
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken && collRect(state->hero.r, state->coin.arr[i].r).is) {
             state->coin.arr[i].taken = true;
+        }
+    }
+
+    // Collect keys, shrink locks
+    for (size_t i = 0; i < state->key.n; ++i) {
+        if (state->key.arr[i].ticksLeft > 0) {
+            --state->key.arr[i].ticksLeft;
+        }
+        if (state->key.arr[i].ticksLeft >= 0) {
+            continue;
+        }
+        bool allKeysTaken = true;
+        for (size_t j = 0; j < state->key.arr[i].key.n; ++j) {
+            if (!state->key.arr[i].key.arr[j].taken) {
+                if (collRect(state->hero.r, state->key.arr[i].key.arr[j].r).is) {
+                    state->key.arr[i].key.arr[j].taken = true;
+                } else {
+                    allKeysTaken = false;
+                }
+            }
+        }
+        if (allKeysTaken) {
+            state->key.arr[i].ticksLeft = state->physics.shrinkingTickCount;
         }
     }
 

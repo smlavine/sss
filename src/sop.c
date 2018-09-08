@@ -42,6 +42,11 @@ CollPen stateOpColl(const State *state, CollRect r) {
     for (size_t i = 0; i < state->shrinker.n; ++i) {
         p = maxPen(p, collRect(r, stateOpShrinker(state, i)));
     }
+    for (size_t i = 0; i < state->key.n; ++i) {
+        for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
+            p = maxPen(p, collRect(r, stateOpKeyLock(state, i, j)));
+        }
+    }
     return p;
 }
 
@@ -81,6 +86,28 @@ void stateOpEnvEnergy(const State *state, float *velX, float *velY) {
 
         addChangingRectVel(state->hero.r, r0, r, velX, velY);
     }
+
+
+    for (size_t i = 0; i < state->key.n; ++i) {
+        if (state->key.arr[i].ticksLeft < 1) {
+            continue;
+        }
+
+        for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
+            CollRect r0 = stateOpKeyLock(state, i, j);
+            CollPen p = collRect(state->hero.r, r0);
+
+            if (!stateOpBumpCollision(state, p)) {
+                continue;
+            }
+
+            ((State*)state)->key.arr[i].ticksLeft--;
+            CollRect r = stateOpKeyLock(state, i, j);
+            ((State*)state)->key.arr[i].ticksLeft++;
+
+            addChangingRectVel(state->hero.r, r0, r, velX, velY);
+        }
+    }
 }
 
 CollRect stateOpPulsator(const State *state, size_t i) {
@@ -89,8 +116,13 @@ CollRect stateOpPulsator(const State *state, size_t i) {
 }
 
 CollRect stateOpShrinker(const State *state, size_t i) {
-    float m = state->shrinker.arr[i].ticksLeft < 0 ? 1 : state->shrinker.arr[i].ticksLeft / (float)state->physics.shrinkerShrinkingTickCount;
+    float m = state->shrinker.arr[i].ticksLeft < 0 ? 1 : state->shrinker.arr[i].ticksLeft / (float)state->physics.shrinkingTickCount;
     return multipliedRect(state->shrinker.arr[i].r, m);
+}
+
+CollRect stateOpKeyLock(const State *state, size_t i, size_t j) {
+    float m = state->key.arr[i].ticksLeft < 0 ? 1 : state->key.arr[i].ticksLeft / (float)state->physics.shrinkingTickCount;
+    return multipliedRect(state->key.arr[i].lock.arr[j], m);
 }
 
 static CollPen maxPen(CollPen a, CollPen b) {

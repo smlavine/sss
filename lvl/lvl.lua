@@ -12,9 +12,16 @@ PIXEL.PULSATOR_EXPANDED   = "120 120 122"
 PIXEL.SHRINKER            = "192 192 192"
 
 
-local SOLID_PIXELS = {}
-SOLID_PIXELS[PIXEL.WALL] = true
-SOLID_PIXELS[PIXEL.EJECTOR] = true
+local KEY_PIXEL = {}
+KEY_PIXEL["  0 128   0"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   0"}
+KEY_PIXEL["  0 128   1"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   1"}
+KEY_PIXEL["  0 128   2"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   2"}
+KEY_PIXEL["  0 128   3"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   3"}
+
+
+local SOLID_PIXEL = {}
+SOLID_PIXEL[PIXEL.WALL] = true
+SOLID_PIXEL[PIXEL.EJECTOR] = true
 
 
 local function copyBmp(b)
@@ -185,6 +192,26 @@ local function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPi
 end
 
 
+local function keyArrStr(img, keyPixels)
+    local x = {}
+    for key, data in pairs(keyPixels) do
+        local keys = findPixelRects(img, {[key] = true})
+        local locks = findPixelRects(img, {[data.lock] = true})
+        if #keys > 0 and #locks > 0 then
+            x[#x + 1] = {data, keys, locks}
+        end
+    end
+    local s = {("%d"):format(#x)}
+    for _, tbl in ipairs(x) do
+        s[#s + 1] = tbl[1].keycolor
+        s[#s + 1] = tbl[1].lockcolor
+        s[#s + 1] = rectArrStr(tbl[2])
+        s[#s + 1] = rectArrStr(tbl[3])
+    end
+    return table.concat(s, "\n")
+end
+
+
 local function main()
     local img = parsePlainPPM(io.read("a"))
     print("255 255 255 255") -- background color
@@ -204,15 +231,16 @@ local function main()
     print(" 0.33") -- ejector ejection velocity
     print("  120") -- pulsator table size
     print(("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0") -- pulsator table
-    print("   20\n") -- shrinker shrinking tick count
+    print("   20\n") -- shrinking tick count
     print(("%d %d"):format(img.w, img.h))
-    print(bmpStr(pixelBmp(img, SOLID_PIXELS)) .. "\n")
+    print(bmpStr(pixelBmp(img, SOLID_PIXEL)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.WALL] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.EJECTOR] = true})) .. "\n")
     print(pulsatorArrStr(img, PIXEL.PULSATOR_CONTRACTED, 0, PIXEL.PULSATOR_EXPANDED, 60) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.SHRINKER] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
+    print(keyArrStr(img, KEY_PIXEL))
 end
 
 
