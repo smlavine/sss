@@ -16,11 +16,16 @@ bool stateOpBumpCollision(const State *state, CollPen p) {
     return false;
 }
 
-bool stateOpGameOver(const State *state) {
-    bool outOfBounds = false;
+StateOpGameOverCause stateOpGameOver(const State *state) {
     CollRect r = state->hero.r;
+
     if (r.x < 0 || r.y < 0 || r.x >= state->lvl.w - 1 || r.y >= state->lvl.h - 1) {
-        outOfBounds = true;
+        return STATE_OP_GAME_OVER_CAUSE_LOST;
+    }
+
+    CollPen p = collBmpRect(state->lvl, state->hero.r);
+    if ((p.south > 0 && p.north > 0) || (p.west > 0 && p.east > 0)) {
+        return STATE_OP_GAME_OVER_CAUSE_LOST;
     }
 
     bool allCoinsTaken = true;
@@ -29,11 +34,11 @@ bool stateOpGameOver(const State *state) {
             allCoinsTaken = false;
         }
     }
+    if (allCoinsTaken) {
+        return STATE_OP_GAME_OVER_CAUSE_WON;
+    }
 
-    CollPen p = collBmpRect(state->lvl, state->hero.r);
-    bool crushed = (p.south > 0 && p.north > 0) || (p.west > 0 && p.east > 0);
-
-    return outOfBounds || allCoinsTaken || crushed;
+    return STATE_OP_GAME_OVER_CAUSE_NONE;
 }
 
 CollPen stateOpColl(const State *state, CollRect r) {

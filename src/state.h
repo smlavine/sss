@@ -94,12 +94,18 @@ typedef struct {
     bool keyUp, keyLeft, keyRight;
 } StateInput;
 
-State *stateNew(const char *path, const StateInput *in);
+typedef enum {
+    STATE_OP_GAME_OVER_CAUSE_NONE,
+    STATE_OP_GAME_OVER_CAUSE_LOST,
+    STATE_OP_GAME_OVER_CAUSE_WON
+} StateOpGameOverCause;
+
+State *stateNew(const char *path);
 State *stateDel(State *state);
-bool stateTick(State *state, const StateInput *in);
+StateOpGameOverCause stateTick(State *state, const StateInput *in);
 void stateDraw(State *state);
 bool stateOpBumpCollision(const State *state, CollPen p);
-bool stateOpGameOver(const State *state);
+StateOpGameOverCause stateOpGameOver(const State *state);
 CollPen stateOpColl(const State *state, CollRect r);
 void stateOpEnvEnergy(const State *state, float *velX, float *velY);
 CollRect stateOpPulsator(const State *state, size_t i);

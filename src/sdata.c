@@ -19,13 +19,10 @@ static StateShrinker scanShrinker(FILE *f);
 static StatePickable scanPickable(FILE *f);
 static StateKey scanKey(FILE *f);
 
-State *stateNew(const char *path, const StateInput *in) {
+State *stateNew(const char *path) {
     State *state = calloc(1, sizeof(*state));
     state->lastTime = 0;
     state->hero.vVel = 0;
-
-    state->winW = in->winW;
-    state->winH = in->winH;
 
     FILE *f = fopen(path, "rb");
 
