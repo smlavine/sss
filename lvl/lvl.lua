@@ -1,7 +1,7 @@
 #!/usr/bin/env lua5.3
 
 
-PIXEL = {}
+local PIXEL = {}
 PIXEL.HERO                = "255   0   0"
 PIXEL.NONE                = "255 255 255"
 PIXEL.COIN                = "255 255   0"
@@ -14,19 +14,19 @@ PIXEL.GRAVITON            = "  0   0 255"
 PIXEL.JUMPITON            = "128   2   2"
 
 
-KEY_PIXEL = {}
+local KEY_PIXEL = {}
 KEY_PIXEL["  0 128   0"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   0"}
 KEY_PIXEL["  0 128   1"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   1"}
 KEY_PIXEL["  0 128   2"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   2"}
 KEY_PIXEL["  0 128   3"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   3"}
 
 
-SOLID_PIXEL = {}
+local SOLID_PIXEL = {}
 SOLID_PIXEL[PIXEL.WALL] = true
 SOLID_PIXEL[PIXEL.EJECTOR] = true
 
 
-COLOR = {}
+local COLOR = {}
 COLOR.BACKGROUND      = "255 255 255 255"
 COLOR.HERO            = "255   0   0 255"
 COLOR.WALL            = "  0   0   0 255"
@@ -38,7 +38,7 @@ COLOR.COIN            = "255 255   0 255"
 COLOR.GRAVITON        = "  0   0 255 255"
 
 
-PHYSICS = {}
+local PHYSICS = {}
 PHYSICS.TICK_DURATION    = " 0.02"
 PHYSICS.HORZ_VEL         = " 0.20"
 PHYSICS.JUMP_VEL         = " 0.17"
@@ -51,7 +51,7 @@ PHYSICS.PULSE_TABLE      = ("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. 
 PHYSICS.SHRINKING        = "   20"
 
 
-function copyBmp(b)
+local function copyBmp(b)
     local bmp = {["w"] = b.w, ["h"] = b.h}
     for x = 1, bmp.w do
         bmp[x] = {}
@@ -63,7 +63,7 @@ function copyBmp(b)
 end
 
 
-function expandRectOnBmp(b, x, y)
+local function expandRectOnBmp(b, x, y)
     local r = {["x"] = x, ["y"] = y, ["w"] = 0, ["h"] = 0}
     while r.x + r.w <= b.w and b[r.x + r.w][r.y] do
         r.w = r.w + 1
@@ -86,7 +86,7 @@ function expandRectOnBmp(b, x, y)
 end
 
 
-function deleteRectOnBmp(b, r)
+local function deleteRectOnBmp(b, r)
     for x = r.x, r.x + r.w - 1 do
         for y = r.y, r.y + r.h - 1 do
             b[x][y] = false
@@ -95,7 +95,7 @@ function deleteRectOnBmp(b, r)
 end
 
 
-function countRectAreaOnBmp(b, r)
+local function countRectAreaOnBmp(b, r)
     local n = 0
     for x = r.x, r.x + r.w - 1 do
         for y = r.y, r.y + r.h - 1 do
@@ -108,7 +108,7 @@ function countRectAreaOnBmp(b, r)
 end
 
 
-function bmpRects(b)
+local function bmpRects(b)
     local rects = {}
     local b2 = copyBmp(b)
     for y = 1, b2.h do
@@ -130,7 +130,7 @@ function bmpRects(b)
 end
 
 
-function parsePlainPPM(s)
+local function parsePlainPPM(s)
     s = s:gsub("#[^\n]*", " ") -- remove comments
 
     local header, w, h = s:match("(P3%s+(%d+)%s+(%d+)%s+%d+%s*)")
@@ -156,7 +156,7 @@ function parsePlainPPM(s)
 end
 
 
-function pixelBmp(img, pixels)
+local function pixelBmp(img, pixels)
     local b = {["w"] = img.w, ["h"] = img.h}
     for x = 1, b.w do
         b[x] = {}
@@ -168,7 +168,7 @@ function pixelBmp(img, pixels)
 end
 
 
-function findPixelRects(img, pixels)
+local function findPixelRects(img, pixels)
     for k, _ in pairs(pixels) do
         if img.p[k] then
             return bmpRects(pixelBmp(img, pixels))
@@ -178,7 +178,7 @@ function findPixelRects(img, pixels)
 end
 
 
-function bmpStr(b)
+local function bmpStr(b)
     local s = {}
     for y = 1, b.h do
         s[y] = {}
@@ -191,12 +191,12 @@ function bmpStr(b)
 end
 
 
-function rectStr(r)
+local function rectStr(r)
     return ("%2d %2d %2d %2d"):format(r.x - 1, r.y - 1, r.w, r.h)
 end
 
 
-function rectArrStr(rects)
+local function rectArrStr(rects)
     local s = {("%d"):format(#rects)}
     for _, r in ipairs(rects) do
         s[#s + 1] = rectStr(r)
@@ -205,7 +205,7 @@ function rectArrStr(rects)
 end
 
 
-function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPixel, expandedOffset)
+local function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPixel, expandedOffset)
     local c = findPixelRects(img, {[contractedPixel] = true})
     local e = findPixelRects(img, {[expandedPixel] = true})
     local s = {("%d"):format(#c + #e)};
@@ -219,7 +219,7 @@ function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPixel, e
 end
 
 
-function keyArrStr(img, keyPixels)
+local function keyArrStr(img, keyPixels)
     local x = {}
     for key, data in pairs(keyPixels) do
         local keys = findPixelRects(img, {[key] = true})
@@ -239,14 +239,8 @@ function keyArrStr(img, keyPixels)
 end
 
 
-function main()
-    local s = io.read("a")
-
-    local c = {}
-    s = s:gsub("##([^\n]*)", function(s) c[#c + 1] = s end)
-    load(table.concat(c, "\n"))()
-
-    local img = parsePlainPPM(s)
+local function main()
+    local img = parsePlainPPM(io.read("a"))
     print(COLOR.BACKGROUND)
     print(COLOR.HERO)
     print(COLOR.WALL)
