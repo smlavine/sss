@@ -20,7 +20,7 @@ OBJ=src/main.o  \
 DST=sss
 
 LVL=lvl/1  lvl/2  lvl/3  lvl/4  lvl/5  lvl/6  lvl/7  lvl/8  lvl/9 \
-    lvl/10 lvl/11 lvl/12 lvl/13 lvl/14 lvl/15
+    lvl/10 lvl/11 lvl/12 lvl/13 lvl/14 lvl/15 lvl/16
 LC=lvl/lvl.luac
 
 all: $(DST) $(LVL)
