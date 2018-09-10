@@ -11,7 +11,6 @@ PIXEL.PULSATOR_CONTRACTED = "120 120 120"
 PIXEL.PULSATOR_EXPANDED   = "120 120 122"
 PIXEL.SHRINKER            = "192 192 192"
 PIXEL.GRAVITON            = "  0   0 255"
-PIXEL.JUMPITON            = "128   2   2"
 
 
 local KEY_PIXEL = {}
@@ -269,7 +268,6 @@ local function main()
     print(rectArrStr(findPixelRects(img, {[PIXEL.SHRINKER] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.COIN] = true})) .. "\n")
     print(rectArrStr(findPixelRects(img, {[PIXEL.GRAVITON] = true})) .. "\n")
-    print(rectArrStr(findPixelRects(img, {[PIXEL.JUMPITON] = true})) .. "\n")
     print(keyArrStr(img, KEY_PIXEL))
 end
 

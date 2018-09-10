@@ -19,8 +19,8 @@ OBJ=src/main.o  \
     lib/coll.o
 DST=sss
 
-LVL=lvl/1  lvl/2  lvl/3  lvl/4  lvl/5  lvl/6  lvl/7  lvl/8  lvl/9 \
-    lvl/10 lvl/11 lvl/12 lvl/13 lvl/14 lvl/15 lvl/16 lvl/17
+LVL=lvl/1  lvl/2  lvl/3  lvl/4  lvl/5  lvl/6  lvl/7  lvl/8  lvl/9 lvl/10 \
+    lvl/11 lvl/12 lvl/13 lvl/14 lvl/15 lvl/16 lvl/17
 LC=lvl/lvl.luac
 
 all: $(DST) $(LVL)
@@ -44,9 +44,11 @@ lib/coll.o: lib/bmp.h lib/coll.h
 $(LVL): $(LC)
 .ppm:
 	lua53 -- $(LC) < $< > $@
+	cp $@ rsc
 
 clean:
-	rm -f $(OBJ) $(LC)
+	rm -f $(OBJ) $(LC) $(LVL)
 
 distclean:
 	rm -f $(OBJ) $(LC) $(DST) $(LVL)
+	printf "%s" "rm -f $(LVL)" | sed -e 's/lvl/rsc/g' | sh
