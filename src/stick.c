@@ -5,17 +5,20 @@
 #include "../lib/dragon.h"
 #include "state.h"
 
-static void tick(State *state, const StateInput *in);
+static bool tick(State *state, const StateInput *in);
 static void sleepSome(double t);
 
-void stateTick(State *state, const StateInput *in) {
+bool stateTick(State *state, const StateInput *in) {
     while (in->time - state->lastTime > state->physics.tickDuration) {
-        tick(state, in);
+        if (tick(state, in)) {
+            return true;
+        }
     }
     sleepSome(in->time - state->lastTime);
+    return false;
 }
 
-static void tick(State *state, const StateInput *in) {
+static bool tick(State *state, const StateInput *in) {
     // Update state with data received from input
     state->winW = in->winW;
     state->winH = in->winH;
@@ -137,9 +140,7 @@ static void tick(State *state, const StateInput *in) {
     }
 
     // Check if it's over
-    if (stateOpGameOver(state)) {
-        exit(EXIT_SUCCESS);
-    }
+    return stateOpGameOver(state);
 }
 
 static void sleepSome(double t) {

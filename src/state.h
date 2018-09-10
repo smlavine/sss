@@ -96,7 +96,7 @@ typedef struct {
 
 State *stateNew(const char *path, const StateInput *in);
 State *stateDel(State *state);
-void stateTick(State *state, const StateInput *in);
+bool stateTick(State *state, const StateInput *in);
 void stateDraw(State *state);
 bool stateOpBumpCollision(const State *state, CollPen p);
 bool stateOpGameOver(const State *state);

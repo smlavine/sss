@@ -8,6 +8,10 @@
 
 #define CFG_PATH "rsc/cfg"
 #define WIN_TITLE "Sassy Square Sally"
+#define LVL_PATH_BUFFER_SIZE 20
+#define LVL_PATH_FMTS "rsc/%d"
+#define LVL_FIRST 1
+#define LVL_LAST 17
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
 #define OGL_VMAJ 2
@@ -16,7 +20,7 @@
 static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
 static StateInput mkStateInput(GLFWwindow *win);
 
-int main(int argc, char **argv) {
+int main(void) {
     int windowed, winW, winH, vsync, aa;
     FILE *f = fopen(CFG_PATH, "r");
     fscanf(f, "%d%d%d", &windowed, &winW, &winH);
@@ -26,18 +30,25 @@ int main(int argc, char **argv) {
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
     rInit();
-    StateInput stateInput = mkStateInput(win);
-    State *state = stateNew(argv[argc - 1], &stateInput);
 
-    while (!glfwWindowShouldClose(win)) {
-        glfwPollEvents();
-        stateInput = mkStateInput(win);
-        stateTick(state, &stateInput);
-        stateDraw(state);
-        glfwSwapBuffers(win);
+    for (int i = LVL_FIRST; i <= LVL_LAST && !glfwWindowShouldClose(win); ++i) {
+        char lvlPath[LVL_PATH_BUFFER_SIZE];
+        sprintf(lvlPath, LVL_PATH_FMTS, i);
+        State *state = stateNew(lvlPath, &stateInput);
+        StateInput stateInput = mkStateInput(win);
+
+        bool gameOver = false;
+        while (!glfwWindowShouldClose(win) && !gameOver) {
+            glfwPollEvents();
+            stateInput = mkStateInput(win);
+            gameOver = stateTick(state, &stateInput);
+            stateDraw(state);
+            glfwSwapBuffers(win);
+        }
+
+        stateDel(state);
     }
 
-    stateDel(state);
     rExit();
     glfwTerminate();
 }
