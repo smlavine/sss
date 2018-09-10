@@ -1,7 +1,7 @@
 #!/usr/bin/env lua5.3
 
 
-local PIXEL = {}
+PIXEL = {}
 PIXEL.HERO                = "255   0   0"
 PIXEL.NONE                = "255 255 255"
 PIXEL.COIN                = "255 255   0"
@@ -14,19 +14,44 @@ PIXEL.GRAVITON            = "  0   0 255"
 PIXEL.JUMPITON            = "128   2   2"
 
 
-local KEY_PIXEL = {}
+KEY_PIXEL = {}
 KEY_PIXEL["  0 128   0"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   0"}
 KEY_PIXEL["  0 128   1"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   1"}
 KEY_PIXEL["  0 128   2"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   2"}
 KEY_PIXEL["  0 128   3"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   3"}
 
 
-local SOLID_PIXEL = {}
+SOLID_PIXEL = {}
 SOLID_PIXEL[PIXEL.WALL] = true
 SOLID_PIXEL[PIXEL.EJECTOR] = true
 
 
-local function copyBmp(b)
+COLOR = {}
+COLOR.BACKGROUND      = "255 255 255 255"
+COLOR.HERO            = "255   0   0 255"
+COLOR.WALL            = "  0   0   0 255"
+COLOR.PASSIVE_EJECTOR = "128   0   0 255"
+COLOR.ACTIVE_EJECTOR  = "255 128 128 255"
+COLOR.PULSATOR        = "  0   0   0 255"
+COLOR.SHRINKER        = "192 192 192 255"
+COLOR.COIN            = "255 255   0 255"
+COLOR.GRAVITON        = "  0   0 255 255"
+
+
+PHYSICS = {}
+PHYSICS.TICK_DURATION    = " 0.02"
+PHYSICS.HORZ_VEL         = " 0.20"
+PHYSICS.JUMP_VEL         = " 0.17"
+PHYSICS.GRAV_ACC         = "-0.01"
+PHYSICS.TERM_VEL         = " 0.50"
+PHYSICS.EJECTOR_COOLDOWN = "   10"
+PHYSICS.EJECTOR_VEL      = " 0.33"
+PHYSICS.PULSE_TABLE_SIZE = "  120"
+PHYSICS.PULSE_TABLE      = ("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0"
+PHYSICS.SHRINKING        = "   20"
+
+
+function copyBmp(b)
     local bmp = {["w"] = b.w, ["h"] = b.h}
     for x = 1, bmp.w do
         bmp[x] = {}
@@ -38,7 +63,7 @@ local function copyBmp(b)
 end
 
 
-local function expandRectOnBmp(b, x, y)
+function expandRectOnBmp(b, x, y)
     local r = {["x"] = x, ["y"] = y, ["w"] = 0, ["h"] = 0}
     while r.x + r.w <= b.w and b[r.x + r.w][r.y] do
         r.w = r.w + 1
@@ -61,7 +86,7 @@ local function expandRectOnBmp(b, x, y)
 end
 
 
-local function deleteRectOnBmp(b, r)
+function deleteRectOnBmp(b, r)
     for x = r.x, r.x + r.w - 1 do
         for y = r.y, r.y + r.h - 1 do
             b[x][y] = false
@@ -70,7 +95,7 @@ local function deleteRectOnBmp(b, r)
 end
 
 
-local function countRectAreaOnBmp(b, r)
+function countRectAreaOnBmp(b, r)
     local n = 0
     for x = r.x, r.x + r.w - 1 do
         for y = r.y, r.y + r.h - 1 do
@@ -83,7 +108,7 @@ local function countRectAreaOnBmp(b, r)
 end
 
 
-local function bmpRects(b)
+function bmpRects(b)
     local rects = {}
     local b2 = copyBmp(b)
     for y = 1, b2.h do
@@ -105,7 +130,7 @@ local function bmpRects(b)
 end
 
 
-local function parsePlainPPM(s)
+function parsePlainPPM(s)
     s = s:gsub("#[^\n]*", " ") -- remove comments
 
     local header, w, h = s:match("(P3%s+(%d+)%s+(%d+)%s+%d+%s*)")
@@ -131,7 +156,7 @@ local function parsePlainPPM(s)
 end
 
 
-local function pixelBmp(img, pixels)
+function pixelBmp(img, pixels)
     local b = {["w"] = img.w, ["h"] = img.h}
     for x = 1, b.w do
         b[x] = {}
@@ -143,7 +168,7 @@ local function pixelBmp(img, pixels)
 end
 
 
-local function findPixelRects(img, pixels)
+function findPixelRects(img, pixels)
     for k, _ in pairs(pixels) do
         if img.p[k] then
             return bmpRects(pixelBmp(img, pixels))
@@ -153,7 +178,7 @@ local function findPixelRects(img, pixels)
 end
 
 
-local function bmpStr(b)
+function bmpStr(b)
     local s = {}
     for y = 1, b.h do
         s[y] = {}
@@ -166,12 +191,12 @@ local function bmpStr(b)
 end
 
 
-local function rectStr(r)
+function rectStr(r)
     return ("%2d %2d %2d %2d"):format(r.x - 1, r.y - 1, r.w, r.h)
 end
 
 
-local function rectArrStr(rects)
+function rectArrStr(rects)
     local s = {("%d"):format(#rects)}
     for _, r in ipairs(rects) do
         s[#s + 1] = rectStr(r)
@@ -180,7 +205,7 @@ local function rectArrStr(rects)
 end
 
 
-local function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPixel, expandedOffset)
+function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPixel, expandedOffset)
     local c = findPixelRects(img, {[contractedPixel] = true})
     local e = findPixelRects(img, {[expandedPixel] = true})
     local s = {("%d"):format(#c + #e)};
@@ -194,7 +219,7 @@ local function pulsatorArrStr(img, contractedPixel, contractedOffset, expandedPi
 end
 
 
-local function keyArrStr(img, keyPixels)
+function keyArrStr(img, keyPixels)
     local x = {}
     for key, data in pairs(keyPixels) do
         local keys = findPixelRects(img, {[key] = true})
@@ -214,29 +239,33 @@ local function keyArrStr(img, keyPixels)
 end
 
 
-local function main()
-    local img = parsePlainPPM(io.read("a"))
-    print("255 255 255 255") -- background color
-    print("255   0   0 255") -- hero color
-    print("  0   0   0 255") -- wall color
-    print("128   0   0 255") -- passive ejector color
-    print("255 128 128 255") -- active ejector color
-    print("  0   0   0 255") -- pulsator color
-    print("192 192 192 255") -- shrinker color
-    print("255 255   0 255") -- coin color
-    print("  0   0 255 255") -- graviton color
-    print("128   0   0 255\n") -- jumpiton color
-    print(" 0.02") -- tick duration
-    print(" 0.20") -- hero horizontal velocity
-    print(" 0.17") -- jump velocity
-    print("-0.01") -- gravity acceleration
-    print(" 0.50") -- terminal velocity
-    print("   10") -- ejector cooldown tick count
-    print(" 0.33") -- ejector ejection velocity
-    print("  120") -- pulsator table size
-    print(("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0") -- pulsator table
-    print("   20") -- shrinking tick count
-    print(" 0.22\n") -- jumpiton velocity
+function main()
+    local s = io.read("a")
+
+    local c = {}
+    s = s:gsub("##([^\n]*)", function(s) c[#c + 1] = s end)
+    load(table.concat(c, "\n"))()
+
+    local img = parsePlainPPM(s)
+    print(COLOR.BACKGROUND)
+    print(COLOR.HERO)
+    print(COLOR.WALL)
+    print(COLOR.PASSIVE_EJECTOR)
+    print(COLOR.ACTIVE_EJECTOR)
+    print(COLOR.PULSATOR)
+    print(COLOR.SHRINKER)
+    print(COLOR.COIN)
+    print(COLOR.GRAVITON .. "\n")
+    print(PHYSICS.TICK_DURATION)
+    print(PHYSICS.HORZ_VEL)
+    print(PHYSICS.JUMP_VEL)
+    print(PHYSICS.GRAV_ACC)
+    print(PHYSICS.TERM_VEL)
+    print(PHYSICS.EJECTOR_COOLDOWN)
+    print(PHYSICS.EJECTOR_VEL)
+    print(PHYSICS.PULSE_TABLE_SIZE)
+    print(PHYSICS.PULSE_TABLE)
+    print(PHYSICS.SHRINKING .. "\n")
     print(("%d %d"):format(img.w, img.h))
     print(bmpStr(pixelBmp(img, SOLID_PIXEL)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")
