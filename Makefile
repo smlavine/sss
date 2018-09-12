@@ -10,6 +10,7 @@ OBJ=src/main.o  \
     src/sdata.o \
     src/sdraw.o \
     src/stick.o \
+    src/msg.o   \
     src/sop.o   \
     lib/bio.o   \
     lib/image.o \
@@ -29,6 +30,7 @@ $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
 src/main.o src/sdata.o src/sdraw.o src/stick.o src/sop.o: src/state.h
+src/stick.o src/msg.o: src/msg.h
 lib/bio.o: lib/bio.h
 lib/image.o: lib/bio.h lib/image.h
 lib/r.o: lib/image.h lib/r.h
