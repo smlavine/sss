@@ -30,6 +30,7 @@ int main(void) {
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
     rInit();
+    stateAudioInit();
 
     for (int i = LVL_FIRST; i <= LVL_LAST && !glfwWindowShouldClose(win); ++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];
@@ -56,6 +57,7 @@ int main(void) {
         stateDel(state);
     }
 
+    stateAudioExit();
     rExit();
     glfwTerminate();
 }

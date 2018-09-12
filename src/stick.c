@@ -12,6 +12,7 @@ StateGameOverCause stateTick(State *state, const StateInput *in) {
     StateGameOverCause c;
     while (in->time - state->lastTime > state->physics.tickDuration) {
         c = tick(state, in);
+        stateAudioPlay(state);
         if (c != STATE_GAME_OVER_CAUSE_NONE) {
             break;
         }

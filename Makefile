@@ -4,13 +4,15 @@
 CC=cc
 CFLAGS=-c -O -I/usr/local/include -I/usr/X11R6/include
 LDFLAGS=-s -L/usr/local/lib -L/usr/X11R6/lib
-LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile -llz4
+LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile
 
 OBJ=src/main.o  \
     src/sdata.o \
     src/sdraw.o \
     src/stick.o \
     src/sop.o   \
+    src/saudio.o\
+    lib/audio.o \
     lib/bio.o   \
     lib/image.o \
     lib/r.o     \
@@ -28,7 +30,8 @@ all: $(DST) $(LVL)
 $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
-src/main.o src/sdata.o src/sdraw.o src/stick.o src/sop.o: src/state.h
+src/main.o src/sdata.o src/sdraw.o src/stick.o src/sop.o src/saudio.o: src/state.h
+lib/audio.o: lib/audio.h
 lib/bio.o: lib/bio.h
 lib/image.o: lib/bio.h lib/image.h
 lib/r.o: lib/image.h lib/r.h
