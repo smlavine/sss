@@ -10,6 +10,7 @@ void audioSoundStop(const AudioSound *sound);
 bool audioSoundPlaying(const AudioSound *sound);
 AudioMusic *audioMusicLoad(const char *path);
 void audioMusicFree(AudioMusic *music);
+void audioMusicPlay(AudioMusic *music, bool repeat);
 void audioMusicStream(AudioMusic *music);
 void audioMusicPause(const AudioMusic *music);
 void audioMusicStop(const AudioMusic *music);
