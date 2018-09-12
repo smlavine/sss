@@ -1,3 +1,4 @@
+// TODO: make state a global singleton
 // TODO: add inAir counter and allow to jump if it's only a few ticks
 
 #define STATE_DEFINE_ARRAY(type) \
@@ -32,6 +33,19 @@ enum {
     STATE_EVENT_KEY,
     STATE_EVENT_DIE,
     STATE_EVENT_WIN
+};
+
+#define STATE_OGG_COUNT 9
+enum {
+    STATE_OGG_MUSIC,
+    STATE_OGG_COIN,
+    STATE_OGG_GRAVITON,
+    STATE_OGG_KEY,
+    STATE_OGG_JUMP,
+    STATE_OGG_EJECT,
+    STATE_OGG_BUMP,
+    STATE_OGG_WIN,
+    STATE_OGG_DIE
 };
 
 typedef struct {
@@ -119,7 +133,7 @@ State *stateNew(const char *path);
 State *stateDel(State *state);
 StateGameOverCause stateTick(State *state, const StateInput *in);
 void stateDraw(State *state);
-void stateAudioInit(void);
+void stateAudioInit(const char **oggPaths);
 void stateAudioExit(void);
 void stateAudioPlay(const State *state);
 bool stateOpBumpCollision(const State *state, CollPen p);

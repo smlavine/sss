@@ -12,6 +12,16 @@
 #define LVL_PATH_FMTS "rsc/%d"
 #define LVL_FIRST 1
 #define LVL_LAST 17
+#define OGG_PATH_ARR (const char *[]) { \
+    "rsc/music.ogg", \
+    "rsc/coin.ogg", \
+    "rsc/graviton.ogg", \
+    "rsc/key.ogg", \
+    "rsc/jump.ogg", \
+    "rsc/eject.ogg", \
+    "rsc/bump.ogg", \
+    "rsc/win.ogg", \
+    "rsc/die.ogg" }
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
 #define OGL_VMAJ 2
@@ -30,7 +40,7 @@ int main(void) {
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
     rInit();
-    stateAudioInit();
+    stateAudioInit(OGG_PATH_ARR);
 
     for (int i = LVL_FIRST; i <= LVL_LAST && !glfwWindowShouldClose(win); ++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];

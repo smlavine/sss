@@ -11,3 +11,4 @@
 #include "bmp.h"
 #include "coll.h"
 #include "batch.h"
+#include "audio.h"
