@@ -21,6 +21,19 @@ enum {
     STATE_COLOR_GRAVITON,
 };
 
+#define STATE_EVENT_COUNT 9
+enum {
+    STATE_EVENT_ANTIBUMP,
+    STATE_EVENT_BUMP,
+    STATE_EVENT_JUMP,
+    STATE_EVENT_EJECT,
+    STATE_EVENT_COIN,
+    STATE_EVENT_GRAVITON,
+    STATE_EVENT_KEY,
+    STATE_EVENT_DIE,
+    STATE_EVENT_WIN
+};
+
 typedef struct {
     // TODO: move each variable to the array it belongs
     float tickDuration;
@@ -76,6 +89,7 @@ typedef struct {
     uint64_t tick;
     double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
+    int event[2][STATE_EVENT_COUNT];
     StatePhysics physics;
     BatchCall bg, fg;
     int winW, winH;
