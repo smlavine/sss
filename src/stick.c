@@ -5,14 +5,14 @@
 #include "../lib/dragon.h"
 #include "state.h"
 
-static StateOpGameOverCause tick(State *state, const StateInput *in);
+static StateGameOverCause tick(State *state, const StateInput *in);
 static void sleepSome(double t);
 
-StateOpGameOverCause stateTick(State *state, const StateInput *in) {
-    StateOpGameOverCause c;
+StateGameOverCause stateTick(State *state, const StateInput *in) {
+    StateGameOverCause c;
     while (in->time - state->lastTime > state->physics.tickDuration) {
         c = tick(state, in);
-        if (c != STATE_OP_GAME_OVER_CAUSE_NONE) {
+        if (c != STATE_GAME_OVER_CAUSE_NONE) {
             break;
         }
     }
@@ -20,7 +20,7 @@ StateOpGameOverCause stateTick(State *state, const StateInput *in) {
     return c;
 }
 
-static StateOpGameOverCause tick(State *state, const StateInput *in) {
+static StateGameOverCause tick(State *state, const StateInput *in) {
     // Update state with data received from input
     state->winW = in->winW;
     state->winH = in->winH;
@@ -142,7 +142,7 @@ static StateOpGameOverCause tick(State *state, const StateInput *in) {
     }
 
     // Check if it's over
-    return stateOpGameOver(state);
+    return in->keyR ? STATE_GAME_OVER_CAUSE_RESTART : stateOpGameOver(state);
 }
 
 static void sleepSome(double t) {

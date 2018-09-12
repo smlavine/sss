@@ -105,21 +105,22 @@ typedef struct {
 typedef struct {
     int winW, winH;
     float time;
-    bool keyUp, keyLeft, keyRight;
+    bool keyUp, keyLeft, keyRight, keyR;
 } StateInput;
 
 typedef enum {
-    STATE_OP_GAME_OVER_CAUSE_NONE,
-    STATE_OP_GAME_OVER_CAUSE_LOST,
-    STATE_OP_GAME_OVER_CAUSE_WON
-} StateOpGameOverCause;
+    STATE_GAME_OVER_CAUSE_NONE,
+    STATE_GAME_OVER_CAUSE_LOST,
+    STATE_GAME_OVER_CAUSE_RESTART,
+    STATE_GAME_OVER_CAUSE_WON
+} StateGameOverCause;
 
 State *stateNew(const char *path);
 State *stateDel(State *state);
-StateOpGameOverCause stateTick(State *state, const StateInput *in);
+StateGameOverCause stateTick(State *state, const StateInput *in);
 void stateDraw(State *state);
 bool stateOpBumpCollision(const State *state, CollPen p);
-StateOpGameOverCause stateOpGameOver(const State *state);
+StateGameOverCause stateOpGameOver(const State *state);
 CollPen stateOpColl(const State *state, CollRect r);
 void stateOpEnvEnergy(const State *state, float *velX, float *velY);
 CollRect stateOpPulsator(const State *state, size_t i);

@@ -40,9 +40,9 @@ int main(void) {
         while (!glfwWindowShouldClose(win)) {
             glfwPollEvents();
             StateInput stateInput = mkStateInput(win);
-            StateOpGameOverCause c = stateTick(state, &stateInput);
-            if (c != STATE_OP_GAME_OVER_CAUSE_NONE) {
-                if (c != STATE_OP_GAME_OVER_CAUSE_WON) {
+            StateGameOverCause c = stateTick(state, &stateInput);
+            if (c != STATE_GAME_OVER_CAUSE_NONE) {
+                if (c != STATE_GAME_OVER_CAUSE_WON) {
                     --i;
                 }
                 break;
@@ -108,5 +108,6 @@ static StateInput mkStateInput(GLFWwindow *win) {
     in.keyUp = glfwGetKey(win, GLFW_KEY_W) || glfwGetKey(win, GLFW_KEY_UP);
     in.keyLeft = glfwGetKey(win, GLFW_KEY_A) || glfwGetKey(win, GLFW_KEY_LEFT);
     in.keyRight = glfwGetKey(win, GLFW_KEY_D) || glfwGetKey(win, GLFW_KEY_RIGHT);
+    in.keyR = glfwGetKey(win, GLFW_KEY_R);
     return in;
 }
