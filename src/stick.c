@@ -133,17 +133,9 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
     }
     if (p.south > 0 && state->hero.vVel < 0) {
         state->hero.vVel = 0;
-        if (!state->physics.invertedGravity)
-            state->event[1][STATE_EVENT_BUMP] = true;
-        else
-            state->event[1][STATE_EVENT_ANTIBUMP] = true;
     }
     if (p.north > 0 && state->hero.vVel > 0) {
         state->hero.vVel = 0;
-        if (state->physics.invertedGravity)
-            state->event[1][STATE_EVENT_BUMP] = true;
-        else
-            state->event[1][STATE_EVENT_ANTIBUMP] = true;
     }
     if (ejected) {
         state->hero.vVel = state->physics.invertedGravity ? -state->physics.ejectionVel : state->physics.ejectionVel;

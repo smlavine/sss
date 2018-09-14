@@ -2,8 +2,8 @@
 .SUFFIXES:.lua .luac .ppm
 
 CC=cc
-CFLAGS=-c -O -I/usr/local/include -I/usr/X11R6/include
-LDFLAGS=-s -L/usr/local/lib -L/usr/X11R6/lib
+CFLAGS=-c -O -g -I/usr/local/include -I/usr/X11R6/include
+LDFLAGS=-L/usr/local/lib -L/usr/X11R6/lib
 LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile
 
 OBJ=src/main.o  \

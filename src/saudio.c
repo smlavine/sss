@@ -6,8 +6,8 @@ static AudioMusic *music;
 
 void stateAudioInit(const char **oggPaths) {
     audioInit();
-    for (int i = 1; i < STATE_OGG_COUNT; ++i) {
-        sound[i - 1] = audioSoundLoad(oggPaths[i]);
+    for (int i = 0; i < STATE_OGG_COUNT - 1; ++i) {
+        sound[i] = audioSoundLoad(oggPaths[i]);
     }
     music = audioMusicLoad(oggPaths[STATE_OGG_MUSIC]);
     audioMusicPlay(music, true);
@@ -25,19 +25,17 @@ void stateAudioExit(void) {
 void stateAudioPlay(const State *state) {
     audioMusicStream(music);
     if (state->event[1][STATE_EVENT_WIN])
-        audioSoundPlay(sound[STATE_OGG_WIN - 1], false);
+        audioSoundPlay(sound[STATE_OGG_WIN], false);
     else if (state->event[1][STATE_EVENT_DIE])
-        audioSoundPlay(sound[STATE_OGG_DIE - 1], false);
+        audioSoundPlay(sound[STATE_OGG_DIE], false);
     else if (state->event[1][STATE_EVENT_EJECT])
-        audioSoundPlay(sound[STATE_OGG_EJECT - 1], false);
+        audioSoundPlay(sound[STATE_OGG_EJECT], false);
     else if (state->event[1][STATE_EVENT_JUMP])
-        audioSoundPlay(sound[STATE_OGG_JUMP - 1], false);
-    else if (!state->event[0][STATE_EVENT_BUMP] && state->event[1][STATE_EVENT_BUMP])
-        audioSoundPlay(sound[STATE_OGG_BUMP - 1], false);
+        audioSoundPlay(sound[STATE_OGG_JUMP], false);
     else if (state->event[1][STATE_EVENT_COIN])
-        audioSoundPlay(sound[STATE_OGG_COIN - 1], false);
+        audioSoundPlay(sound[STATE_OGG_COIN], false);
     else if (state->event[1][STATE_EVENT_GRAVITON])
-        audioSoundPlay(sound[STATE_OGG_GRAVITON - 1], false);
+        audioSoundPlay(sound[STATE_OGG_GRAVITON], false);
     else if (state->event[1][STATE_EVENT_KEY])
-        audioSoundPlay(sound[STATE_OGG_KEY - 1], false);
+        audioSoundPlay(sound[STATE_OGG_KEY], false);
 }
