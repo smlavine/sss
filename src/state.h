@@ -48,6 +48,13 @@ enum {
     STATE_OGG_DIE
 };
 
+typedef enum {
+    STATE_GAME_OVER_CAUSE_NONE,
+    STATE_GAME_OVER_CAUSE_LOST,
+    STATE_GAME_OVER_CAUSE_RESTART,
+    STATE_GAME_OVER_CAUSE_WON
+} StateGameOverCause;
+
 typedef struct {
     // TODO: move each variable to the array it belongs
     float tickDuration;
@@ -103,7 +110,7 @@ typedef struct {
     uint64_t tick;
     double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
-    int event[2][STATE_EVENT_COUNT];
+    bool event[2][STATE_EVENT_COUNT];
     StatePhysics physics;
     BatchCall bg, fg;
     int winW, winH;
@@ -121,13 +128,6 @@ typedef struct {
     float time;
     bool keyUp, keyLeft, keyRight, keyR;
 } StateInput;
-
-typedef enum {
-    STATE_GAME_OVER_CAUSE_NONE,
-    STATE_GAME_OVER_CAUSE_LOST,
-    STATE_GAME_OVER_CAUSE_RESTART,
-    STATE_GAME_OVER_CAUSE_WON
-} StateGameOverCause;
 
 State *stateNew(const char *path);
 State *stateDel(State *state);

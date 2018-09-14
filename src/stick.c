@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -22,6 +22,12 @@ StateGameOverCause stateTick(State *state, const StateInput *in) {
 }
 
 static StateGameOverCause tick(State *state, const StateInput *in) {
+    // Move events
+    for (int i = 0; i < STATE_EVENT_COUNT; ++i) {
+        state->event[0][i] = state->event[1][i];
+        state->event[1][i] = false;
+    }
+
     // Update state with data received from input
     state->winW = in->winW;
     state->winH = in->winH;
@@ -83,6 +89,7 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken && collRect(state->hero.r, state->coin.arr[i].r).is) {
             state->coin.arr[i].taken = true;
+            state->event[1][STATE_EVENT_COIN] = true;
         }
     }
 
@@ -91,6 +98,7 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
         if (!state->graviton.arr[i].taken && collRect(state->hero.r, state->graviton.arr[i].r).is) {
             state->graviton.arr[i].taken = true;
             state->physics.invertedGravity = !state->physics.invertedGravity;
+            state->event[1][STATE_EVENT_GRAVITON] = true;
         }
     }
 
@@ -107,6 +115,7 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
             if (!state->key.arr[i].key.arr[j].taken) {
                 if (collRect(state->hero.r, state->key.arr[i].key.arr[j].r).is) {
                     state->key.arr[i].key.arr[j].taken = true;
+                    state->event[1][STATE_EVENT_KEY] = true;
                 } else {
                     allKeysTaken = false;
                 }
@@ -124,16 +133,26 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
     }
     if (p.south > 0 && state->hero.vVel < 0) {
         state->hero.vVel = 0;
+        if (!state->physics.invertedGravity)
+            state->event[1][STATE_EVENT_BUMP] = true;
+        else
+            state->event[1][STATE_EVENT_ANTIBUMP] = true;
     }
     if (p.north > 0 && state->hero.vVel > 0) {
         state->hero.vVel = 0;
+        if (state->physics.invertedGravity)
+            state->event[1][STATE_EVENT_BUMP] = true;
+        else
+            state->event[1][STATE_EVENT_ANTIBUMP] = true;
     }
     if (ejected) {
         state->hero.vVel = state->physics.invertedGravity ? -state->physics.ejectionVel : state->physics.ejectionVel;
         state->hero.envVelX = state->hero.envVelY = 0;
+        state->event[1][STATE_EVENT_EJECT] = true;
     } else if (jump) {
         state->hero.vVel = state->physics.invertedGravity ? -state->physics.jumpVel : state->physics.jumpVel;
         state->hero.envVelX = state->hero.envVelY = 0;
+        state->event[1][STATE_EVENT_JUMP] = true;
     }
     state->hero.vVel += state->physics.invertedGravity ? -state->physics.gravAcc : state->physics.gravAcc;
     if (state->hero.vVel < -state->physics.termVel) {
@@ -143,7 +162,12 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
     }
 
     // Check if it's over
-    return in->keyR ? STATE_GAME_OVER_CAUSE_RESTART : stateOpGameOver(state);
+    StateGameOverCause c =  in->keyR ? STATE_GAME_OVER_CAUSE_RESTART : stateOpGameOver(state);
+    if (c == STATE_GAME_OVER_CAUSE_WON)
+        state->event[1][STATE_EVENT_WIN] = true;
+    else if (c != STATE_GAME_OVER_CAUSE_NONE)
+        state->event[1][STATE_EVENT_DIE] = true;
+    return c;
 }
 
 static void sleepSome(double t) {
