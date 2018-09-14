@@ -24,18 +24,18 @@ void stateAudioExit(void) {
 
 void stateAudioPlay(const State *state) {
     audioMusicStream(music);
-    if (state->event[1][STATE_EVENT_WIN])
+    if (state->event[STATE_EVENT_WIN])
         audioSoundPlay(sound[STATE_OGG_WIN], false);
-    else if (state->event[1][STATE_EVENT_DIE])
+    else if (state->event[STATE_EVENT_DIE])
         audioSoundPlay(sound[STATE_OGG_DIE], false);
-    else if (state->event[1][STATE_EVENT_EJECT])
+    else if (state->event[STATE_EVENT_EJECT])
         audioSoundPlay(sound[STATE_OGG_EJECT], false);
-    else if (state->event[1][STATE_EVENT_JUMP])
+    else if (state->event[STATE_EVENT_JUMP])
         audioSoundPlay(sound[STATE_OGG_JUMP], false);
-    else if (state->event[1][STATE_EVENT_COIN])
+    else if (state->event[STATE_EVENT_COIN])
         audioSoundPlay(sound[STATE_OGG_COIN], false);
-    else if (state->event[1][STATE_EVENT_GRAVITON])
+    else if (state->event[STATE_EVENT_GRAVITON])
         audioSoundPlay(sound[STATE_OGG_GRAVITON], false);
-    else if (state->event[1][STATE_EVENT_KEY])
+    else if (state->event[STATE_EVENT_KEY])
         audioSoundPlay(sound[STATE_OGG_KEY], false);
 }

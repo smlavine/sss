@@ -19,7 +19,7 @@
     "rsc/jump.ogg", \
     "rsc/eject.ogg", \
     "rsc/win.ogg", \
-    "rsc/die.ogg" \
+    "rsc/die.ogg", \
     "rsc/music.ogg" }
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0

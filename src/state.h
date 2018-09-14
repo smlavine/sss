@@ -33,7 +33,7 @@ enum {
     STATE_EVENT_WIN
 };
 
-#define STATE_OGG_COUNT 9
+#define STATE_OGG_COUNT 8
 enum {
     STATE_OGG_COIN,
     STATE_OGG_GRAVITON,
@@ -107,7 +107,7 @@ typedef struct {
     uint64_t tick;
     double lastTime;
     uint8_t color[STATE_COLOR_COUNT][4];
-    bool event[2][STATE_EVENT_COUNT];
+    bool event[STATE_EVENT_COUNT];
     StatePhysics physics;
     BatchCall bg, fg;
     int winW, winH;
