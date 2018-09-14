@@ -1,3 +1,6 @@
+// TODO: replace rsc/cfg with command-line options
+// TODO: simplify lib/*
+
 #include <stdio.h>
 
 #define GLFW_INCLUDE_NONE
@@ -38,6 +41,7 @@ int main(void) {
 
     glfwInit();
     GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
+    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     rInit();
     stateAudioInit(OGG_PATH_ARR);
 
