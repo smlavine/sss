@@ -32,16 +32,14 @@ Bmp *bmpDel(Bmp *bmp, bool freeHandle) {
 
 bool bmpGet(const Bmp *bmp, size_t x, size_t y, size_t z) {
     size_t i = z * bmp->w * bmp->h + y * bmp->w + x;
-    uint8_t byte = i / 8;
-    uint8_t bit = i % 8;
-    uint8_t mask = 1 << bit;
-    return bmp->b[byte] & mask;
+    uint8_t byte = bmp->b[i / 8];
+    uint8_t mask = 1 << (i % 8);
+    return byte & mask;
 }
 
 void bmpSet(Bmp *bmp, size_t x, size_t y, size_t z, bool b) {
     size_t i = z * bmp->w * bmp->h + y * bmp->w + x;
-    uint8_t byte = i / 8;
-    uint8_t bit = i % 8;
-    uint8_t mask = 1 << bit;
-    bmp->b[byte] =  b ? bmp->b[byte] | mask : bmp->b[byte] & ~mask;
+    uint8_t byte = bmp->b[i / 8];
+    uint8_t mask = 1 << (i % 8);
+    bmp->b[i / 8] =  b ? byte | mask : byte & ~mask;
 }
