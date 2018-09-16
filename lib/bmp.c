@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "bio.h"
 #include "bmp.h"
 
 static bool getbit(uint8_t byte, int i);
@@ -47,96 +46,6 @@ Bmp *bmpDel(Bmp *bmp, bool freeHandle) {
         free(bmp);
     }
     return NULL;
-}
-
-Bmp *bmpRead(const void *p, Bmp *bmp) {
-    if (!bmp) {
-        bmp = malloc(sizeof(*bmp));
-    }
-
-    p = bioReadU32LE(p, &bmp->w);
-    p = bioReadU32LE(p, &bmp->h);
-    p = bioReadU32LE(p, &bmp->l);
-
-    size_t b = bmp->w * bmp->h * bmp->l / 8;
-    if (bmp->w * bmp->h * bmp->l % 8) {
-        ++b;
-    }
-    bmp->b = malloc(b);
-    p = bioReadU8v(p, b, bmp->b);
-
-    return bmp;
-}
-
-void *bmpWrite(const Bmp *bmp, void *p) {
-    p = bioWriteU32LE(p, bmp->w);
-    p = bioWriteU32LE(p, bmp->h);
-    p = bioWriteU32LE(p, bmp->l);
-
-    size_t b = bmp->w * bmp->h * bmp->l / 8;
-    if (bmp->w * bmp->h * bmp->l % 8) {
-        ++b;
-    }
-
-    p = bioWriteU8v(p, b, bmp->b);
-
-    return p;
-}
-
-Bmp *bmpLoad(const char *path, Bmp *bmp) {
-    return bmpLoadFromFile(fopen(path, "rb"), true, bmp);
-}
-
-void bmpSave(const Bmp *bmp, const char *path) {
-    bmpSaveToFile(bmp, fopen(path, "wb"), true);
-}
-
-Bmp *bmpLoadFromFile(void *file, bool close, Bmp *bmp) {
-    if (!bmp) {
-        bmp = malloc(sizeof(*bmp));
-    }
-
-    bmp->w = bioScanU32LE(file);
-    bmp->h = bioScanU32LE(file);
-    bmp->l = bioScanU32LE(file);
-
-    size_t b = bmp->w * bmp->h * bmp->l / 8;
-    if (bmp->w * bmp->h * bmp->l % 8) {
-        ++b;
-    }
-    bmp->b = malloc(b);
-    bioScanU8v(file, b, bmp->b);
-
-    if (close) {
-        fclose(file);
-    }
-
-    return bmp;
-}
-
-void bmpSaveToFile(const Bmp *bmp, void *file, bool close) {
-    bioPrintU32LE(file, bmp->w);
-    bioPrintU32LE(file, bmp->h);
-    bioPrintU32LE(file, bmp->l);
-
-    size_t b = bmp->w * bmp->h * bmp->l / 8;
-    if (bmp->w * bmp->h * bmp->l % 8) {
-        ++b;
-    }
-
-    bioPrintU8v(file, b, bmp->b);
-
-    if (close) {
-        fclose(file);
-    }
-}
-
-size_t bmpSize(const Bmp *bmp) {
-    size_t b = bmp->w * bmp->h * bmp->l / 8;
-    if (bmp->w * bmp->h * bmp->l % 8) {
-        ++b;
-    }
-    return 4 * 3 + b;
 }
 
 bool bmpGet(const Bmp *bmp, size_t x, size_t y, size_t z) {

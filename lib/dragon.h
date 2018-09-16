@@ -3,7 +3,6 @@
 #include <stddef.h>
 #include <math.h>
 
-#include "bio.h"
 #include "r.h"
 #include "matrix.h"
 #include "cam.h"
