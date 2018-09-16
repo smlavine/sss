@@ -1,5 +1,4 @@
 #include <inttypes.h>
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "../lib/dragon.h"
@@ -42,7 +41,7 @@ State *stateNew(const char *path) {
     }
     fscanf(f, "%d", &p->shrinkingTickCount);
 
-    fscanf(f, "%" SCNu32 "%" SCNu32, &state->lvl.w, &state->lvl.h);
+    fscanf(f, "%zu%zu", &state->lvl.w, &state->lvl.h);
     bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
     for (int y = state->lvl.h - 1; y >= 0; --y) {
         for (int x = 0; x < (int)state->lvl.w; ++x) {

@@ -6,7 +6,7 @@ typedef struct {
 } Batch;
 
 // TODO: batchNew
-Batch *batchCopy(const Batch *s, Batch *d);
+Batch *batchDup(const Batch *s, Batch *d);
 Batch *batchDel(Batch *b, bool freeHandle);
 void batch(Batch *b, size_t ni, const uint16_t *i, size_t nv, const RVertex *v);
 void batchClear(Batch *b);

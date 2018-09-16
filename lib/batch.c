@@ -9,7 +9,7 @@
 #include "coll.h"
 #include "batch.h"
 
-Batch *batchCopy(const Batch *s, Batch *d) {
+Batch *batchDup(const Batch *s, Batch *d) {
     if (!d) {
         d = malloc(sizeof(*d));
     }
