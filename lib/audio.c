@@ -1,7 +1,6 @@
-#include <stdbool.h>
-#include <stdlib.h>
+#include "dragon.h"
 
-#include "audio.h"
+#include <stdlib.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>

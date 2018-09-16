@@ -6,15 +6,18 @@ CFLAGS=-c -O -g -I/usr/local/include -I/usr/X11R6/include
 LDFLAGS=-L/usr/local/lib -L/usr/X11R6/lib
 LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile
 
-OBJ=src/main.o  \
-    src/sdata.o \
-    src/sdraw.o \
-    src/stick.o \
-    src/sop.o   \
-    src/saudio.o\
-    lib/audio.o \
-    lib/r.o     \
-    lib/batch.o \
+OBJ=src/main.o   \
+    src/sdata.o  \
+    src/sdraw.o  \
+    src/stick.o  \
+    src/sop.o    \
+    src/saudio.o \
+    lib/audio.o  \
+    lib/matrix.o \
+    lib/cam.o    \
+    lib/r.o      \
+    lib/batch.o  \
+    lib/bmp.o    \
     lib/coll.o
 DST=sss
 
@@ -27,12 +30,8 @@ all: $(DST) $(LVL)
 $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
+$(OBJ): lib/dragon.h
 src/main.o src/sdata.o src/sdraw.o src/stick.o src/sop.o src/saudio.o: src/state.h
-lib/audio.o: lib/audio.h
-lib/r.o: lib/r.h
-lib/batch.o: lib/r.h lib/batch.h
-lib/bmp.o: lib/bmp.h
-lib/coll.o: lib/bmp.h lib/coll.h
 .c.o:
 	$(CC) -o $@ $(CFLAGS) $<
 

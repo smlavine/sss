@@ -1,11 +1,8 @@
-#include <stdbool.h>
-#include <stdint.h>
+#include "dragon.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-
-#include "bmp.h"
-#include "coll.h"
 
 #define MINNONNEG(x,y) ((x)<0?(y):(y)<0?(x):(x)<(y)?(x):(y))
 

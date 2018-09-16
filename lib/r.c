@@ -1,8 +1,7 @@
-#include <stdbool.h>
+#include "dragon.h"
+
 #include <string.h>
 #include <stdlib.h>
-
-#include "r.h"
 
 #include <GLES2/gl2.h>
 

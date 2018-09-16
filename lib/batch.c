@@ -1,13 +1,8 @@
-#include <stdbool.h>
-#include <stdint.h>
+#include "dragon.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-
-#include "r.h"
-#include "bmp.h"
-#include "coll.h"
-#include "batch.h"
 
 Batch *batchDup(const Batch *s, Batch *d) {
     if (!d) {
