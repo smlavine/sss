@@ -13,22 +13,9 @@ typedef enum {
 } RDrawMode;
 
 typedef struct {
-    float x, y, z, s, t;
+    float x, y, z;
     unsigned char r, g, b, a;
 } RVertex;
-
-typedef struct RTex RTex;
-
-typedef enum {
-    R_TEX_QUALITY_WORST,
-    R_TEX_QUALITY_BEST
-} RTexQuality;
-
-typedef enum {
-    R_TEX_WRAPPING_CLAMP_TO_EDGE,
-    R_TEX_WRAPPING_REPEAT,
-    R_TEX_WRAPPING_MIRRORED_REPEAT
-} RTexWrapping;
 
 void rInit(void);
 void rExit(void);
@@ -40,7 +27,3 @@ void rClear(const float c[4]);
 void rDraw(RDrawMode mode, size_t n, const RVertex *v);
 void rDrawIndexed(RDrawMode mode,size_t ni,const uint16_t *i,const RVertex *v);
 void rViewport(int x, int y, int w, int h);
-RTex *rTexNew(const Image *image, RTexQuality quality, RTexWrapping wrapping);
-RTex *rTexDel(RTex *tex);
-void rTexActivate(const RTex *tex);
-const RTex *rTexActive(void);

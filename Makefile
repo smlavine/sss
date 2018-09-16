@@ -14,7 +14,6 @@ OBJ=src/main.o  \
     src/saudio.o\
     lib/audio.o \
     lib/bio.o   \
-    lib/image.o \
     lib/r.o     \
     lib/batch.o \
     lib/bmp.o   \
@@ -33,9 +32,8 @@ $(DST): $(OBJ)
 src/main.o src/sdata.o src/sdraw.o src/stick.o src/sop.o src/saudio.o: src/state.h
 lib/audio.o: lib/audio.h
 lib/bio.o: lib/bio.h
-lib/image.o: lib/bio.h lib/image.h
-lib/r.o: lib/image.h lib/r.h
-lib/batch.o: lib/image.h lib/r.h lib/batch.h
+lib/r.o: lib/r.h
+lib/batch.o: lib/r.h lib/batch.h
 lib/bmp.o: lib/bio.h lib/bmp.h
 lib/coll.o: lib/bmp.h lib/coll.h
 .c.o:

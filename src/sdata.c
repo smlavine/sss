@@ -57,7 +57,7 @@ State *stateNew(const char *path) {
     CollRectArray wall;
     SCAN_ARRAY(f, wall, scanRect);
     for (size_t i = 0; i < wall.n; ++i) {
-        batchCallRect(&state->bg, wall.arr[i], state->color[STATE_COLOR_WALL]);
+        batchRect(&state->bg, wall.arr[i], state->color[STATE_COLOR_WALL]);
     }
     free(wall.arr);
 
@@ -76,7 +76,7 @@ State *stateNew(const char *path) {
 State *stateDel(State *state) {
     bmpDel(&state->lvl, false);
     free(state->physics.pulsatorTable);
-    batchCallDel(&state->bg, false);
+    batchDel(&state->bg, false);
     free(state->ejector.arr);
     free(state->pulsator.arr);
     free(state->shrinker.arr);

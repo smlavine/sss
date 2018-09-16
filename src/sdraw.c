@@ -16,36 +16,36 @@ void stateDraw(State *state) {
     rClear(bgColor);
     rDrawIndexed(R_DRAW_MODE_TRIANGLES, state->bg.ni, state->bg.i, state->bg.v);
 
-    batchCallRect(&state->fg, state->hero.r, state->color[STATE_COLOR_HERO]);
+    batchRect(&state->fg, state->hero.r, state->color[STATE_COLOR_HERO]);
     for (size_t i = 0; i < state->ejector.n; ++i) {
         if (state->ejector.arr[i].cooldown) {
-            batchCallRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_ACTIVE_EJECTOR]);
+            batchRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_ACTIVE_EJECTOR]);
         } else {
-            batchCallRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_PASSIVE_EJECTOR]);
+            batchRect(&state->fg, state->ejector.arr[i].r, state->color[STATE_COLOR_PASSIVE_EJECTOR]);
         }
     }
     for (size_t i = 0; i < state->pulsator.n; ++i) {
         CollRect r = stateOpPulsator(state, i);
-        batchCallRect(&state->fg, r, state->color[STATE_COLOR_PULSATOR]);
+        batchRect(&state->fg, r, state->color[STATE_COLOR_PULSATOR]);
     }
     for (size_t i = 0; i < state->shrinker.n; ++i) {
         CollRect r = stateOpShrinker(state, i);
-        batchCallRect(&state->fg, r, state->color[STATE_COLOR_SHRINKER]);
+        batchRect(&state->fg, r, state->color[STATE_COLOR_SHRINKER]);
     }
     for (size_t i = 0; i < state->coin.n; ++i) {
         if (!state->coin.arr[i].taken) {
-            batchCallRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
+            batchRect(&state->fg, state->coin.arr[i].r, state->color[STATE_COLOR_COIN]);
         }
     }
     for (size_t i = 0; i < state->graviton.n; ++i) {
         if (!state->graviton.arr[i].taken) {
-            batchCallRect(&state->fg, state->graviton.arr[i].r, state->color[STATE_COLOR_GRAVITON]);
+            batchRect(&state->fg, state->graviton.arr[i].r, state->color[STATE_COLOR_GRAVITON]);
         }
     }
     for (size_t i = 0; i < state->key.n; ++i) {
         for (size_t j = 0; j < state->key.arr[i].key.n; ++j) {
             if (!state->key.arr[i].key.arr[j].taken) {
-                batchCallRect(&state->fg, state->key.arr[i].key.arr[j].r, state->key.arr[i].keyColor);
+                batchRect(&state->fg, state->key.arr[i].key.arr[j].r, state->key.arr[i].keyColor);
             }
         }
         if (state->key.arr[i].ticksLeft == 0) {
@@ -53,9 +53,9 @@ void stateDraw(State *state) {
         }
         for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
             CollRect r = stateOpKeyLock(state, i, j);
-            batchCallRect(&state->fg, r, state->key.arr[i].lockColor);
+            batchRect(&state->fg, r, state->key.arr[i].lockColor);
         }
     }
     rDrawIndexed(R_DRAW_MODE_TRIANGLES, state->fg.ni, state->fg.i, state->fg.v);
-    batchCallClear(&state->fg);
+    batchClear(&state->fg);
 }

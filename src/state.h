@@ -109,7 +109,7 @@ typedef struct {
     uint8_t color[STATE_COLOR_COUNT][4];
     bool event[STATE_EVENT_COUNT];
     StatePhysics physics;
-    BatchCall bg, fg;
+    Batch bg, fg;
     int winW, winH;
     Bmp lvl;
     StateHero hero;
