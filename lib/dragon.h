@@ -118,13 +118,13 @@ typedef struct {
     RVertex *v;
 } Batch;
 
-// TODO: batchNew
 Batch *batchDup(const Batch *s, Batch *d);
 Batch *batchDel(Batch *b, bool freeHandle);
 void batch(Batch *b, size_t ni, const uint16_t *i, size_t nv, const RVertex *v);
 void batchClear(Batch *b);
 void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]);
 void batchLine(Batch *b, CollLine l, float t, const uint8_t rgba[4]);
+void batchRectLine(Batch *b, CollRect r, float ti, float to, const uint8_t rgba[4]);
 
 // ---------------------------------------------------------------------------
 // audio.c
@@ -137,7 +137,7 @@ void audioInit(void);
 void audioExit(void);
 AudioSound *audioSoundLoad(const char *path);
 void audioSoundFree(AudioSound *sound);
-void audioSoundPlay(const AudioSound *sound, bool repeat);
+void audioSoundPlay(const AudioSound *sound);
 void audioSoundStop(const AudioSound *sound);
 bool audioSoundPlaying(const AudioSound *sound);
 AudioMusic *audioMusicLoad(const char *path);

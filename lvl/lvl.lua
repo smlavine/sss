@@ -14,10 +14,15 @@ PIXEL.GRAVITON            = "  0   0 255"
 
 
 local KEY_PIXEL = {}
-KEY_PIXEL["  0 128   0"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   0"}
-KEY_PIXEL["  0 128   1"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   1"}
-KEY_PIXEL["  0 128   2"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   2"}
-KEY_PIXEL["  0 128   3"] = {["keycolor"] = "  0 128   0 255", ["lockcolor"] = "  0 255   0 255", ["lock"] = "  0 255   3"}
+for i = 1, 4 do
+    KEY_PIXEL[("  0 128 %3d"):format(i)] = {
+        ["keycolor"]      = "  0 128   0 255",
+        ["lockcolor"]     = "  0 255   0 255",
+        ["antilockcolor"] = "  0 255   0 255",
+        ["lock"]          = ("  0 255 %3d"):format(i),
+        ["antilock"]      = ("%3d 255   0"):format(i)
+    }
+end
 
 
 local SOLID_PIXEL = {}
@@ -48,6 +53,7 @@ PHYSICS.EJECTOR_VEL      = " 0.33"
 PHYSICS.PULSE_TABLE_SIZE = "  120"
 PHYSICS.PULSE_TABLE      = ("0 "):rep(50) .. ".1 .2 .3 .4 .5 .6 .7 .8 .9 1 " .. ("1 "):rep(50) .. ".9 .8 .7 .6 .5 .4 .3 .2 .1 0"
 PHYSICS.SHRINKING        = "   20"
+PHYSICS.ANTILOCK_LINE_T  = "  0.1"
 
 
 local function copyBmp(b)
@@ -223,16 +229,19 @@ local function keyArrStr(img, keyPixels)
     for key, data in pairs(keyPixels) do
         local keys = findPixelRects(img, {[key] = true})
         local locks = findPixelRects(img, {[data.lock] = true})
-        if #keys > 0 and #locks > 0 then
-            x[#x + 1] = {data, keys, locks}
+        local antilocks = findPixelRects(img, {[data.antilock] = true})
+        if #keys > 0 then
+            x[#x + 1] = {data, keys, locks, antilocks}
         end
     end
     local s = {("%d"):format(#x)}
     for _, tbl in ipairs(x) do
         s[#s + 1] = tbl[1].keycolor
         s[#s + 1] = tbl[1].lockcolor
+        s[#s + 1] = tbl[1].antilockcolor
         s[#s + 1] = rectArrStr(tbl[2])
         s[#s + 1] = rectArrStr(tbl[3])
+        s[#s + 1] = rectArrStr(tbl[4])
     end
     return table.concat(s, "\n")
 end
@@ -258,7 +267,8 @@ local function main()
     print(PHYSICS.EJECTOR_VEL)
     print(PHYSICS.PULSE_TABLE_SIZE)
     print(PHYSICS.PULSE_TABLE)
-    print(PHYSICS.SHRINKING .. "\n")
+    print(PHYSICS.SHRINKING)
+    print(PHYSICS.ANTILOCK_LINE_T .. "\n")
     print(("%d %d"):format(img.w, img.h))
     print(bmpStr(pixelBmp(img, SOLID_PIXEL)) .. "\n")
     print(rectStr(findPixelRects(img, {[PIXEL.HERO] = true})[1]) .. "\n")

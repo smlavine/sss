@@ -1,3 +1,5 @@
+// TODO: get rid of the SCAN_ARRAY macro and all the static functions
+
 #include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -41,6 +43,7 @@ State *stateNew(const char *path) {
         fscanf(f, "%f", &p->pulsatorTable[i]);
     }
     fscanf(f, "%d", &p->shrinkingTickCount);
+    fscanf(f, "%f", &p->antilockLineThickness);
 
     fscanf(f, "%zu%zu", &state->lvl.w, &state->lvl.h);
     bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
@@ -85,6 +88,7 @@ State *stateDel(State *state) {
     for (size_t i = 0; i < state->key.n; ++i) {
         free(state->key.arr[i].key.arr);
         free(state->key.arr[i].lock.arr);
+        free(state->key.arr[i].antilock.arr);
     }
     free(state->key.arr);
     free(state);
@@ -133,8 +137,12 @@ static StateKey scanKey(FILE *f) {
     for (int i = 0; i < 4; ++i) {
         fscanf(f, "%" SCNu8, &k.lockColor[i]);
     }
+    for (int i = 0; i < 4; ++i) {
+        fscanf(f, "%" SCNu8, &k.antilockColor[i]);
+    }
     SCAN_ARRAY(f, k.key, scanPickable);
     k.ticksLeft = -1;
     SCAN_ARRAY(f, k.lock, scanRect);
+    SCAN_ARRAY(f, k.antilock, scanRect);
     return k;
 }

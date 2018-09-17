@@ -1,6 +1,7 @@
 // TODO: make state a global singleton
 // TODO: add inAir counter and allow to jump if it's only a few ticks
-
+// TODO: move state->"physics" crap to places where they actually belong
+// TODO: get rid of STATE_DEFINE_ARRAY macro
 #define STATE_DEFINE_ARRAY(type) \
     typedef struct { \
         size_t n; \
@@ -9,6 +10,7 @@
 
 STATE_DEFINE_ARRAY(CollRect);
 
+// TODO: delete
 #define STATE_COLOR_COUNT 9
 enum {
     STATE_COLOR_BACKGROUND,
@@ -53,15 +55,15 @@ typedef enum {
 } StateGameOverCause;
 
 typedef struct {
-    // TODO: move each variable to the array it belongs
-    float tickDuration;
-    float horVel, jumpVel, gravAcc, termVel;
-    int ejectorCooldownTickCount;
-    float ejectionVel;
-    size_t pulsatorTableSize;
-    float *pulsatorTable;
-    int shrinkingTickCount;
-    bool invertedGravity;
+    float tickDuration; // TODO: move to state
+    float horVel, jumpVel, gravAcc, termVel; // TODO: move to state->hero
+    int ejectorCooldownTickCount; // TODO: move to state->ejector
+    float ejectionVel; // TODO: move to state->ejector
+    size_t pulsatorTableSize; // TODO: move to state->pulsator
+    float *pulsatorTable; // TODO: move to state->pulsator
+    int shrinkingTickCount; // TODO: move to state->shrinker and add another one in state->key
+    float antilockLineThickness; // TODO: move to state->key
+    bool invertedGravity; // TODO: move to state->graviton
 } StatePhysics;
 
 typedef struct {
@@ -95,19 +97,18 @@ typedef struct {
 STATE_DEFINE_ARRAY(StatePickable);
 
 typedef struct {
-    uint8_t keyColor[4];
-    uint8_t lockColor[4];
+    uint8_t keyColor[4], lockColor[4], antilockColor[4];
     StatePickableArray key;
     int ticksLeft;
-    CollRectArray lock;
+    CollRectArray lock, antilock;
 } StateKey;
 STATE_DEFINE_ARRAY(StateKey);
 
 typedef struct {
     uint64_t tick;
     double lastTime;
-    uint8_t color[STATE_COLOR_COUNT][4];
     bool event[STATE_EVENT_COUNT];
+    uint8_t color[STATE_COLOR_COUNT][4]; // TODO: move into other members of the structure
     StatePhysics physics;
     Batch bg, fg;
     int winW, winH;
@@ -140,3 +141,4 @@ void stateOpEnvEnergy(const State *state, float *velX, float *velY);
 CollRect stateOpPulsator(const State *state, size_t i);
 CollRect stateOpShrinker(const State *state, size_t i);
 CollRect stateOpKeyLock(const State *state, size_t i, size_t j);
+CollRect stateOpKeyAntilock(const State *state, size_t i, size_t j);

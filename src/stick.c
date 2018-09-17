@@ -98,7 +98,7 @@ static StateGameOverCause tick(State *state, const StateInput *in) {
         }
     }
 
-    // Collect keys, shrink locks
+    // Collect keys, shrink locks, unshrink antilocks
     for (size_t i = 0; i < state->key.n; ++i) {
         if (state->key.arr[i].ticksLeft > 0) {
             --state->key.arr[i].ticksLeft;

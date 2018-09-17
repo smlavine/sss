@@ -62,12 +62,12 @@ void audioSoundFree(AudioSound *sound) {
     free(sound);
 }
 
-void audioSoundPlay(const AudioSound *sound, bool repeat) {
+void audioSoundPlay(const AudioSound *sound) {
     alSourcef(sound->source, AL_PITCH, 1);
     alSourcef(sound->source, AL_GAIN, 1);
     alSource3f(sound->source, AL_POSITION, 0, 0, 0);
     alSource3f(sound->source, AL_VELOCITY, 0, 0, 0);
-    alSourcei(sound->source, AL_LOOPING, repeat);
+    alSourcei(sound->source, AL_LOOPING, AL_FALSE);
     alSourcei(sound->source, AL_BUFFER, sound->buffer);
     alSourcePlay(sound->source);
 }
@@ -115,21 +115,16 @@ void audioMusicPlay(AudioMusic *music, bool repeat) {
 void audioMusicStream(AudioMusic *music) {
     ALint processedBufferCount;
     alGetSourcei(music->source, AL_BUFFERS_PROCESSED, &processedBufferCount);
-    if (processedBufferCount <= 0) return;
+    if (processedBufferCount <= 0) {
+        return;
+    }
 
     ALuint buffer;
     alSourceUnqueueBuffers(music->source, 1, &buffer);
-
     size_t bytesLoaded = loadBuffer(g.buffer, MUSIC_BUFFER_SIZE, &music->f, music->repeat);
-
     alBufferData(buffer, AUDIO_FORMAT, g.buffer, bytesLoaded, AUDIO_RATE);
-
     alSourceQueueBuffers(music->source, 1, &buffer);
-
     alSourcePlay(music->source);
-
-    alGetSourcei(music->source, AL_BUFFERS_PROCESSED, &processedBufferCount); // TODO: remove
-
     if (bytesLoaded == MUSIC_BUFFER_SIZE && processedBufferCount > 1) audioMusicStream(music);
 }
 

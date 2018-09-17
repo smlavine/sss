@@ -53,6 +53,9 @@ CollPen stateOpColl(const State *state, CollRect r) {
         for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
             p = maxPen(p, collRect(r, stateOpKeyLock(state, i, j)));
         }
+        for (size_t j = 0; j < state->key.arr[i].antilock.n; ++j) {
+            p = maxPen(p, collRect(r, stateOpKeyAntilock(state, i, j)));
+        }
     }
     return p;
 }
@@ -114,6 +117,21 @@ void stateOpEnvEnergy(const State *state, float *velX, float *velY) {
 
             addChangingRectVel(state->hero.r, r0, r, velX, velY);
         }
+
+        for (size_t j = 0; j < state->key.arr[i].antilock.n; ++j) {
+            CollRect r0 = stateOpKeyAntilock(state, i, j);
+            CollPen p = collRect(state->hero.r, r0);
+
+            if (!stateOpBumpCollision(state, p)) {
+                continue;
+            }
+
+            ((State*)state)->key.arr[i].ticksLeft--;
+            CollRect r = stateOpKeyAntilock(state, i, j);
+            ((State*)state)->key.arr[i].ticksLeft++;
+
+            addChangingRectVel(state->hero.r, r0, r, velX, velY);
+        }
     }
 }
 
@@ -130,6 +148,11 @@ CollRect stateOpShrinker(const State *state, size_t i) {
 CollRect stateOpKeyLock(const State *state, size_t i, size_t j) {
     float m = state->key.arr[i].ticksLeft < 0 ? 1 : state->key.arr[i].ticksLeft / (float)state->physics.shrinkingTickCount;
     return multipliedRect(state->key.arr[i].lock.arr[j], m);
+}
+
+CollRect stateOpKeyAntilock(const State *state, size_t i, size_t j) {
+    float m = state->key.arr[i].ticksLeft < 0 ? 0 : 1 - state->key.arr[i].ticksLeft / (float)state->physics.shrinkingTickCount;
+    return multipliedRect(state->key.arr[i].antilock.arr[j], m);
 }
 
 static CollPen maxPen(CollPen a, CollPen b) {

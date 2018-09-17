@@ -1,29 +1,16 @@
-// TODO: replace rsc/cfg with command-line options
-// TODO: simplify lib/*
+#include "../lib/dragon.h"
+#include "state.h"
 
 #include <stdio.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include "../lib/dragon.h"
-#include "state.h"
-
 #define CFG_PATH "rsc/cfg"
 #define WIN_TITLE "Sassy Square Sally"
 #define LVL_PATH_BUFFER_SIZE 20
 #define LVL_PATH_FMTS "rsc/%d"
-#define LVL_FIRST 1
-#define LVL_LAST 17
-#define OGG_PATH_ARR (const char *[]) { \
-    "rsc/coin.ogg", \
-    "rsc/graviton.ogg", \
-    "rsc/key.ogg", \
-    "rsc/jump.ogg", \
-    "rsc/eject.ogg", \
-    "rsc/win.ogg", \
-    "rsc/die.ogg", \
-    "rsc/music.ogg" }
+#define OGG_PATH_ARR (const char*[]){"rsc/coin.ogg","rsc/graviton.ogg","rsc/key.ogg","rsc/jump.ogg","rsc/eject.ogg","rsc/win.ogg","rsc/die.ogg","rsc/music.ogg"}
 #define OGL_API GLFW_OPENGL_ES_API
 #define OGL_PROF 0
 #define OGL_VMAJ 2
@@ -33,10 +20,9 @@ static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof,
 static StateInput mkStateInput(GLFWwindow *win);
 
 int main(void) {
-    int windowed, winW, winH, vsync, aa;
+    int windowed, winW, winH, vsync, aa, lvlFirst, lvlLast;
     FILE *f = fopen(CFG_PATH, "r");
-    fscanf(f, "%d%d%d", &windowed, &winW, &winH);
-    fscanf(f, "%d%d", &vsync, &aa);
+    fscanf(f, "%d%d%d%d%d%d%d", &windowed, &winW, &winH, &vsync, &aa, &lvlFirst, &lvlLast);
     fclose(f);
 
     glfwInit();
@@ -45,7 +31,7 @@ int main(void) {
     rInit();
     stateAudioInit(OGG_PATH_ARR);
 
-    for (int i = LVL_FIRST; i <= LVL_LAST && !glfwWindowShouldClose(win); ++i) {
+    for (int i = lvlFirst; i <= lvlLast && !glfwWindowShouldClose(win); ++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];
         snprintf(lvlPath, LVL_PATH_BUFFER_SIZE, LVL_PATH_FMTS, i);
         State *state = stateNew(lvlPath);
