@@ -34,26 +34,26 @@ int main(void) {
     for (int i = lvlFirst; i <= lvlLast && !glfwWindowShouldClose(win); ++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];
         snprintf(lvlPath, LVL_PATH_BUFFER_SIZE, LVL_PATH_FMTS, i);
-        State *state = stateNew(lvlPath);
+        stateNew(lvlPath);
 
         glfwSetTime(0);
         while (!glfwWindowShouldClose(win)) {
             glfwPollEvents();
             StateInput stateInput = mkStateInput(win);
-            StateGameOverCause c = stateTick(state, &stateInput);
+            StateGameOverCause c = stateTick(&stateInput);
             if (c != STATE_GAME_OVER_CAUSE_NONE) {
                 if (c != STATE_GAME_OVER_CAUSE_WON) {
                     --i;
                 }
                 break;
             }
-            stateDraw(state);
+            stateDraw();
             glfwSwapBuffers(win);
         }
-        stateDraw(state);
+        stateDraw();
         glfwSwapBuffers(win);
 
-        stateDel(state);
+        stateDel();
     }
 
     stateAudioExit();

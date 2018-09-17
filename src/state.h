@@ -1,4 +1,3 @@
-// TODO: make state a global singleton
 // TODO: add inAir counter and allow to jump if it's only a few ticks
 // TODO: move state->"physics" crap to places where they actually belong
 // TODO: get rid of STATE_DEFINE_ARRAY macro
@@ -127,18 +126,20 @@ typedef struct {
     bool keyUp, keyLeft, keyRight, keyR;
 } StateInput;
 
-State *stateNew(const char *path);
-State *stateDel(State *state);
-StateGameOverCause stateTick(State *state, const StateInput *in);
-void stateDraw(State *state);
+extern State s; // sdata.c
+
+void stateNew(const char *path);
+void stateDel(void);
+StateGameOverCause stateTick(const StateInput *in);
+void stateDraw(void);
 void stateAudioInit(const char **oggPaths);
 void stateAudioExit(void);
-void stateAudioPlay(const State *state);
-bool stateOpBumpCollision(const State *state, CollPen p);
-StateGameOverCause stateOpGameOver(const State *state);
-CollPen stateOpColl(const State *state, CollRect r);
-void stateOpEnvEnergy(const State *state, float *velX, float *velY);
-CollRect stateOpPulsator(const State *state, size_t i);
-CollRect stateOpShrinker(const State *state, size_t i);
-CollRect stateOpKeyLock(const State *state, size_t i, size_t j);
-CollRect stateOpKeyAntilock(const State *state, size_t i, size_t j);
+void stateAudioPlay(void);
+bool stateOpBumpCollision(const CollPen p);
+StateGameOverCause stateOpGameOver(void);
+CollPen stateOpColl(const CollRect r);
+void stateOpEnvEnergy(float *velX, float *velY);
+CollRect stateOpPulsator(const size_t i);
+CollRect stateOpShrinker(const size_t i);
+CollRect stateOpKeyLock(const size_t i, size_t j);
+CollRect stateOpKeyAntilock(const size_t i, size_t j);

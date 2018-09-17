@@ -248,6 +248,7 @@ end
 
 
 local function main()
+    -- TODO: change the printing order in accordance to the (incoming?) reordering of the State structure
     local img = parsePlainPPM(io.read("a"))
     print(COLOR.BACKGROUND)
     print(COLOR.HERO)

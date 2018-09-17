@@ -22,21 +22,21 @@ void stateAudioExit(void) {
     audioExit();
 }
 
-void stateAudioPlay(const State *state) {
+void stateAudioPlay(void) {
     audioMusicStream(music);
-    if (state->event[STATE_EVENT_WIN]) {
+    if (s.event[STATE_EVENT_WIN]) {
         audioSoundPlay(sound[STATE_OGG_WIN]);
-    } else if (state->event[STATE_EVENT_DIE]) {
+    } else if (s.event[STATE_EVENT_DIE]) {
         audioSoundPlay(sound[STATE_OGG_DIE]);
-    } else if (state->event[STATE_EVENT_EJECT]) {
+    } else if (s.event[STATE_EVENT_EJECT]) {
         audioSoundPlay(sound[STATE_OGG_EJECT]);
-    } else if (state->event[STATE_EVENT_JUMP]) {
+    } else if (s.event[STATE_EVENT_JUMP]) {
         audioSoundPlay(sound[STATE_OGG_JUMP]);
-    } else if (state->event[STATE_EVENT_COIN]) {
+    } else if (s.event[STATE_EVENT_COIN]) {
         audioSoundPlay(sound[STATE_OGG_COIN]);
-    } else if (state->event[STATE_EVENT_GRAVITON]) {
+    } else if (s.event[STATE_EVENT_GRAVITON]) {
         audioSoundPlay(sound[STATE_OGG_GRAVITON]);
-    } else if (state->event[STATE_EVENT_KEY]) {
+    } else if (s.event[STATE_EVENT_KEY]) {
         audioSoundPlay(sound[STATE_OGG_KEY]);
     }
 }

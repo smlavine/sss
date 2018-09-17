@@ -1,6 +1,8 @@
 // TODO: get rid of the SCAN_ARRAY macro and all the static functions
+// TODO: change the scanning order in accordance to the (incoming?) reordering of the State structure
 
 #include <inttypes.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -21,20 +23,22 @@ static StateShrinker scanShrinker(FILE *f);
 static StatePickable scanPickable(FILE *f);
 static StateKey scanKey(FILE *f);
 
-State *stateNew(const char *path) {
-    State *state = calloc(1, sizeof(*state));
-    state->lastTime = 0;
-    state->hero.vVel = 0;
+State s;
+
+void stateNew(const char *path) {
+    memset(&s, 0, sizeof(s));
+    s.lastTime = 0;
+    s.hero.vVel = 0;
 
     FILE *f = fopen(path, "rb");
 
     for (int i = 0; i < STATE_COLOR_COUNT; ++i) {
         for (int j = 0; j < 4; ++j) {
-            fscanf(f, "%" SCNu8, &state->color[i][j]);
+            fscanf(f, "%" SCNu8, &s.color[i][j]);
         }
     }
 
-    StatePhysics *p = &state->physics;
+    StatePhysics *p = &s.physics;
     fscanf(f, "%f%f%f%f%f", &p->tickDuration, &p->horVel, &p->jumpVel, &p->gravAcc, &p->termVel);
     fscanf(f, "%d%f", &p->ejectorCooldownTickCount, &p->ejectionVel);
     fscanf(f, "%zu", &p->pulsatorTableSize);
@@ -45,54 +49,50 @@ State *stateNew(const char *path) {
     fscanf(f, "%d", &p->shrinkingTickCount);
     fscanf(f, "%f", &p->antilockLineThickness);
 
-    fscanf(f, "%zu%zu", &state->lvl.w, &state->lvl.h);
-    bmpNew(state->lvl.w, state->lvl.h, 1, &state->lvl);
-    for (int y = state->lvl.h - 1; y >= 0; --y) {
-        for (int x = 0; x < (int)state->lvl.w; ++x) {
+    fscanf(f, "%zu%zu", &s.lvl.w, &s.lvl.h);
+    bmpNew(s.lvl.w, s.lvl.h, 1, &s.lvl);
+    for (int y = s.lvl.h - 1; y >= 0; --y) {
+        for (int x = 0; x < (int)s.lvl.w; ++x) {
             int b;
             fscanf(f, "%d", &b);
-            bmpSet(&state->lvl, x, y, 0, b);
+            bmpSet(&s.lvl, x, y, 0, b);
         }
     }
 
-    state->hero.r = scanRect(f);
+    s.hero.r = scanRect(f);
 
     CollRectArray wall;
     SCAN_ARRAY(f, wall, scanRect);
     for (size_t i = 0; i < wall.n; ++i) {
-        batchRect(&state->bg, wall.arr[i], state->color[STATE_COLOR_WALL]);
+        batchRect(&s.bg, wall.arr[i], s.color[STATE_COLOR_WALL]);
     }
     free(wall.arr);
 
-    SCAN_ARRAY(f, state->ejector, scanEjector);
-    SCAN_ARRAY(f, state->pulsator, scanPulsator);
-    SCAN_ARRAY(f, state->shrinker, scanShrinker);
-    SCAN_ARRAY(f, state->coin, scanPickable);
-    SCAN_ARRAY(f, state->graviton, scanPickable);
-    SCAN_ARRAY(f, state->key, scanKey);
+    SCAN_ARRAY(f, s.ejector, scanEjector);
+    SCAN_ARRAY(f, s.pulsator, scanPulsator);
+    SCAN_ARRAY(f, s.shrinker, scanShrinker);
+    SCAN_ARRAY(f, s.coin, scanPickable);
+    SCAN_ARRAY(f, s.graviton, scanPickable);
+    SCAN_ARRAY(f, s.key, scanKey);
 
     fclose(f);
-
-    return state;
 }
 
-State *stateDel(State *state) {
-    bmpDel(&state->lvl, false);
-    free(state->physics.pulsatorTable);
-    batchDel(&state->bg, false);
-    free(state->ejector.arr);
-    free(state->pulsator.arr);
-    free(state->shrinker.arr);
-    free(state->coin.arr);
-    free(state->graviton.arr);
-    for (size_t i = 0; i < state->key.n; ++i) {
-        free(state->key.arr[i].key.arr);
-        free(state->key.arr[i].lock.arr);
-        free(state->key.arr[i].antilock.arr);
+void stateDel(void) {
+    bmpDel(&s.lvl, false);
+    free(s.physics.pulsatorTable);
+    batchDel(&s.bg, false);
+    free(s.ejector.arr);
+    free(s.pulsator.arr);
+    free(s.shrinker.arr);
+    free(s.coin.arr);
+    free(s.graviton.arr);
+    for (size_t i = 0; i < s.key.n; ++i) {
+        free(s.key.arr[i].key.arr);
+        free(s.key.arr[i].lock.arr);
+        free(s.key.arr[i].antilock.arr);
     }
-    free(state->key.arr);
-    free(state);
-    return NULL;
+    free(s.key.arr);
 }
 
 static CollRect scanRect(FILE *f) {
