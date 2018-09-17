@@ -53,8 +53,8 @@ void stateDraw(State *state) {
         }
         for (size_t j = 0; j < state->key.arr[i].lock.n; ++j) {
             CollRect r = stateOpKeyLock(state, i, j);
-            batchRectLine(&state->fg, r, state->physics.antilockLineThickness, 0, state->key.arr[i].antilockColor);
-            //batchRect(&state->fg, r, state->key.arr[i].lockColor);
+            batchRectLine(&state->fg, r, state->physics.antilockLineThickness, 0, state->key.arr[i].lockColor);
+//            batchRect(&state->fg, r, state->key.arr[i].lockColor);
         }
         for (size_t j = 0; j < state->key.arr[i].antilock.n; ++j) {
             CollRect r = stateOpKeyAntilock(state, i, j);

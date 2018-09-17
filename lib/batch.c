@@ -81,8 +81,8 @@ void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]) {
 void batchLine(Batch *b, CollLine l, float t, const uint8_t rgba[4]) {
     float dx = sinf(l.angle) * t / 2;
     float dy = cosf(l.angle) * t / 2;
-    float x2 = l.x + dx * l.len;
-    float y2 = l.y + dy * l.len;
+    float x2 = l.x + cosf(l.angle) * l.len;
+    float y2 = l.y + sinf(l.angle) * l.len;
     const uint16_t i[] = {
         (uint16_t)b->nv + 0,
         (uint16_t)b->nv + 1,
@@ -101,22 +101,10 @@ void batchLine(Batch *b, CollLine l, float t, const uint8_t rgba[4]) {
 }
 
 void batchRectLine(Batch *b, CollRect r, float ti, float to, const uint8_t rgba[4]) {
-//    float t = ti + to;
-//    float dt = ti - to;
-//    float x = r.x + dt / 2;
-//    float y = r.y + dt / 2;
-//    float w = r.w - dt / 2;
-//    float h = r.h - dt / 2;
-//    batchLine(b, (CollLine){x,     y,     0     , w}, t, rgba);
-//    batchLine(b, (CollLine){x,     y,     PI / 2, h}, t, rgba);
-//    batchLine(b, (CollLine){x + w, y,     PI / 2, h}, t, rgba);
-//    batchLine(b, (CollLine){x,     y + h, 0     , w}, t, rgba);
-
-//    batchLine(b, (CollLine){r.x,       r.y,       0     , r.w}, ti, rgba);
-//    batchLine(b, (CollLine){r.x,       r.y,       PI / 2, r.h}, ti, rgba);
-//    batchLine(b, (CollLine){r.x + r.w, r.y,       PI / 2, r.h}, ti, rgba);
-//    batchLine(b, (CollLine){r.x,       r.y + r.h, 0     , r.w}, ti, rgba);
-
-//    batchLine(b, (CollLine){0, 0, 0, 100}, 10, rgba);
-//TODO
+    float t = ti + to;
+    float dt = (ti - to) / 2;
+    batchLine(b, (CollLine){r.x,            r.y + dt,       0     , r.w}, t, rgba);
+    batchLine(b, (CollLine){r.x,            r.y + r.h - dt, 0     , r.w}, t, rgba);
+    batchLine(b, (CollLine){r.x + dt,       r.y,            PI / 2, r.h}, t, rgba);
+    batchLine(b, (CollLine){r.x + r.w - dt, r.y,            PI / 2, r.h}, t, rgba);
 }
