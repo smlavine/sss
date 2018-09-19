@@ -1,88 +1,87 @@
 #include "../lib/dragon.h"
-#include "state.h"
+#include "s.h"
 
 #include <stdio.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#define CFG_PATH "rsc/cfg"
-#define WIN_TITLE "Sassy Square Sally"
-#define LVL_PATH_BUFFER_SIZE 20
-#define LVL_PATH_FMTS "rsc/%d"
-#define OGG_PATH_ARR (const char*[]){"rsc/coin.ogg","rsc/graviton.ogg","rsc/key.ogg","rsc/jump.ogg","rsc/eject.ogg","rsc/win.ogg","rsc/die.ogg","rsc/music.ogg"}
+#define WIN_W 0
+#define WIN_H 0
+#define WIN_T "Sassy Square Sally"
 #define OGL_API GLFW_OPENGL_ES_API
-#define OGL_PROF 0
-#define OGL_VMAJ 2
-#define OGL_VMIN 0
+#define OGL_V 20
+#define VSYNC true
+#define AA 4
+#define LVL_FIRST 10
+#define LVL_LAST 17
+#define LVL_PATH_BUFFER_SIZE 11
+#define LVL_PATH_FMTS "rsc/%d.ppm"
+#define MUSIC_PATH "rsc/music.ogg"
 
-static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa);
-static StateInput mkStateInput(GLFWwindow *win);
+static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa);
 
 int main(void) {
-    int windowed, winW, winH, vsync, aa, lvlFirst, lvlLast;
-    FILE *f = fopen(CFG_PATH, "r");
-    fscanf(f, "%d%d%d%d%d%d%d", &windowed, &winW, &winH, &vsync, &aa, &lvlFirst, &lvlLast);
-    fclose(f);
-
     glfwInit();
-    GLFWwindow *win = mkWin(winW, winH, WIN_TITLE, !windowed, OGL_API, OGL_PROF, OGL_VMAJ, OGL_VMIN, vsync, aa);
+    GLFWwindow *win = mkW(WIN_W, WIN_H, WIN_T, OGL_API, OGL_V, VSYNC, AA);
     glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     rInit();
-    stateAudioInit(OGG_PATH_ARR);
+    audioInit();
+    AudioMusic *music = audioMusicLoad(MUSIC_PATH);
+    audioMusicPlay(music, true);
 
-    for (int i = lvlFirst; i <= lvlLast && !glfwWindowShouldClose(win); ++i) {
+    for (int i = LVL_FIRST;!glfwWindowShouldClose(win) && i <= LVL_LAST;++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];
         snprintf(lvlPath, LVL_PATH_BUFFER_SIZE, LVL_PATH_FMTS, i);
-        stateNew(lvlPath);
-
+        sLoad(lvlPath);
         glfwSetTime(0);
+
         while (!glfwWindowShouldClose(win)) {
             glfwPollEvents();
-            StateInput stateInput = mkStateInput(win);
-            StateGameOverCause c = stateTick(&stateInput);
-            if (c != STATE_GAME_OVER_CAUSE_NONE) {
-                if (c != STATE_GAME_OVER_CAUSE_WON) {
-                    --i;
-                }
+
+            float t = glfwGetTime();
+            bool kUp = glfwGetKey(win, GLFW_KEY_UP);
+            bool kLeft = glfwGetKey(win, GLFW_KEY_LEFT);
+            bool kRight = glfwGetKey(win, GLFW_KEY_RIGHT);
+            bool kR = glfwGetKey(win, GLFW_KEY_R);
+            int r = sTick(music, t, kUp, kLeft, kRight, kR);
+
+            int winW, winH;
+            glfwGetFramebufferSize(win, &winW, &winH);
+            sDraw(winW, winH);
+            glfwSwapBuffers(win);
+
+            if (r < 0) {
+                --i;
+            }
+            if (r != 0) {
                 break;
             }
-            stateDraw();
-            glfwSwapBuffers(win);
         }
-        stateDraw();
-        glfwSwapBuffers(win);
 
-        stateDel();
+        sFree();
     }
 
-    stateAudioExit();
+    audioMusicStop(music);
+    audioMusicFree(music);
+    audioExit();
     rExit();
     glfwTerminate();
 }
 
-static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof, int V, int v, bool vsync, int aa) {
+static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     GLFWwindow *win;
     int width, height;
     GLFWmonitor *monitor;
 
     glfwWindowHint(GLFW_CLIENT_API, api);
-    if (api == GLFW_OPENGL_API) {
-        glfwWindowHint(GLFW_OPENGL_PROFILE, prof);
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, V);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, v);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, v / 10);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, v % 10);
     glfwWindowHint(GLFW_SAMPLES, aa);
 
-    if (f) {
+    if (w == 0 && h == 0) {
         monitor = glfwGetPrimaryMonitor();
-        if (!monitor) {
-            return NULL;
-        }
         const GLFWvidmode *vidmode = glfwGetVideoMode(monitor);
-        if (!vidmode) {
-            return NULL;
-        }
         width = vidmode->width;
         height = vidmode->height;
         glfwWindowHint(GLFW_RED_BITS, vidmode->redBits);
@@ -97,18 +96,7 @@ static GLFWwindow *mkWin(int w, int h, const char *t, bool f, int api, int prof,
 
     win = glfwCreateWindow(width, height, t, monitor, NULL);
     glfwMakeContextCurrent(win);
-    glfwSwapInterval(vsync ? 1 : 0);
+    glfwSwapInterval(vs ? 1 : 0);
 
     return win;
-}
-
-static StateInput mkStateInput(GLFWwindow *win) {
-    StateInput in;
-    glfwGetFramebufferSize(win, &in.winW, &in.winH);
-    in.time = glfwGetTime();
-    in.keyUp = glfwGetKey(win, GLFW_KEY_W) || glfwGetKey(win, GLFW_KEY_UP);
-    in.keyLeft = glfwGetKey(win, GLFW_KEY_A) || glfwGetKey(win, GLFW_KEY_LEFT);
-    in.keyRight = glfwGetKey(win, GLFW_KEY_D) || glfwGetKey(win, GLFW_KEY_RIGHT);
-    in.keyR = glfwGetKey(win, GLFW_KEY_R);
-    return in;
 }
