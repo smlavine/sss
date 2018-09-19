@@ -12,13 +12,13 @@
 #define EJECTION_VEL            0.33
 #define TERM_VEL                0.50
 
-static int tick(bool kUp, bool kLeft, bool kRight, bool kR);
+static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR);
 static void sleepSome(double t);
 
-int sTick(AudioMusic *music,double t,bool kUp,bool kLeft,bool kRight,bool kR){
-    audioMusicStream(music);
+int sTick(Saudio audio,double t,bool kUp,bool kLeft,bool kRight,bool kR){
+    audioMusicStream(audio.music);
     while (t - s.tick.lastTime > TICK_DURATION) {
-        int r = tick(kUp, kLeft, kRight, kR);
+        int r = tick(audio, kUp, kLeft, kRight, kR);
         if (r != 0) {
             return r;
         }
@@ -27,7 +27,7 @@ int sTick(AudioMusic *music,double t,bool kUp,bool kLeft,bool kRight,bool kR){
     return 0;
 }
 
-static int tick(bool kUp, bool kLeft, bool kRight, bool kR) {
+static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
     // Advance time
     ++s.tick.tick;
     s.tick.lastTime += TICK_DURATION;
@@ -150,19 +150,19 @@ static int tick(bool kUp, bool kLeft, bool kRight, bool kR) {
 
     // Play audio
     if (r > 0) {
-        audioSoundPlay(s.audio.win);
+        audioSoundPlay(audio.win);
     } else if (r < 0) {
-        audioSoundPlay(s.audio.die);
+        audioSoundPlay(audio.die);
     } else if (ejected) {
-        audioSoundPlay(s.audio.eject);
+        audioSoundPlay(audio.eject);
     } else if (jumped) {
-        audioSoundPlay(s.audio.jump);
+        audioSoundPlay(audio.jump);
     } else if (coin) {
-        audioSoundPlay(s.audio.coin);
+        audioSoundPlay(audio.coin);
     } else if (graviton) {
-        audioSoundPlay(s.audio.graviton);
+        audioSoundPlay(audio.graviton);
     } else if (key) {
-        audioSoundPlay(s.audio.key);
+        audioSoundPlay(audio.key);
     }
 
     return r;

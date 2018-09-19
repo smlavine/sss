@@ -6,14 +6,6 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define OGG_COIN     "rsc/coin.ogg"
-#define OGG_GRAVITON "rsc/graviton.ogg"
-#define OGG_KEY      "rsc/key.ogg"
-#define OGG_JUMP     "rsc/jump.ogg"
-#define OGG_EJECT    "rsc/eject.ogg"
-#define OGG_DIE      "rsc/die.ogg"
-#define OGG_WIN      "rsc/win.ogg"
-
 #define P_HERO                0xff0000
 #define P_NONE                0xffffff
 #define P_WALL                0x000000
@@ -70,14 +62,6 @@ void sLoad(const char *path) {
     fclose(f);
 
     memset(&s, 0, sizeof(s));
-
-    s.audio.coin = audioSoundLoad(OGG_COIN);
-    s.audio.graviton = audioSoundLoad(OGG_GRAVITON);
-    s.audio.key = audioSoundLoad(OGG_KEY);
-    s.audio.jump = audioSoundLoad(OGG_JUMP);
-    s.audio.eject = audioSoundLoad(OGG_EJECT);
-    s.audio.die = audioSoundLoad(OGG_DIE);
-    s.audio.win = audioSoundLoad(OGG_WIN);
 
     for (int i = 0; i < w * h; ++i) {
         if (p[i] == P_HERO) {
@@ -200,13 +184,6 @@ void sLoad(const char *path) {
 void sFree(void) {
     batchDel(&s.draw.bg, false);
     batchDel(&s.draw.fg, false);
-    audioSoundFree(s.audio.coin);
-    audioSoundFree(s.audio.graviton);
-    audioSoundFree(s.audio.key);
-    audioSoundFree(s.audio.jump);
-    audioSoundFree(s.audio.eject);
-    audioSoundFree(s.audio.die);
-    audioSoundFree(s.audio.win);
     bmpDel(&s.lvl, false);
     free(s.ejector.arr);
     free(s.pulsator.arr);

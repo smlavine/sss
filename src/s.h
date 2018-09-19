@@ -1,14 +1,15 @@
 #define S_SHRINKING_TICKS 20
 
+typedef struct {
+    AudioMusic *music;
+    AudioSound *coin, *graviton, *key, *jump, *eject, *die, *win;
+} Saudio;
+
 extern struct S {
 
     struct {
         Batch bg, fg;
     } draw;
-
-    struct {
-        AudioSound *coin, *graviton, *key, *jump, *eject, *die, *win;
-    } audio;
 
     struct {
         long long tick;
@@ -86,7 +87,7 @@ void sLoad(const char *path);
 void sFree(void);
 
 // tick.c
-int sTick(AudioMusic *music,double t,bool kUp,bool kLeft,bool kRight,bool kR);
+int sTick(Saudio audio,double t,bool kUp,bool kLeft,bool kRight,bool kR);
 
 // draw.c
 void sDraw(int winW, int winH);

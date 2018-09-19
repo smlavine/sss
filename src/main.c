@@ -13,11 +13,18 @@
 #define OGL_V 20
 #define VSYNC true
 #define AA 4
-#define LVL_FIRST 10
+#define LVL_FIRST 1
 #define LVL_LAST 17
 #define LVL_PATH_BUFFER_SIZE 11
 #define LVL_PATH_FMTS "rsc/%d.ppm"
-#define MUSIC_PATH "rsc/music.ogg"
+#define OGG_MUSIC    "rsc/music.ogg"
+#define OGG_COIN     "rsc/coin.ogg"
+#define OGG_GRAVITON "rsc/graviton.ogg"
+#define OGG_KEY      "rsc/key.ogg"
+#define OGG_JUMP     "rsc/jump.ogg"
+#define OGG_EJECT    "rsc/eject.ogg"
+#define OGG_DIE      "rsc/die.ogg"
+#define OGG_WIN      "rsc/win.ogg"
 
 static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa);
 
@@ -27,8 +34,16 @@ int main(void) {
     glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     rInit();
     audioInit();
-    AudioMusic *music = audioMusicLoad(MUSIC_PATH);
-    audioMusicPlay(music, true);
+    Saudio audio;
+    audio.music = audioMusicLoad(OGG_MUSIC);
+    audio.coin = audioSoundLoad(OGG_COIN);
+    audio.graviton = audioSoundLoad(OGG_GRAVITON);
+    audio.key = audioSoundLoad(OGG_KEY);
+    audio.jump = audioSoundLoad(OGG_JUMP);
+    audio.eject = audioSoundLoad(OGG_EJECT);
+    audio.die = audioSoundLoad(OGG_DIE);
+    audio.win = audioSoundLoad(OGG_WIN);
+    audioMusicPlay(audio.music, true);
 
     for (int i = LVL_FIRST;!glfwWindowShouldClose(win) && i <= LVL_LAST;++i) {
         char lvlPath[LVL_PATH_BUFFER_SIZE];
@@ -44,7 +59,7 @@ int main(void) {
             bool kLeft = glfwGetKey(win, GLFW_KEY_LEFT);
             bool kRight = glfwGetKey(win, GLFW_KEY_RIGHT);
             bool kR = glfwGetKey(win, GLFW_KEY_R);
-            int r = sTick(music, t, kUp, kLeft, kRight, kR);
+            int r = sTick(audio, t, kUp, kLeft, kRight, kR);
 
             int winW, winH;
             glfwGetFramebufferSize(win, &winW, &winH);
@@ -62,8 +77,15 @@ int main(void) {
         sFree();
     }
 
-    audioMusicStop(music);
-    audioMusicFree(music);
+    audioMusicStop(audio.music);
+    audioMusicFree(audio.music);
+    audioSoundFree(audio.coin);
+    audioSoundFree(audio.graviton);
+    audioSoundFree(audio.key);
+    audioSoundFree(audio.jump);
+    audioSoundFree(audio.eject);
+    audioSoundFree(audio.die);
+    audioSoundFree(audio.win);
     audioExit();
     rExit();
     glfwTerminate();
