@@ -80,6 +80,14 @@ extern struct S {
         } *arr;
     } key;
 
+    struct {
+        bool inside;
+        size_t n;
+        struct {
+            CollRect a, b;
+        } *arr;
+    } portal;
+
 } s; // (data.c)
 
 // data.c
@@ -101,3 +109,4 @@ CollPen sOpColl(const CollRect r);
 int sOpGameOver(void);
 bool sOpBumpCollision(const CollPen p);
 void sOpEnvEnergy(float *velX, float *velY);
+bool sOpTeleported(bool *inside, float *x, float *y);

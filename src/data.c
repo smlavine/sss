@@ -21,6 +21,9 @@
 #define P_KEY_LOCK     (const int[]) {0x00ff01, 0x00ff02, 0x00ff03, 0x00ff04}
 #define P_KEY_ANTILOCK (const int[]) {0x01ff00, 0x02ff00, 0x03ff00, 0x04ff00}
 
+#define PORTAL_PIXEL_COUNT 4
+#define P_PORTAL (const int[]) {0xff00ff, 0xff01ff, 0xff02ff, 0xff03ff}
+
 #define WALL_COLOR (const uint8_t[]) {0, 0, 0, 0}
 #define PULSATOR_CONTRACTED_OFFSET 0
 #define PULSATOR_EXPANDED_OFFSET 60
@@ -174,6 +177,16 @@ void sLoad(const char *path) {
         free(key[i].arr);
         free(keyLock[i].arr);
         free(keyAntilock[i].arr);
+    }
+
+    RectArr portal[PORTAL_PIXEL_COUNT];
+    for (int i = 0; i < PORTAL_PIXEL_COUNT; ++i) {
+        portal[i] = getRectArr(w, h, p, P_PORTAL[i], P_NONE);
+        Rect *r = portal[i].arr;
+        s.portal.arr=realloc(s.portal.arr,++s.portal.n*sizeof(*s.portal.arr));
+        s.portal.arr[s.portal.n-1].a=(CollRect){r[0].x,r[0].y,r[0].h,r[0].w};
+        s.portal.arr[s.portal.n-1].b=(CollRect){r[1].x,r[1].y,r[1].h,r[1].w};
+        free(portal[i].arr);
     }
 
     free(p);
