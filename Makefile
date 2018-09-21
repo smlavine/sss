@@ -3,7 +3,7 @@
 CC=cc
 CFLAGS=-c -O -g -I/usr/local/include -I/usr/X11R6/include
 LDFLAGS=-L/usr/local/lib -L/usr/X11R6/lib
-LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile
+LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile -lm
 
 OBJ=src/main.o   \
     src/data.o   \
