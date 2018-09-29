@@ -182,11 +182,13 @@ void sLoad(const char *path) {
     RectArr portal[PORTAL_PIXEL_COUNT];
     for (int i = 0; i < PORTAL_PIXEL_COUNT; ++i) {
         portal[i] = getRectArr(w, h, p, P_PORTAL[i], P_NONE);
-        Rect *r = portal[i].arr;
-        s.portal.arr=realloc(s.portal.arr,++s.portal.n*sizeof(*s.portal.arr));
-        s.portal.arr[s.portal.n-1].a=(CollRect){r[0].x,r[0].y,r[0].h,r[0].w};
-        s.portal.arr[s.portal.n-1].b=(CollRect){r[1].x,r[1].y,r[1].h,r[1].w};
-        free(portal[i].arr);
+        if (portal[i].n == 2) {
+            Rect *r = portal[i].arr;
+            s.portal.arr=realloc(s.portal.arr,++s.portal.n*sizeof(*s.portal.arr));
+            s.portal.arr[s.portal.n-1].a=(CollRect){r[0].x,r[0].y,r[0].h,r[0].w};
+            s.portal.arr[s.portal.n-1].b=(CollRect){r[1].x,r[1].y,r[1].h,r[1].w};
+            free(portal[i].arr);
+        }
     }
 
     free(p);
