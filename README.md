@@ -1,5 +1,9 @@
 # Sassy Square Sally
 An open-source 2D platformer.
 
-![screenshot](screenshot1.png)
-![screenshot](screenshot2.png)
+<!-- TODO: speed-run video -->
+<!-- TODO: screenshots -->
+<!-- TODO: packages -->
+<!-- TODO: installation instructions -->
+<!-- TODO: keybindings -->
+<!-- TODO: dependencies -->
