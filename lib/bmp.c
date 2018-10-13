@@ -13,15 +13,6 @@ Bmp *bmpNew(size_t w, size_t h, size_t l, Bmp *b) {
     return b;
 }
 
-Bmp *bmpDup(const Bmp *s, Bmp *d) {
-    d = d ? d : malloc(sizeof(*d));
-    memcpy(d, s, sizeof(*d));
-    size_t w = d->w, h = d->h, l = d->l;
-    size_t n = w * h * l % 8 ? w * h * l / 8 + 1 : w * h * l / 8;
-    d->b = memcpy(malloc(n), s->b, n);
-    return d;
-}
-
 Bmp *bmpDel(Bmp *bmp, bool freeHandle) {
     free(bmp->b);
     if (freeHandle) {

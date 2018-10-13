@@ -29,7 +29,7 @@ void sDraw(int winW, int winH) {
 
     float matrix[4][4];
     Cam camera = cam((float)winW / (float)winH);
-    camSetMinRect(&camera, 0, 0, s.lvl.w, s.lvl.h);
+    camSetMinRect(&camera, (CollRect){0, 0, s.lvl.w, s.lvl.h});
     camMatrix(&camera, matrix);
     rPipeWorld(matrix, NULL, NULL, NULL);
 

@@ -6,56 +6,29 @@ Cam cam(float ar) {
     return (Cam){{0,0},{0,0},1,0,ar};
 }
 
-float camGetW(const Cam *c) {
-    return c->ar * 2 / c->zoom;
+void camSetMinRect(Cam *c, CollRect r) {
+    r.w = fabsf(r.w);
+    r.h = fabsf(r.h);
+    c->center[0] = c->focus[0] = r.x + r.w / 2;
+    c->center[1] = c->focus[1] = r.y + r.h / 2;
+    c->zoom = c->ar * 2 / r.w < 2 / r.h ? c->ar * 2 / r.w : 2 / r.h;
 }
 
-void camSetW(Cam *c, float w) {
-    c->zoom = fabsf(c->ar * 2 / w);
+void camSetMaxRect(Cam *c, CollRect r) {
+    r.w = fabsf(r.w);
+    r.h = fabsf(r.h);
+    c->center[0] = c->focus[0] = r.x + r.w / 2;
+    c->center[1] = c->focus[1] = r.y + r.h / 2;
+    c->zoom = c->ar * 2 / r.w > 2 / r.h ? c->ar * 2 / r.w : 2 / r.h;
 }
 
-float camGetH(const Cam *c) {
-    return 2 / c->zoom;
-}
-
-void camSetH(Cam *c, float h) {
-    c->zoom = fabsf(2 / h);
-}
-
-void camGetSize(const Cam *c, float size[2]) {
-    size[0] = camGetW(c);
-    size[1] = camGetH(c);
-}
-
-void camSetMinSize(Cam *c, float w, float h) {
-    w = fabsf(w);
-    h = fabsf(h);
-    c->zoom = c->ar * 2 / w < 2 / h ? c->ar * 2 / w : 2 / h;
-}
-
-void camSetMaxSize(Cam *c, float w, float h) {
-    w = fabsf(w);
-    h = fabsf(h);
-    c->zoom = c->ar * 2 / w > 2 / h ? c->ar * 2 / w : 2 / h;
-}
-
-void camSetMinRect(Cam *c, float x, float y, float w, float h) {
-    c->center[0] = c->focus[0] = x + w / 2;
-    c->center[1] = c->focus[1] = y + h / 2;
-    camSetMinSize(c, w, h);
-}
-
-void camSetMaxRect(Cam *c, float x, float y, float w, float h) {
-    c->center[0] = c->focus[0] = x + w / 2;
-    c->center[1] = c->focus[1] = y + h / 2;
-    camSetMaxSize(c, w, h);
-}
-
-void camGetRect(const Cam *c, float rect[4]) {
-    rect[2] = camGetW(c);
-    rect[3] = camGetH(c);
-    rect[0] = c->focus[0] - rect[2] / 2;
-    rect[1] = c->focus[1] - rect[3] / 2;
+CollRect camGetRect(const Cam *c) {
+    CollRect r;
+    r.w = c->ar * 2 / c->zoom;
+    r.h = 2 / c->zoom;
+    r.x = c->focus[0] - r.w / 2;
+    r.y = c->focus[1] - r.h / 2;
+    return r;
 }
 
 void camMatrix(const Cam *c, float m[4][4]) {

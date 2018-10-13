@@ -3,36 +3,6 @@
 #include <stdint.h>
 
 // ---------------------------------------------------------------------------
-// matrix.c
-// ---------------------------------------------------------------------------
-
-void matrixTranslation(float matrix[4][4], float x, float y, float z);
-void matrixScale(float matrix[4][4], float x, float y, float z);
-void matrixRotationZ(float matrix[4][4], float angle);
-void matrixProduct(float ab[4][4], const float a[4][4], const float b[4][4]);
-void matrixVectorProduct(float v[4], const float m[4][4], const float x[4]);
-
-// ---------------------------------------------------------------------------
-// cam.c
-// ---------------------------------------------------------------------------
-
-typedef struct {
-    float center[2], focus[2], zoom, angle, ar;
-} Cam;
-Cam cam(float ar);
-float camGetW(const Cam *c);
-void camSetW(Cam *c, float w);
-float camGetH(const Cam *c);
-void camSetH(Cam *c, float h);
-void camGetSize(const Cam *c, float size[2]);
-void camSetMinSize(Cam *c, float w, float h);
-void camSetMaxSize(Cam *c, float w, float h);
-void camSetMinRect(Cam *c, float x, float y, float w, float h);
-void camSetMaxRect(Cam *c, float x, float y, float w, float h);
-void camGetRect(const Cam *c, float rect[4]);
-void camMatrix(const Cam *c, float m[4][4]);
-
-// ---------------------------------------------------------------------------
 // bmp.c
 // ---------------------------------------------------------------------------
 
@@ -42,7 +12,6 @@ typedef struct {
 } Bmp;
 
 Bmp *bmpNew(size_t w, size_t h, size_t l, Bmp *b);
-Bmp *bmpDup(const Bmp *s, Bmp *d);
 Bmp *bmpDel(Bmp *bmp, bool freeHandle);
 bool bmpGet(const Bmp *bmp, size_t x, size_t y, size_t z);
 void bmpSet(Bmp *bmp, size_t x, size_t y, size_t z, bool b);
@@ -60,18 +29,31 @@ typedef struct {
     float south, north, west, east;
 } CollPen;
 
-typedef struct {
-    float x, y, angle;
-} CollRay;
-
-typedef struct {
-    float x, y, angle, len;
-} CollLine;
-
 CollPen collBmpRect(const Bmp b, CollRect r);
 CollPen collRect(CollRect a, CollRect b);
-float collRayLine(CollRay r, CollLine line);
-float collRayRect(CollRay r, CollRect rect);
+
+// ---------------------------------------------------------------------------
+// matrix.c
+// ---------------------------------------------------------------------------
+
+void matrixTranslation(float matrix[4][4], float x, float y, float z);
+void matrixScale(float matrix[4][4], float x, float y, float z);
+void matrixRotationZ(float matrix[4][4], float angle);
+void matrixProduct(float ab[4][4], const float a[4][4], const float b[4][4]);
+void matrixVectorProduct(float v[4], const float m[4][4], const float x[4]);
+
+// ---------------------------------------------------------------------------
+// cam.c
+// ---------------------------------------------------------------------------
+
+typedef struct {
+    float center[2], focus[2], zoom, angle, ar;
+} Cam;
+Cam cam(float ar);
+void camSetMinRect(Cam *c, CollRect r);
+void camSetMaxRect(Cam *c, CollRect r);
+CollRect camGetRect(const Cam *c);
+void camMatrix(const Cam *c, float m[4][4]);
 
 // ---------------------------------------------------------------------------
 // r.c
@@ -103,8 +85,7 @@ void rPipeModel(const float m[4][4],const float c[4],float M[4][4],float C[4]);
 void rPipeSpace(const float m[4][4],const float c[4],float M[4][4],float C[4]);
 void rPipeWorld(const float m[4][4],const float c[4],float M[4][4],float C[4]);
 void rClear(const float c[4]);
-void rDraw(RDrawMode mode, size_t n, const RVertex *v);
-void rDrawIndexed(RDrawMode mode,size_t ni,const uint16_t *i,const RVertex *v);
+void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v);
 void rViewport(int x, int y, int w, int h);
 
 // ---------------------------------------------------------------------------
@@ -114,16 +95,15 @@ void rViewport(int x, int y, int w, int h);
 typedef struct {
     float w, h, l;
     size_t ni, mi, nv, mv;
-    uint16_t *i;
+    uint32_t *i;
     RVertex *v;
 } Batch;
 
-Batch *batchDup(const Batch *s, Batch *d);
 Batch *batchDel(Batch *b, bool freeHandle);
-void batch(Batch *b, size_t ni, const uint16_t *i, size_t nv, const RVertex *v);
+void batch(Batch *b, size_t ni, const uint32_t *i, size_t nv, const RVertex *v);
 void batchClear(Batch *b);
 void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]);
-void batchLine(Batch *b, CollLine l, float t, const uint8_t rgba[4]);
+void batchLine(Batch *b, float x, float y, float angle, float len, float t, const uint8_t rgba[4]);
 void batchRectLine(Batch *b, CollRect r, float ti, float to, const uint8_t rgba[4]);
 
 // ---------------------------------------------------------------------------

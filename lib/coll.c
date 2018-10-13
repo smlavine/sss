@@ -4,12 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MINNONNEG(x,y) ((x)<0?(y):(y)<0?(x):(x)<(y)?(x):(y))
-
-#define PI 3.14159
-
-static void collRay(CollRay a, CollRay b, float *la, float *lb);
-
 CollPen collBmpRect(const Bmp b, CollRect r) {
     if (r.x < 0 || r.y < 0 || r.x >= b.w - 1 || r.y >= b.h - 1) {
         return (CollPen){false,0,0,0,0};
@@ -169,40 +163,4 @@ CollPen collRect(CollRect a, CollRect b) {
         }
         return p;
     }
-}
-
-float collRayLine(CollRay r, CollLine line) {
-    float rl, ll;
-    // TODO: ensure length is never negative and remove this check
-    if (line.len < 0) {
-        line.angle = fmodf(line.angle + PI, PI * 2);
-        line.len = fabsf(line.len);
-    }
-    collRay(r, (CollRay){line.x, line.y, line.angle}, &rl, &ll);
-    return ll >= 0 && rl >= 0 && ll <= line.len ? rl : -1;
-}
-
-float collRayRect(CollRay r, CollRect R) {
-    float l1, l2, l3, l4;
-    l1 = collRayLine(r, (CollLine){R.x,       R.y,       0,          R.w});
-    l2 = collRayLine(r, (CollLine){R.x + R.w, R.y,       PI / 2,     R.h});
-    l3 = collRayLine(r, (CollLine){R.x + R.w, R.y + R.h, PI,         R.w});
-    l4 = collRayLine(r, (CollLine){R.x,       R.y + R.h, PI * 3 / 2, R.h});
-    return MINNONNEG(l1, MINNONNEG(l2, MINNONNEG(l3, l4)));
-}
-
-static void collRay(CollRay a, CollRay b, float *la, float *lb) {
-    float ca = cosf(a.angle);
-    float cb = cosf(b.angle);
-    float sa = sinf(a.angle);
-    float sb = sinf(b.angle);
-    float dx = b.x - a.x;
-    float dy = b.y - a.y;
-    float det = cb * sa - ca * sb;
-    if (det == 0) {
-        *la = *lb = -INFINITY;
-        return;
-    }
-    *la = (dy * cb - dx * sb) / det;
-    *lb = (dy * ca - dx * sa) / det;
 }

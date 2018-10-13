@@ -185,7 +185,7 @@ void rClear(const float c[4]) {
     }
 }
 
-void rDraw(RDrawMode mode, size_t n, const RVertex *v) {
+void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v){
     glEnableVertexAttribArray((GLuint)r.loc.aPos);
     glEnableVertexAttribArray((GLuint)r.loc.aClr);
 
@@ -194,56 +194,22 @@ void rDraw(RDrawMode mode, size_t n, const RVertex *v) {
 
     switch (mode) {
     case R_DRAW_MODE_POINTS:
-        glDrawArrays(GL_POINTS, 0, (GLsizei)n);
+        glDrawElements(GL_POINTS, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_LINES:
-        glDrawArrays(GL_LINES, 0, (GLsizei)n);
+        glDrawElements(GL_LINES, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_LINE_LOOP:
-        glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)n);
+        glDrawElements(GL_LINE_LOOP, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLES:
-        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)n);
+        glDrawElements(GL_TRIANGLES, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLE_STRIP:
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, (GLsizei)n);
+        glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLE_FAN:
-        glDrawArrays(GL_TRIANGLE_FAN, 0, (GLsizei)n);
-        break;
-    default:
-        break;
-    }
-
-    glDisableVertexAttribArray((GLuint)r.loc.aClr);
-    glDisableVertexAttribArray((GLuint)r.loc.aPos);
-}
-
-void rDrawIndexed(RDrawMode mode,size_t ni,const uint16_t *i,const RVertex *v){
-    glEnableVertexAttribArray((GLuint)r.loc.aPos);
-    glEnableVertexAttribArray((GLuint)r.loc.aClr);
-
-    glVertexAttribPointer((GLuint)r.loc.aPos, 3, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
-    glVertexAttribPointer((GLuint)r.loc.aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
-
-    switch (mode) {
-    case R_DRAW_MODE_POINTS:
-        glDrawElements(GL_POINTS, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
-        break;
-    case R_DRAW_MODE_LINES:
-        glDrawElements(GL_LINES, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
-        break;
-    case R_DRAW_MODE_LINE_LOOP:
-        glDrawElements(GL_LINE_LOOP, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLES:
-        glDrawElements(GL_TRIANGLES, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLE_STRIP:
-        glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLE_FAN:
-        glDrawElements(GL_TRIANGLE_FAN, (GLsizei)ni, GL_UNSIGNED_SHORT, i);
+        glDrawElements(GL_TRIANGLE_FAN, (GLsizei)ni, GL_UNSIGNED_INT, i);
         break;
     default:
         break;
