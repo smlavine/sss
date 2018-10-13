@@ -43,11 +43,6 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
     s.hero.r.x += s.hero.envVelX;
     s.hero.r.y += s.hero.envVelY;
 
-    // Teleport hero
-    if (sOpTeleported(&s.portal.inside, &s.hero.r.x, &s.hero.r.y)) {
-        s.hero.vVel = -s.hero.vVel;
-    }
-
     // Update environmental velocity
     sOpEnvEnergy(&s.hero.envVelX, &s.hero.envVelY);
 

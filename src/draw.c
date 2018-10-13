@@ -1,7 +1,7 @@
 #include "../lib/dragon.h"
 #include "s.h"
 
-// TODO: make key, lock, antilock, portal colors more distinguishable
+// TODO: make key, lock, antilock colors more distinguishable
 #define COLOR_HERO            (const uint8_t[]) { 255,   0,   0, 255 }
 #define COLOR_ACTIVE_EJECTOR  (const uint8_t[]) { 255, 128, 128, 255 }
 #define COLOR_PASSIVE_EJECTOR (const uint8_t[]) { 128,   0,   0, 255 }
@@ -21,10 +21,6 @@
                                                      {   0, 255,   0, 255 }, \
                                                      {   0, 255,   0, 255 }, \
                                                      {   0, 255,   0, 255 } }
-#define COLOR_PORTAL (const uint8_t[][4]) { { 255,   0, 255, 255 }, \
-                                            { 255,   0, 255, 255 }, \
-                                            { 255,   0, 255, 255 }, \
-                                            { 255,   0, 255, 255 } }
 #define KEY_ANTILOCK_LINE_THICKNESS 0.1
 #define CLEAR_COLOR (const float[]){1, 1, 1, 1}
 
@@ -90,11 +86,6 @@ void sDraw(int winW, int winH) {
                           t, 0, COLOR_KEY_ANTILOCK[i]);
             batchRect(&s.draw.fg, r, COLOR_KEY_ANTILOCK[i]);
         }
-    }
-
-    for (size_t i = 0; i < s.portal.n; ++i) {
-        batchRect(&s.draw.fg, s.portal.arr[i].a, COLOR_PORTAL[i]);
-        batchRect(&s.draw.fg, s.portal.arr[i].b, COLOR_PORTAL[i]);
     }
 
     batchRect(&s.draw.fg, s.hero.r, COLOR_HERO);

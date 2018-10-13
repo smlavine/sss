@@ -1,5 +1,3 @@
-// TODO: portal sound
-
 #include "../lib/dragon.h"
 #include "s.h"
 
@@ -16,7 +14,7 @@
 #define VSYNC true
 #define AA 4
 #define LVL_FIRST 1
-#define LVL_LAST 23
+#define LVL_LAST 21
 #define LVL_PATH_BUFFER_SIZE 11
 #define LVL_PATH_FMTS "rsc/%d.ppm"
 #define OGG_MUSIC    "rsc/music.ogg"

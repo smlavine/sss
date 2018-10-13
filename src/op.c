@@ -142,32 +142,6 @@ void sOpEnvEnergy(float *velX, float *velY) {
     }
 }
 
-bool sOpTeleported(bool *inside, float *x, float *y) {
-    bool in = false;
-    for (size_t i = 0; i < s.portal.n; ++i) {
-        if (collRect(s.hero.r, s.portal.arr[i].a).is) {
-            if (!s.portal.inside) {
-                *inside = true;
-                *x=s.portal.arr[i].b.x + s.portal.arr[i].b.w/2 - s.hero.r.w/2;
-                *y=s.portal.arr[i].b.y + s.portal.arr[i].b.h/2 - s.hero.r.h/2;
-                return true;
-            }
-            in = true;
-        }
-        if (collRect(s.hero.r, s.portal.arr[i].b).is) {
-            if (!s.portal.inside) {
-                *inside = true;
-                *x=s.portal.arr[i].a.x + s.portal.arr[i].a.w/2 - s.hero.r.w/2;
-                *y=s.portal.arr[i].a.y + s.portal.arr[i].a.h/2 - s.hero.r.h/2;
-                return true;
-            }
-            in = true;
-        }
-    }
-    *inside = in;
-    return false;
-}
-
 static CollRect multipliedRect(CollRect r, float m) {
     float w = r.w * m;
     float h = r.h * m;
