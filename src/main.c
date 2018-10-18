@@ -122,3 +122,14 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 
     return win;
 }
+
+// TODO: platforms.
+// TODO: fire.
+// TODO: new levels.
+// TODO: any size hero.
+// TODO: many heroes.
+// TODO: hero kinds.
+// TODO: zones.
+// TODO: lights.
+// TODO: clean-up TODOs.
+// TODO: README.md: GIFs, speedrun, screenshots, installation, building, controls.
