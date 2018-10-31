@@ -80,6 +80,17 @@ extern struct S {
         } *arr;
     } key;
 
+    struct {
+        size_t n;
+        struct {
+            float w, h;
+            size_t n;
+            struct {
+                float x, y;
+            } *arr;
+        } *arr;
+    } plat;
+
 } s; // (data.c)
 
 // data.c
@@ -97,6 +108,7 @@ CollRect sOpPulsator(size_t i);
 CollRect sOpShrinker(size_t i);
 CollRect sOpKeyLock(size_t i, size_t j);
 CollRect sOpKeyAntilock(size_t i, size_t j);
+CollRect sOpPlat(size_t i);
 CollPen sOpColl(const CollRect r);
 int sOpGameOver(void);
 bool sOpBumpCollision(const CollPen p);

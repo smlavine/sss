@@ -39,6 +39,13 @@ CollRect sOpKeyAntilock(size_t i, size_t j) {
     return multipliedRect(s.key.arr[i].antilock.arr[j], m);
 }
 
+CollRect sOpPlat(size_t i) {
+    size_t j = s.tick.tick % s.plat.arr[i].n;
+    float x = s.plat.arr[i].arr[j].x;
+    float y = s.plat.arr[i].arr[j].y;
+    return (CollRect){x, y, s.plat.arr[i].w, s.plat.arr[i].h};
+}
+
 CollPen sOpColl(const CollRect r) {
     CollPen p = collBmpRect(s.lvl, r);
     for (size_t i = 0; i < s.pulsator.n; ++i) {
@@ -54,6 +61,9 @@ CollPen sOpColl(const CollRect r) {
         for (size_t j = 0; j < s.key.arr[i].antilock.n; ++j) {
             p = maxPen(p, collRect(r, sOpKeyAntilock(i, j)));
         }
+    }
+    for (size_t i = 0; i < s.plat.n; ++i) {
+        p = maxPen(p, collRect(r, sOpPlat(i)));
     }
     return p;
 }
@@ -140,6 +150,17 @@ void sOpEnvEnergy(float *velX, float *velY) {
             s.key.arr[i].ticksLeft++;
         }
     }
+
+    for (size_t i = 0; i < s.plat.n; ++i) {
+        CollRect r0 = sOpPlat(i);
+        if (!sOpBumpCollision(collRect(s.hero.r, r0))) {
+            continue;
+        }
+        s.tick.tick++;
+        addRectV(s.hero.r, r0, sOpPlat(i), velX, velY);
+        s.tick.tick--;
+    }
+
 }
 
 static CollRect multipliedRect(CollRect r, float m) {

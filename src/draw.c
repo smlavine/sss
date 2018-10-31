@@ -9,6 +9,7 @@
 #define COLOR_SHRINKER        (const uint8_t[]) { 192, 192, 192, 255 }
 #define COLOR_COIN            (const uint8_t[]) { 255, 255,   0, 255 }
 #define COLOR_GRAVITON        (const uint8_t[]) {   0,   0, 255, 255 }
+#define COLOR_PLAT            (const uint8_t[]) {   0,   0,   0, 255 }
 #define COLOR_KEY             (const uint8_t[][4]) { {   0, 128,   0, 255 }, \
                                                      {   0, 128,   0, 255 }, \
                                                      {   0, 128,   0, 255 }, \
@@ -36,6 +37,10 @@ void sDraw(int winW, int winH) {
     rClear(CLEAR_COLOR);
 
     rDrawIndexed(R_DRAW_MODE_TRIANGLES,s.draw.bg.ni,s.draw.bg.i,s.draw.bg.v);
+
+    for (size_t i = 0; i < s.plat.n; ++i) {
+        batchRect(&s.draw.fg, sOpPlat(i), COLOR_PLAT);
+    }
 
     for (size_t i = 0; i < s.ejector.n; ++i) {
         if (s.ejector.arr[i].cooldown) {

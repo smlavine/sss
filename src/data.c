@@ -24,6 +24,7 @@
 #define WALL_COLOR (const uint8_t[]) {0, 0, 0, 0}
 #define PULSATOR_CONTRACTED_OFFSET 0
 #define PULSATOR_EXPANDED_OFFSET 60
+#define PLAT_SPEED 10 // the bigger the slower; how many ticks to cross a tile
 
 typedef struct {
     int x, y, w, h;
@@ -34,10 +35,28 @@ typedef struct {
     Rect *arr;
 } RectArr;
 
+typedef struct {
+    int w, h;
+    size_t n;
+    struct {
+        float x, y;
+    } *arr;
+} Plat;
+
+typedef enum {
+    DIR_WEST,
+    DIR_EAST,
+    DIR_SOUTH,
+    DIR_NORTH
+} Dir;
+#define P_DIR  (const int[]){0xfefefe, 0xfdfdfd, 0xfcfcfc, 0xfbfbfb}
+#define P_PLAT (const int[]){0x010101, 0x020202, 0x030303, 0x040404}
+
 struct S s;
 
 static void skipComments(FILE *f, bool skipLeadingWhitespaceToo);
 static RectArr getRectArr(int w, int h, int *p, int px, int d);
+static Plat getPlat(int w, const int *p, Rect r, Dir d);
 
 void sLoad(const char *path) {
     int w, h, dump;
@@ -176,6 +195,46 @@ void sLoad(const char *path) {
         free(keyAntilock[i].arr);
     }
 
+    RectArr platWest = getRectArr(w, h, p, P_PLAT[DIR_WEST], P_NONE);
+    RectArr platEast = getRectArr(w, h, p, P_PLAT[DIR_EAST], P_NONE);
+    RectArr platSouth = getRectArr(w, h, p, P_PLAT[DIR_SOUTH], P_NONE);
+    RectArr platNorth = getRectArr(w, h, p, P_PLAT[DIR_NORTH], P_NONE);
+    size_t platN = platWest.n + platEast.n + platSouth.n + platNorth.n;
+    Plat *plat = malloc(platN * sizeof(*plat));
+    for (size_t i = 0; i < platWest.n; ++i) {
+        Plat pl = getPlat(w, p, platWest.arr[i], DIR_WEST);
+        plat[i] = pl;
+    }
+    for (size_t i = 0; i < platEast.n; ++i) {
+        Plat pl = getPlat(w, p, platEast.arr[i], DIR_EAST);
+        plat[i + platWest.n] = pl;
+    }
+    for (size_t i = 0; i < platSouth.n; ++i) {
+        Plat pl = getPlat(w, p, platSouth.arr[i], DIR_SOUTH);
+        plat[i + platWest.n + platEast.n] = pl;
+    }
+    for (size_t i = 0; i < platNorth.n; ++i) {
+        Plat pl = getPlat(w, p, platNorth.arr[i], DIR_NORTH);
+        plat[i + platWest.n + platEast.n + platSouth.n] = pl;
+    }
+    s.plat.n = platN;
+    s.plat.arr = malloc(platN * sizeof(*s.plat.arr));
+    for (size_t i = 0; i < platN; ++i) {
+        s.plat.arr[i].w = plat[i].w;
+        s.plat.arr[i].h = plat[i].h;
+        s.plat.arr[i].n = plat[i].n;
+        s.plat.arr[i].arr = malloc(plat[i].n * sizeof(*plat[i].arr));
+        for (size_t j = 0; j < plat[i].n; ++j) {
+            s.plat.arr[i].arr[j].x = plat[i].arr[j].x;
+            s.plat.arr[i].arr[j].y = plat[i].arr[j].y;
+        }
+    }
+    free(plat);
+    free(platWest.arr);
+    free(platEast.arr);
+    free(platSouth.arr);
+    free(platNorth.arr);
+
     free(p);
 
     // TODO: environmental velocity
@@ -196,6 +255,10 @@ void sFree(void) {
         free(s.key.arr[i].antilock.arr);
     }
     free(s.key.arr);
+    for (size_t i = 0; i < s.plat.n; ++i) {
+        free(s.plat.arr[i].arr);
+    }
+    free(s.plat.arr);
 }
 
 static void skipComments(FILE *f, bool skipLeadingWhitespaceToo) {
@@ -254,4 +317,76 @@ static RectArr getRectArr(int w, int h, int *p, int px, int d) {
     }
 
     return r;
+}
+
+// TODO: some error checking?
+static Plat getPlat(int w, const int *p, Rect r, Dir d) {
+    size_t m = 16;
+    Plat plat = {r.w, r.h, 0, malloc(m * sizeof(*plat.arr))};
+
+    int vx = 0;
+    int vy = 0;
+    switch (d) {
+        case DIR_WEST: vx = -1; break;
+        case DIR_EAST: vx =  1; break;
+        case DIR_SOUTH: vy = -1; break;
+        case DIR_NORTH: vy =  1; break;
+        default: break;
+    }
+
+    int x = r.x;
+    int y = r.y;
+    do {
+
+        int newX = x + vx;
+        int newY = y + vy;
+        for (int xi = newX; xi < newX + r.w; ++xi) {
+            for (int yi = newY; yi < newY + r.h; ++yi) {
+                int px = p[yi * w + xi];
+                switch (px) {
+                    case P_DIR[DIR_WEST]:
+                        vx = -1;
+                        vy =  0;
+                        break;
+                    case P_DIR[DIR_EAST]:
+                        vx =  1;
+                        vy =  0;
+                        break;
+                    case P_DIR[DIR_SOUTH]:
+                        vx =  0;
+                        vy = -1;
+                        break;
+                    case P_DIR[DIR_NORTH]:
+                        vx =  0;
+                        vy =  1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        newX = x + vx;
+        newY = y + vy;
+
+        for (int i = 0; i < PLAT_SPEED; ++i) {
+            plat.arr[plat.n].x = x + (float)vx * (float)i / (float)PLAT_SPEED;
+            plat.arr[plat.n].y = y + (float)vy * (float)i / (float)PLAT_SPEED;
+
+            ++plat.n;
+
+            if (plat.n == m) {
+                m *= 2;
+                plat.arr = realloc(plat.arr, m * sizeof(*plat.arr));
+            }
+        }
+
+        x = newX;
+        y = newY;
+
+        if (x < 0 || y < 0) exit(0);
+
+    } while (x != r.x || y != r.y);
+
+    return plat;
 }

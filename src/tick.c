@@ -136,6 +136,7 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
         s.hero.envVelX = s.hero.envVelY = 0;
     } else if (jumped) {
         s.hero.vVel = s.graviton.invertedGravity ? -JUMP_VEL : JUMP_VEL;
+        s.hero.vVel += s.hero.envVelY; // feels better
         s.hero.envVelX = s.hero.envVelY = 0;
     }
     s.hero.vVel += s.graviton.invertedGravity ? -GRAV_ACC : GRAV_ACC;
