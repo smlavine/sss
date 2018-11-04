@@ -60,10 +60,10 @@ void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]) {
         (uint32_t)b->nv + 0
     };
     const RVertex v[] = {
-        {r.x,       r.y,       0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {r.x + r.w, r.y,       0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {r.x + r.w, r.y + r.h, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {r.x,       r.y + r.h, 0, rgba[0], rgba[1], rgba[2], rgba[3]}
+        {r.x,       r.y,       rgba[0], rgba[1], rgba[2], rgba[3]},
+        {r.x + r.w, r.y,       rgba[0], rgba[1], rgba[2], rgba[3]},
+        {r.x + r.w, r.y + r.h, rgba[0], rgba[1], rgba[2], rgba[3]},
+        {r.x,       r.y + r.h, rgba[0], rgba[1], rgba[2], rgba[3]}
     };
     batch(b, 6, i, 4, v);
 }
@@ -82,10 +82,10 @@ void batchLine(Batch *b, float x, float y, float angle, float len, float t, cons
         (uint32_t)b->nv + 0
     };
     const RVertex v[] = {
-        {x - dx,   y + dy, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {x + dx,   y - dy, 0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {x2 + dx,  y2 - dy,  0, rgba[0], rgba[1], rgba[2], rgba[3]},
-        {x2 - dx,  y2 + dy,  0, rgba[0], rgba[1], rgba[2], rgba[3]}
+        {x - dx,   y + dy,  rgba[0], rgba[1], rgba[2], rgba[3]},
+        {x + dx,   y - dy,  rgba[0], rgba[1], rgba[2], rgba[3]},
+        {x2 + dx,  y2 - dy, rgba[0], rgba[1], rgba[2], rgba[3]},
+        {x2 - dx,  y2 + dy, rgba[0], rgba[1], rgba[2], rgba[3]}
     };
     batch(b, 6, i, 4, v);
 }

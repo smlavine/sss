@@ -7,30 +7,19 @@
 
 static struct {
     GLuint prog;
-    struct {
-        GLint aPos, aClr;
-        GLint uMatModel, uMatSpace, uMatWorld;
-        GLint uClrModel, uClrSpace, uClrWorld;
-    } loc;
-    struct {
-        bool depthTest, transparency;
-    } capability;
-    struct {
-        struct {
-            float matrix[4][4], color[4];
-        } model, space, world;
-    } pipeline;
+    GLint aPos, aClr;
+    GLint uMat;
 } r;
 
 void rInit(void) {
     const char *VERT =
     "#version 100\n"
-    "attribute vec3 aPos;\n"
+    "attribute vec2 aPos;\n"
     "attribute vec4 aClr;\n"
     "varying vec4 vClr;\n"
-    "uniform mat4 uMatModel, uMatSpace, uMatWorld;\n"
+    "uniform mat4 uMat;\n"
     "void main(void) {\n"
-    "    gl_Position = uMatWorld * uMatSpace * uMatModel * vec4(aPos.xyz,1);\n"
+    "    gl_Position = uMat * vec4(aPos.xy,0,1);\n"
     "    vClr = aClr / 255.0;\n"
     "}\n";
 
@@ -38,7 +27,6 @@ void rInit(void) {
     "#version 100\n"
     "precision mediump float;\n"
     "varying vec4 vClr;\n"
-    "uniform vec4 uClrModel, uClrSpace, uClrWorld;\n"
     "void main(void) {\n"
     "    gl_FragColor = vClr;\n"
     "}\n";
@@ -60,23 +48,12 @@ void rInit(void) {
 
     glUseProgram(r.prog);
 
-    r.loc.aPos = glGetAttribLocation(r.prog, "aPos");
-    r.loc.aClr = glGetAttribLocation(r.prog, "aClr");
-    r.loc.uMatModel = glGetUniformLocation(r.prog, "uMatModel");
-    r.loc.uMatSpace = glGetUniformLocation(r.prog, "uMatSpace");
-    r.loc.uMatWorld = glGetUniformLocation(r.prog, "uMatWorld");
-    r.loc.uClrModel = glGetUniformLocation(r.prog, "uClrModel");
-    r.loc.uClrSpace = glGetUniformLocation(r.prog, "uClrSpace");
-    r.loc.uClrWorld = glGetUniformLocation(r.prog, "uClrWorld");
+    r.aPos = glGetAttribLocation(r.prog, "aPos");
+    r.aClr = glGetAttribLocation(r.prog, "aClr");
+    r.uMat = glGetUniformLocation(r.prog, "uMat");
 
     float m[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    float c[4] = {1,1,1,1};
-    rPipeModel(m, c, NULL, NULL);
-    rPipeSpace(m, c, NULL, NULL);
-    rPipeWorld(m, c, NULL, NULL);
-
-    rCapability(R_CAPABILITY_DEPTH_TEST, false);
-    rCapability(R_CAPABILITY_TRANSPARENCY, false);
+    rMatrix(m);
 }
 
 void rExit(void) {
@@ -84,113 +61,28 @@ void rExit(void) {
     glDeleteProgram(r.prog);
 }
 
-bool rCapability(RCapability capability, bool enabled) {
-    bool state = false;
-    switch (capability) {
-        case R_CAPABILITY_DEPTH_TEST:
-            if (enabled) {
-                glEnable(GL_DEPTH_TEST);
-            } else {
-                glDisable(GL_DEPTH_TEST);
-            }
-            state = r.capability.depthTest;
-            r.capability.depthTest = enabled;
-            break;
-        case R_CAPABILITY_TRANSPARENCY:
-            if (enabled) {
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            } else {
-                glDisable(GL_BLEND);
-            }
-            state = r.capability.transparency;
-            r.capability.transparency = enabled;
-            break;
-        default:
-            break;
-    }
-    return state;
-}
-
-void rPipeModel(const float m[4][4],const float c[4],float M[4][4],float C[4]){
-    float pm[4][4], pc[4];
-
+void rMatrix(const float m[4][4]) {
     if (m) {
-        glUniformMatrix4fv(r.loc.uMatModel, 1, GL_FALSE, (const void*)m);
-        memcpy(pm, r.pipeline.model.matrix, sizeof(pm));
-        memcpy(r.pipeline.model.matrix, m, sizeof(pm));
+        glUniformMatrix4fv(r.uMat, 1, GL_FALSE, (const void*)m);
     }
-
-    if (c) {
-        glUniform4fv(r.loc.uClrModel, 1, c);
-        memcpy(pc, r.pipeline.model.color, sizeof(pc));
-        memcpy(r.pipeline.model.color, c, sizeof(pc));
-    }
-
-    if (M) memcpy(M, pm, sizeof(pm));
-    if (C) memcpy(C, pc, sizeof(pc));
-}
-
-void rPipeSpace(const float m[4][4],const float c[4],float M[4][4],float C[4]){
-    float pm[4][4], pc[4];
-
-    if (m) {
-        glUniformMatrix4fv(r.loc.uMatSpace, 1, GL_FALSE, (const void*)m);
-        memcpy(pm, r.pipeline.space.matrix, sizeof(pm));
-        memcpy(r.pipeline.space.matrix, m, sizeof(pm));
-    }
-
-    if (c) {
-        glUniform4fv(r.loc.uClrSpace, 1, c);
-        memcpy(pc, r.pipeline.space.color, sizeof(pc));
-        memcpy(r.pipeline.space.color, c, sizeof(pc));
-    }
-
-    if (M) memcpy(M, pm, sizeof(pm));
-    if (C) memcpy(C, pc, sizeof(pc));
-}
-
-void rPipeWorld(const float m[4][4],const float c[4],float M[4][4],float C[4]){
-    float pm[4][4], pc[4];
-
-    if (m) {
-        glUniformMatrix4fv(r.loc.uMatWorld, 1, GL_FALSE, (const void*)m);
-        memcpy(pm, r.pipeline.world.matrix, sizeof(pm));
-        memcpy(r.pipeline.world.matrix, m, sizeof(pm));
-    }
-
-    if (c) {
-        glUniform4fv(r.loc.uClrWorld, 1, c);
-        memcpy(pc, r.pipeline.world.color, sizeof(pc));
-        memcpy(r.pipeline.world.color, c, sizeof(pc));
-    }
-
-    if (M) memcpy(M, pm, sizeof(pm));
-    if (C) memcpy(C, pc, sizeof(pc));
 }
 
 
-void rClear(const float c[4]) {
+void rClear(const float *c) {
     if (c) {
         glClearColor(c[0], c[1], c[2], c[3]);
     } else {
         glClearColor(0,0,0,0);
     }
-
     glClear(GL_COLOR_BUFFER_BIT);
-
-    if (r.capability.depthTest) {
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_DEPTH_BUFFER_BIT);
-    }
 }
 
 void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v){
-    glEnableVertexAttribArray((GLuint)r.loc.aPos);
-    glEnableVertexAttribArray((GLuint)r.loc.aClr);
+    glEnableVertexAttribArray((GLuint)r.aPos);
+    glEnableVertexAttribArray((GLuint)r.aClr);
 
-    glVertexAttribPointer((GLuint)r.loc.aPos, 3, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
-    glVertexAttribPointer((GLuint)r.loc.aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
+    glVertexAttribPointer((GLuint)r.aPos, 2, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
+    glVertexAttribPointer((GLuint)r.aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
 
     switch (mode) {
     case R_DRAW_MODE_POINTS:
@@ -215,10 +107,11 @@ void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v){
         break;
     }
 
-    glDisableVertexAttribArray((GLuint)r.loc.aClr);
-    glDisableVertexAttribArray((GLuint)r.loc.aPos);
+    glDisableVertexAttribArray((GLuint)r.aClr);
+    glDisableVertexAttribArray((GLuint)r.aPos);
 }
 
 void rViewport(int x, int y, int w, int h) {
     glViewport(x, y, w, h);
 }
+

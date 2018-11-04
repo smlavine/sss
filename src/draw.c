@@ -32,7 +32,7 @@ void sDraw(int winW, int winH) {
     Cam camera = cam((float)winW / (float)winH);
     camSetMinRect(&camera, (CollRect){0, 0, s.lvl.w, s.lvl.h});
     camMatrix(&camera, matrix);
-    rPipeWorld(matrix, NULL, NULL, NULL);
+    rMatrix(matrix);
 
     rClear(CLEAR_COLOR);
 
