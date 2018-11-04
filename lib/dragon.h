@@ -33,29 +33,6 @@ CollPen collBmpRect(const Bmp b, CollRect r);
 CollPen collRect(CollRect a, CollRect b);
 
 // ---------------------------------------------------------------------------
-// matrix.c
-// ---------------------------------------------------------------------------
-
-void matrixTranslation(float matrix[4][4], float x, float y, float z);
-void matrixScale(float matrix[4][4], float x, float y, float z);
-void matrixRotationZ(float matrix[4][4], float angle);
-void matrixProduct(float ab[4][4], const float a[4][4], const float b[4][4]);
-void matrixVectorProduct(float v[4], const float m[4][4], const float x[4]);
-
-// ---------------------------------------------------------------------------
-// cam.c
-// ---------------------------------------------------------------------------
-
-typedef struct {
-    float center[2], focus[2], zoom, angle, ar;
-} Cam;
-Cam cam(float ar);
-void camSetMinRect(Cam *c, CollRect r);
-void camSetMaxRect(Cam *c, CollRect r);
-CollRect camGetRect(const Cam *c);
-void camMatrix(const Cam *c, float m[4][4]);
-
-// ---------------------------------------------------------------------------
 // r.c
 // ---------------------------------------------------------------------------
 
@@ -75,7 +52,7 @@ typedef struct {
 
 void rInit(void);
 void rExit(void);
-void rMatrix(const float m[4][4]);
+void rPipe(float mulX, float mulY, float addX, float addY, float divX);
 void rClear(const float *c);
 void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v);
 void rViewport(int x, int y, int w, int h);

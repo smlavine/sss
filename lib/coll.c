@@ -1,12 +1,8 @@
 #include "dragon.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-
 CollPen collBmpRect(const Bmp b, CollRect r) {
-    if (r.x < 0 || r.y < 0 || r.x >= b.w - 1 || r.y >= b.h - 1) {
-        return (CollPen){false,0,0,0,0};
+    if (r.x < 0 || r.y < 0 || r.x + r.w >= b.w || r.y + r.h >= b.h) {
+        return (CollPen){false, 0, 0, 0, 0};
     }
 
     int x = r.x;
@@ -26,15 +22,20 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
     int southEast = bmpGet(&b, x + w, y,     0);
     int northWest = bmpGet(&b, x,     y + h, 0);
     int northEast = bmpGet(&b, x + w, y + h, 0);
-    bool south = false, north = false, west = false, east = false;
+
+    bool south, north, west, east;
+    south = north = west = east = false;
+
     for (int xi = x + 1; xi < x + w; ++xi) {
         south |= bmpGet(&b, xi, y,     0);
         north |= bmpGet(&b, xi, y + h, 0);
     }
+
     for (int yi = y + 1; yi < y + h; ++yi) {
         west |= bmpGet(&b, x,     yi, 0);
         east |= bmpGet(&b, x + w, yi, 0);
     }
+
     for (int xi = x + 1; xi < x + w; ++xi) {
         for (int yi = y + 1; yi < y + h; ++yi) {
             if (bmpGet(&b, xi, yi, 0)) {
@@ -53,7 +54,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
     float penNorthWestSq = penNorth * penNorth + penWest * penWest;
     float penNorthEastSq = penNorth * penNorth + penEast * penEast;
 
-    int n = (southWest << 3) + (southEast << 2) + (northWest << 1) + (northEast << 0);
+    int n = (southWest << 3) + (southEast << 2) + (northWest << 1) + northEast;
     switch (n) {
         case 15: // 1111
             south = north = west = east = true;
@@ -85,6 +86,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             east = true;
             break; // east
         case  8: // 1000
+            // FIXME: this might be wrong
             if (penSouth <= penWest) {
                 south = true;
             } else {
@@ -92,6 +94,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             }
             break; // south west
         case  4: // 0100
+            // FIXME: this might be wrong
             if (penSouth <= penEast) {
                 south = true;
             } else {
@@ -99,6 +102,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             }
             break; // south east
         case  2: // 0010
+            // FIXME: this might be wrong
             if (penNorth <= penWest) {
                 north = true;
             } else {
@@ -106,6 +110,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             }
             break; // north east
         case  1: // 0001
+            // FIXME: this might be wrong
             if (penNorth <= penEast) {
                 north = true;
             } else {
@@ -113,6 +118,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             }
             break; // north west
         case  9: // 1001
+            // FIXME: this might be wrong
             if (penSouthEastSq <= penNorthWestSq) {
                 south = east = true;
             } else {
@@ -120,6 +126,7 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             }
             break; // diagonal south west north east
         case  6: // 0110
+            // FIXME: this might be wrong
             if (penSouthWestSq <= penNorthEastSq) {
                 south = west = true;
             } else {

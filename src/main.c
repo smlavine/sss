@@ -1,3 +1,11 @@
+/*
+ * Welcome to the source of Sassy Square Sally! I hope you have a nice stay.
+ * If you are new I would advice you to become acquainted with lib/ first.
+ * The code there is much cosier - most functions are completely independent.
+ * Everything under src/ revolves around a huge singleton defined in src/s.h.
+ * src/main.c contains main() which initializes, runs and terminates the game.
+ */
+
 #include "../lib/dragon.h"
 #include "s.h"
 
@@ -133,3 +141,4 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 // TODO: lights.
 // TODO: clean-up TODOs.
 // TODO: README.md: GIFs, speedrun, screenshots, installation, building, controls.
+// TODO: add/remove rectangle collision targets to global bitmap when possible for better precision

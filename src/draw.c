@@ -27,12 +27,18 @@
 
 void sDraw(int winW, int winH) {
     rViewport(0, 0, winW, winH);
-
-    float matrix[4][4];
-    Cam camera = cam((float)winW / (float)winH);
-    camSetMinRect(&camera, (CollRect){0, 0, s.lvl.w, s.lvl.h});
-    camMatrix(&camera, matrix);
-    rMatrix(matrix);
+    float ar = (float)winW / winH;
+    if (ar > (float)s.lvl.w / s.lvl.h) {
+        float mul = 2.0 / s.lvl.h;
+        float tilesPerUnit = s.lvl.h / 2.0;
+        float offset = -(s.lvl.w / tilesPerUnit) / (2 * ar);
+        rPipe(mul, mul, offset, -1, ar);
+    } else {
+        float mul = 2.0 * ar / s.lvl.w;
+        float tilesPerUnit = s.lvl.w / (ar * 2);
+        float offset = -(s.lvl.h / tilesPerUnit) / 2;
+        rPipe(mul, mul, -1, offset, ar);
+    }
 
     rClear(CLEAR_COLOR);
 

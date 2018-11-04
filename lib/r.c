@@ -1,15 +1,8 @@
 #include "dragon.h"
 
-#include <string.h>
-#include <stdlib.h>
-
 #include <GLES2/gl2.h>
 
-static struct {
-    GLuint prog;
-    GLint aPos, aClr;
-    GLint uMat;
-} r;
+static GLuint prog, aPos, aClr, uMat;
 
 void rInit(void) {
     const char *VERT =
@@ -19,7 +12,7 @@ void rInit(void) {
     "varying vec4 vClr;\n"
     "uniform mat4 uMat;\n"
     "void main(void) {\n"
-    "    gl_Position = uMat * vec4(aPos.xy,0,1);\n"
+    "    gl_Position = uMat * vec4(aPos.xy, 0, 1);\n"
     "    vClr = aClr / 255.0;\n"
     "}\n";
 
@@ -31,87 +24,85 @@ void rInit(void) {
     "    gl_FragColor = vClr;\n"
     "}\n";
 
-    r.prog = glCreateProgram();
+    prog = glCreateProgram();
     GLuint vert = glCreateShader(GL_VERTEX_SHADER);
     GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(vert, 1, &VERT, NULL);
     glShaderSource(frag, 1, &FRAG, NULL);
     glCompileShader(vert);
     glCompileShader(frag);
-    glAttachShader(r.prog, vert);
-    glAttachShader(r.prog, frag);
-    glLinkProgram(r.prog);
-    glDetachShader(r.prog, vert);
-    glDetachShader(r.prog, frag);
+    glAttachShader(prog, vert);
+    glAttachShader(prog, frag);
+    glLinkProgram(prog);
+    glDetachShader(prog, vert);
+    glDetachShader(prog, frag);
     glDeleteShader(frag);
     glDeleteShader(vert);
 
-    glUseProgram(r.prog);
+    glUseProgram(prog);
 
-    r.aPos = glGetAttribLocation(r.prog, "aPos");
-    r.aClr = glGetAttribLocation(r.prog, "aClr");
-    r.uMat = glGetUniformLocation(r.prog, "uMat");
+    aPos = glGetAttribLocation(prog, "aPos");
+    aClr = glGetAttribLocation(prog, "aClr");
+    uMat = glGetUniformLocation(prog, "uMat");
 
-    float m[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    rMatrix(m);
+    float m[] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+    glUniformMatrix4fv(uMat, 1, GL_FALSE, m);
 }
 
 void rExit(void) {
     glUseProgram(0);
-    glDeleteProgram(r.prog);
+    glDeleteProgram(prog);
 }
 
-void rMatrix(const float m[4][4]) {
-    if (m) {
-        glUniformMatrix4fv(r.uMat, 1, GL_FALSE, (const void*)m);
-    }
+void rPipe(float mulX, float mulY, float addX, float addY, float divX) {
+    float m[16] = {
+        mulX / divX,    0, 0, addX,
+                  0, mulY, 0, addY,
+                  0,    0, 1, 0,
+                  0,    0, 0, 1
+    };
+    glUniformMatrix4fv(uMat, 1, GL_TRUE, m);
 }
-
 
 void rClear(const float *c) {
-    if (c) {
-        glClearColor(c[0], c[1], c[2], c[3]);
-    } else {
-        glClearColor(0,0,0,0);
-    }
+    glClearColor(c?c[0]:0, c?c[1]:0, c?c[2]:0, c?c[3]:0);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v){
-    glEnableVertexAttribArray((GLuint)r.aPos);
-    glEnableVertexAttribArray((GLuint)r.aClr);
+    glEnableVertexAttribArray(aPos);
+    glEnableVertexAttribArray(aClr);
 
-    glVertexAttribPointer((GLuint)r.aPos, 2, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
-    glVertexAttribPointer((GLuint)r.aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
+    glVertexAttribPointer(aPos, 2, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
+    glVertexAttribPointer(aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
 
     switch (mode) {
     case R_DRAW_MODE_POINTS:
-        glDrawElements(GL_POINTS, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_POINTS, ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_LINES:
-        glDrawElements(GL_LINES, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_LINES, ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_LINE_LOOP:
-        glDrawElements(GL_LINE_LOOP, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_LINE_LOOP, ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLES:
-        glDrawElements(GL_TRIANGLES, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_TRIANGLES, ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLE_STRIP:
-        glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_TRIANGLE_STRIP, ni, GL_UNSIGNED_INT, i);
         break;
     case R_DRAW_MODE_TRIANGLE_FAN:
-        glDrawElements(GL_TRIANGLE_FAN, (GLsizei)ni, GL_UNSIGNED_INT, i);
+        glDrawElements(GL_TRIANGLE_FAN, ni, GL_UNSIGNED_INT, i);
         break;
     default:
         break;
     }
 
-    glDisableVertexAttribArray((GLuint)r.aClr);
-    glDisableVertexAttribArray((GLuint)r.aPos);
+    glDisableVertexAttribArray(aClr);
+    glDisableVertexAttribArray(aPos);
 }
 
 void rViewport(int x, int y, int w, int h) {
     glViewport(x, y, w, h);
 }
-

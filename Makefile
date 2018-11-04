@@ -11,8 +11,6 @@ OBJ=src/main.o   \
     src/tick.o   \
     src/op.o     \
     lib/audio.o  \
-    lib/matrix.o \
-    lib/cam.o    \
     lib/r.o      \
     lib/batch.o  \
     lib/bmp.o    \
