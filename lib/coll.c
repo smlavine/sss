@@ -8,33 +8,52 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
     if (r.x < 0 || r.y < 0 || r.x >= b.w - 1 || r.y >= b.h - 1) {
         return (CollPen){false,0,0,0,0};
     }
-    // TODO: assert(r.w == 1)
-    // TODO: assert(r.h == 1)
-    int southWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y,     0);
-    int southEast = bmpGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y,     0);
-    int northWest = bmpGet(&b, (uint32_t)r.x,     (uint32_t)r.y + 1, 0);
-    int northEast = bmpGet(&b, (uint32_t)r.x + 1, (uint32_t)r.y + 1, 0);
 
-    if (r.x + r.w <= (size_t)r.x + 1) {
-        southEast = northEast = false;
-    }
-    if (r.y + r.h <= (size_t)r.y + 1) {
-        northWest = northEast = false;
+    int x = r.x;
+    int y = r.y;
+    int w = r.x + r.w - (int)r.x;
+    int h = r.y + r.h - (int)r.y;
+
+    if ((int)(r.x + r.w) == r.x + r.w && w > 0) {
+        --w;
     }
 
-    int n = (southWest<<3) + (southEast<<2) + (northWest<<1) + (northEast<<0);
+    if ((int)(r.y + r.h) == r.y + r.h && h > 0) {
+        --h;
+    }
+
+    int southWest = bmpGet(&b, x,     y,     0);
+    int southEast = bmpGet(&b, x + w, y,     0);
+    int northWest = bmpGet(&b, x,     y + h, 0);
+    int northEast = bmpGet(&b, x + w, y + h, 0);
+    bool south = false, north = false, west = false, east = false;
+    for (int xi = x + 1; xi < x + w; ++xi) {
+        south |= bmpGet(&b, xi, y,     0);
+        north |= bmpGet(&b, xi, y + h, 0);
+    }
+    for (int yi = y + 1; yi < y + h; ++yi) {
+        west |= bmpGet(&b, x,     yi, 0);
+        east |= bmpGet(&b, x + w, yi, 0);
+    }
+    for (int xi = x + 1; xi < x + w; ++xi) {
+        for (int yi = y + 1; yi < y + h; ++yi) {
+            if (bmpGet(&b, xi, yi, 0)) {
+                south = north = west = east = true;
+            }
+        }
+    }
 
     float penSouth = (size_t)r.y + 1 - r.y;
-    float penNorth = r.h - penSouth;
+    float penNorth = r.y + r.h - (size_t)(r.y + r.h);
     float penWest = (size_t)r.x + 1 - r.x;
-    float penEast = r.w - penWest;
+    float penEast = r.x + r.w - (size_t)(r.x + r.w);
 
     float penSouthWestSq = penSouth * penSouth + penWest * penWest;
     float penSouthEastSq = penSouth * penSouth + penEast * penEast;
     float penNorthWestSq = penNorth * penNorth + penWest * penWest;
     float penNorthEastSq = penNorth * penNorth + penEast * penEast;
 
-    bool south = false, north = false, west = false, east = false;
+    int n = (southWest << 3) + (southEast << 2) + (northWest << 1) + (northEast << 0);
     switch (n) {
         case 15: // 1111
             south = north = west = east = true;

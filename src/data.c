@@ -82,15 +82,12 @@ void sLoad(const char *path) {
 
     memset(&s, 0, sizeof(s));
 
-    for (int i = 0; i < w * h; ++i) {
-        if (p[i] == P_HERO) {
-            s.hero.r.x = i % w;
-            s.hero.r.y = i / w;
-            s.hero.r.w = 1;
-            s.hero.r.h = 1;
-            break;
-        }
-    }
+    RectArr hero = getRectArr(w, h, p, P_HERO, P_NONE);
+    s.hero.r.x = hero.arr[0].x;
+    s.hero.r.y = hero.arr[0].y;
+    s.hero.r.w = hero.arr[0].w;
+    s.hero.r.h = hero.arr[0].h;
+    free(hero.arr);
 
     bmpNew(w, h, 1, &s.lvl);
     for (int i = 0; i < w * h; ++i) {

@@ -1,3 +1,5 @@
+// TODO: add/remove rectangle collision targets to global bitmap when possible for better precision
+
 #include "../lib/dragon.h"
 #include "s.h"
 
