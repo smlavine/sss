@@ -10,14 +10,6 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
     int w = r.x + r.w - (int)r.x;
     int h = r.y + r.h - (int)r.y;
 
-    if ((int)(r.x + r.w) == r.x + r.w && w > 0) {
-        --w;
-    }
-
-    if ((int)(r.y + r.h) == r.y + r.h && h > 0) {
-        --h;
-    }
-
     int southWest = bmpGet(b, x,     y);
     int southEast = bmpGet(b, x + w, y);
     int northWest = bmpGet(b, x,     y + h);
@@ -86,48 +78,50 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
             east = true;
             break; // east
         case  8: // 1000
-            // FIXME: this might be wrong
-            if (penSouth <= penWest) {
+            if (penSouth <= penWest && !west) {
                 south = true;
-            } else {
+            } else if (!south) {
                 west = true;
             }
             break; // south west
         case  4: // 0100
-            // FIXME: this might be wrong
-            if (penSouth <= penEast) {
+            if (penSouth <= penEast && !east) {
                 south = true;
-            } else {
+            } else if (!south) {
                 east = true;
             }
             break; // south east
         case  2: // 0010
-            // FIXME: this might be wrong
-            if (penNorth <= penWest) {
+            if (penNorth <= penWest && !west) {
                 north = true;
-            } else {
+            } else if (!north) {
                 west = true;
             }
             break; // north east
         case  1: // 0001
-            // FIXME: this might be wrong
-            if (penNorth <= penEast) {
+            if (penNorth <= penEast && !east) {
                 north = true;
-            } else {
+            } else if (!north) {
                 east = true;
             }
             break; // north west
         case  9: // 1001
-            // FIXME: this might be wrong
-            if (penSouthEastSq <= penNorthWestSq) {
+            if (south || east) {
+                south = east = true;
+            } else if (north || west) {
+                north = west = true;
+            } else if (penSouthEastSq <= penNorthWestSq) {
                 south = east = true;
             } else {
                 north = west = true;
             }
             break; // diagonal south west north east
         case  6: // 0110
-            // FIXME: this might be wrong
-            if (penSouthWestSq <= penNorthEastSq) {
+            if (south || west) {
+                south = west = true;
+            } else if (north || east) {
+                north = east = true;
+            } else if (penSouthWestSq <= penNorthEastSq) {
                 south = west = true;
             } else {
                 north = east = true;
