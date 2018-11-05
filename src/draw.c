@@ -1,4 +1,3 @@
-#include "../lib/dragon.h"
 #include "s.h"
 
 // TODO: make key, lock, antilock colors more distinguishable

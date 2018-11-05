@@ -1,4 +1,3 @@
-#include "../lib/dragon.h"
 #include "s.h"
 
 #include <string.h>

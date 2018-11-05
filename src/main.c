@@ -109,6 +109,7 @@ int main(void) {
             // If the result is zero, continue running this level
             if (r < 0) {
                 --i;
+                break;
             } else if (r > 0) {
                 break;
             }
@@ -167,6 +168,7 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     return win;
 }
 
+// FIXME: there are problems with collisions, especially in lock levels; fix 'em
 // TODO: fire.
 // TODO: new levels.
 // TODO: many heroes.
