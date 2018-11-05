@@ -7,14 +7,17 @@
 // ---------------------------------------------------------------------------
 
 typedef struct {
-    size_t w, h, l;
+    size_t w, h;
     uint8_t *b;
 } Bmp;
 
-Bmp *bmpNew(size_t w, size_t h, size_t l, Bmp *b);
-Bmp *bmpDel(Bmp *bmp, bool freeHandle);
-bool bmpGet(const Bmp *bmp, size_t x, size_t y, size_t z);
-void bmpSet(Bmp *bmp, size_t x, size_t y, size_t z, bool b);
+static inline bool bmpGet(const Bmp b, size_t x, size_t y) {
+    return b.b[y * b.w + x];
+}
+
+static inline void bmpSet(Bmp b, size_t x, size_t y, bool v) {
+    b.b[y * b.w + x] = v;
+}
 
 // ---------------------------------------------------------------------------
 // coll.c

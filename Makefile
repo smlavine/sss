@@ -13,7 +13,6 @@ OBJ=src/main.o   \
     lib/audio.o  \
     lib/r.o      \
     lib/batch.o  \
-    lib/bmp.o    \
     lib/coll.o
 DST=sss
 

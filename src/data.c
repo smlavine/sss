@@ -89,10 +89,10 @@ void sLoad(const char *path) {
     s.hero.r.h = hero.arr[0].h;
     free(hero.arr);
 
-    bmpNew(w, h, 1, &s.lvl);
+    s.lvl = (Bmp){w, h, malloc(w * h * sizeof(*s.lvl.b))};
     for (int i = 0; i < w * h; ++i) {
         bool bit = (p[i] == P_WALL || p[i] == P_EJECTOR);
-        bmpSet(&s.lvl, i % w, i / w, 0, bit);
+        bmpSet(s.lvl, i % w, i / w, bit);
     }
 
     RectArr wall = getRectArr(w, h, p, P_WALL, P_NONE);
@@ -240,7 +240,7 @@ void sLoad(const char *path) {
 void sFree(void) {
     batchDel(&s.draw.bg, false);
     batchDel(&s.draw.fg, false);
-    bmpDel(&s.lvl, false);
+    free(s.lvl.b);
     free(s.ejector.arr);
     free(s.pulsator.arr);
     free(s.shrinker.arr);

@@ -18,27 +18,27 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
         --h;
     }
 
-    int southWest = bmpGet(&b, x,     y,     0);
-    int southEast = bmpGet(&b, x + w, y,     0);
-    int northWest = bmpGet(&b, x,     y + h, 0);
-    int northEast = bmpGet(&b, x + w, y + h, 0);
+    int southWest = bmpGet(b, x,     y);
+    int southEast = bmpGet(b, x + w, y);
+    int northWest = bmpGet(b, x,     y + h);
+    int northEast = bmpGet(b, x + w, y + h);
 
     bool south, north, west, east;
     south = north = west = east = false;
 
     for (int xi = x + 1; xi < x + w; ++xi) {
-        south |= bmpGet(&b, xi, y,     0);
-        north |= bmpGet(&b, xi, y + h, 0);
+        south |= bmpGet(b, xi, y);
+        north |= bmpGet(b, xi, y + h);
     }
 
     for (int yi = y + 1; yi < y + h; ++yi) {
-        west |= bmpGet(&b, x,     yi, 0);
-        east |= bmpGet(&b, x + w, yi, 0);
+        west |= bmpGet(b, x,     yi);
+        east |= bmpGet(b, x + w, yi);
     }
 
     for (int xi = x + 1; xi < x + w; ++xi) {
         for (int yi = y + 1; yi < y + h; ++yi) {
-            if (bmpGet(&b, xi, yi, 0)) {
+            if (bmpGet(b, xi, yi)) {
                 south = north = west = east = true;
             }
         }
