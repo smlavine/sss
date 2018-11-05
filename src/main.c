@@ -168,7 +168,6 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     return win;
 }
 
-// FIXME: there are problems with collisions, especially in lock levels; fix 'em
 // TODO: fire.
 // TODO: new levels.
 // TODO: many heroes.

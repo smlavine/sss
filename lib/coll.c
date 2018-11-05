@@ -140,7 +140,8 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
 }
 
 CollPen collRect(CollRect a, CollRect b) {
-    if (a.x+a.w <= b.x || a.x >= b.x+b.w || a.y+a.h <= b.y || a.y >= b.y+b.h){
+    if (a.x+a.w <= b.x || a.x >= b.x+b.w || a.y+a.h <= b.y || a.y >= b.y+b.h
+      ||a.w <= 0 || b.w <= 0 || a.h <= 0 || b.h <= 0) {
         return (CollPen){false, 0, 0, 0, 0};
     } else {
         float penSouth = b.y + b.h - a.y;
