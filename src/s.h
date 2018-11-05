@@ -1,3 +1,5 @@
+#include "../lib/dragon.h"
+
 #define S_SHRINKING_TICKS 20
 
 typedef struct {
