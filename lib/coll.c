@@ -140,23 +140,22 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
 }
 
 CollPen collRect(CollRect a, CollRect b) {
-    if (a.x + a.w <= b.x || a.x >= b.x + b.w
-     || a.y + a.h <= b.y || a.y >= b.y + b.h
-     || a.w <= 0 || a.h <= 0 || b.w <= 0 || b.h <= 0) {
+    if (a.x+a.w <= b.x || a.x >= b.x+b.w || a.y+a.h <= b.y || a.y >= b.y+b.h){
         return (CollPen){false, 0, 0, 0, 0};
     } else {
+        float penSouth = b.y + b.h - a.y;
+        float penNorth = a.y + a.h - b.y;
+        float penWest = b.x + b.w - a.x;
+        float penEast = a.x + a.w - b.x;
         CollPen p = {true, 0, 0, 0, 0};
         if (a.x < b.x) {
-            float penEast = a.x + a.w - b.x;
             if (a.y < b.y) {
-                float penNorth = a.y + a.h - b.y;
                 if (penEast < penNorth) {
                     p.east = penEast;
                 } else {
                     p.north = penNorth;
                 }
             } else {
-                float penSouth = b.y + b.h - a.y;
                 if (penEast < penSouth) {
                     p.east = penEast;
                 } else {
@@ -164,16 +163,13 @@ CollPen collRect(CollRect a, CollRect b) {
                 }
             }
         } else {
-            float penWest = b.x + b.w - a.x;
             if (a.y < b.y) {
-                float penNorth = a.y + a.h - b.y;
                 if (penWest < penNorth) {
                     p.west = penWest;
                 } else {
                     p.north = penNorth;
                 }
             } else {
-                float penSouth = b.y + b.h - a.y;
                 if (penWest < penSouth) {
                     p.west = penWest;
                 } else {
