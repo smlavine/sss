@@ -8,8 +8,8 @@ void rInit(void) {
     const char *VERT =
     "#version 100\n"
     "attribute vec2 aPos;\n"
-    "attribute vec4 aClr;\n"
-    "varying vec4 vClr;\n"
+    "attribute vec3 aClr;\n"
+    "varying vec3 vClr;\n"
     "uniform mat4 uMat;\n"
     "void main(void) {\n"
     "    gl_Position = uMat * vec4(aPos.xy, 0, 1);\n"
@@ -19,9 +19,9 @@ void rInit(void) {
     const char *FRAG =
     "#version 100\n"
     "precision mediump float;\n"
-    "varying vec4 vClr;\n"
+    "varying vec3 vClr;\n"
     "void main(void) {\n"
-    "    gl_FragColor = vClr;\n"
+    "    gl_FragColor = vec4(vClr.rgb, 1);\n"
     "}\n";
 
     prog = glCreateProgram();
@@ -74,7 +74,7 @@ void rDrawIndexedTriangles(size_t ni,const uint32_t *i,const RVertex *v){
     glEnableVertexAttribArray(aClr);
 
     glVertexAttribPointer(aPos, 2, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
-    glVertexAttribPointer(aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
+    glVertexAttribPointer(aClr, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
 
     glDrawElements(GL_TRIANGLES, ni, GL_UNSIGNED_INT, i);
 

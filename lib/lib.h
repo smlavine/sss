@@ -95,7 +95,7 @@ CollPen collRect(CollRect a, CollRect b);
 
 typedef struct {
     float x, y;
-    uint8_t r, g, b, a;
+    uint8_t r, g, b;
 } RVertex;
 
 void rInit(void);
