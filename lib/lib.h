@@ -192,11 +192,10 @@ typedef struct {
 } Batch;
 
 Batch *batchDel(Batch *b, bool freeHandle);
-void batch(Batch *b, size_t ni, const uint32_t *i, size_t nv, const RVertex *v);
+void batch(Batch*b, size_t ni, const uint32_t*i, size_t nv, const RVertex*v);
 void batchClear(Batch *b);
-void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]);
-void batchLine(Batch *b, float x, float y, float angle, float len, float t, const uint8_t rgba[4]);
-void batchRectLine(Batch *b, CollRect r, float ti, float to, const uint8_t rgba[4]);
+void batchRect(Batch *b, CollRect r, const uint8_t *rgb);
+void batchRectLine(Batch *b,CollRect r,float ti,float to,const uint8_t *rgb);
 
 // ===========================================================================
 

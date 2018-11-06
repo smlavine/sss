@@ -50,7 +50,7 @@ void batchClear(Batch *b) {
     b->nv = 0;
 }
 
-void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]) {
+void batchRect(Batch *b, CollRect r, const uint8_t *rgb) {
     const uint32_t i[] = {
         (uint32_t)b->nv + 0,
         (uint32_t)b->nv + 1,
@@ -60,41 +60,17 @@ void batchRect(Batch *b, CollRect r, const uint8_t rgba[4]) {
         (uint32_t)b->nv + 0
     };
     const RVertex v[] = {
-        {r.x,       r.y,       rgba[0], rgba[1], rgba[2]},
-        {r.x + r.w, r.y,       rgba[0], rgba[1], rgba[2]},
-        {r.x + r.w, r.y + r.h, rgba[0], rgba[1], rgba[2]},
-        {r.x,       r.y + r.h, rgba[0], rgba[1], rgba[2]}
+        {r.x,       r.y,       rgb[0], rgb[1], rgb[2]},
+        {r.x + r.w, r.y,       rgb[0], rgb[1], rgb[2]},
+        {r.x + r.w, r.y + r.h, rgb[0], rgb[1], rgb[2]},
+        {r.x,       r.y + r.h, rgb[0], rgb[1], rgb[2]}
     };
     batch(b, 6, i, 4, v);
 }
 
-void batchLine(Batch *b, float x, float y, float angle, float len, float t, const uint8_t rgba[4]) {
-    float dx = sinf(angle) * t / 2;
-    float dy = cosf(angle) * t / 2;
-    float x2 = x + cosf(angle) * len;
-    float y2 = y + sinf(angle) * len;
-    const uint32_t i[] = {
-        (uint32_t)b->nv + 0,
-        (uint32_t)b->nv + 1,
-        (uint32_t)b->nv + 2,
-        (uint32_t)b->nv + 2,
-        (uint32_t)b->nv + 3,
-        (uint32_t)b->nv + 0
-    };
-    const RVertex v[] = {
-        {x - dx,   y + dy,  rgba[0], rgba[1], rgba[2]},
-        {x + dx,   y - dy,  rgba[0], rgba[1], rgba[2]},
-        {x2 + dx,  y2 - dy, rgba[0], rgba[1], rgba[2]},
-        {x2 - dx,  y2 + dy, rgba[0], rgba[1], rgba[2]}
-    };
-    batch(b, 6, i, 4, v);
-}
-
-void batchRectLine(Batch *b, CollRect r, float ti, float to, const uint8_t rgba[4]) {
-    float t = ti + to;
-    float dt = (ti - to) / 2;
-    batchLine(b, r.x,            r.y + dt,       0     , r.w, t, rgba);
-    batchLine(b, r.x,            r.y + r.h - dt, 0     , r.w, t, rgba);
-    batchLine(b, r.x + dt,       r.y,            PI / 2, r.h, t, rgba);
-    batchLine(b, r.x + r.w - dt, r.y,            PI / 2, r.h, t, rgba);
+void batchRectLine(Batch *b,CollRect r,float ti,float to,const uint8_t *rgb) {
+    batchRect(b, (CollRect){r.x - to,   r.y,        ti + to, r.h    }, rgb);
+    batchRect(b, (CollRect){r.x,        r.y - to,   r.w,     ti + to}, rgb);
+    batchRect(b, (CollRect){r.x,        r.y+r.h-ti, r.w,     ti + to}, rgb);
+    batchRect(b, (CollRect){r.x+r.w-ti, r.y,        ti + to, r.h    }, rgb);
 }
