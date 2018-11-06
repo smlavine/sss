@@ -1,7 +1,7 @@
 #include "dragon.h"
 
 CollPen collBmpRect(const Bmp b, CollRect r) {
-    if (r.x < 0 || r.y < 0 || r.x + r.w >= b.w || r.y + r.h >= b.h) {
+    if (r.x<0 || r.y<0 || r.x+r.w>=b.w || r.y+r.h>=b.h || r.w<=0 || r.h<=0) {
         return (CollPen){false, 0, 0, 0, 0};
     }
 
@@ -10,13 +10,12 @@ CollPen collBmpRect(const Bmp b, CollRect r) {
     int w = r.x + r.w - (int)r.x;
     int h = r.y + r.h - (int)r.y;
 
-    int southWest = bmpGet(b, x,     y);
-    int southEast = bmpGet(b, x + w, y);
-    int northWest = bmpGet(b, x,     y + h);
-    int northEast = bmpGet(b, x + w, y + h);
+    bool southWest = bmpGet(b, x,     y);
+    bool southEast = bmpGet(b, x + w, y);
+    bool northWest = bmpGet(b, x,     y + h);
+    bool northEast = bmpGet(b, x + w, y + h);
 
-    bool south, north, west, east;
-    south = north = west = east = false;
+    bool south = false, north = false, west = false, east = false;
 
     for (int xi = x + 1; xi < x + w; ++xi) {
         south |= bmpGet(b, xi, y);

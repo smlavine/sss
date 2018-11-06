@@ -98,10 +98,19 @@ int main(void) {
             bool kR = glfwGetKey(win, GLFW_KEY_R);
             int r = sTick(audio, t, kUp, kLeft, kRight, kR);
 
-            // Render the current state - call sDraw()
+            // Render the current state - call sDraw().
             int winW, winH;
             glfwGetFramebufferSize(win, &winW, &winH);
             sDraw(winW, winH);
+            /*
+             * This call will block and cap the framerate to screen refresh
+             * rate. Thus the physics loop won't be able to go faster than
+             * the rendering loop when they should be completely independent
+             * from each other and run concurrently. This could be solved by
+             * moving the rendering loop into its own thread, and locking the
+             * global singleton with a mutex.
+             * A problem? Maybe. So far I deem physics to be accurate enough.
+             */
             glfwSwapBuffers(win);
 
             // If the result is negative, restart the level
@@ -168,12 +177,25 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     return win;
 }
 
-// TODO: fire.
-// TODO: new levels.
-// TODO: many heroes.
-// TODO: hero kinds.
-// TODO: zones.
-// TODO: lights.
-// TODO: clean-up TODOs.
-// TODO: README.md: GIFs, speedrun, screenshots, installation, building, controls.
-// TODO: add/remove rectangle collision targets to global bitmap when possible for better precision
+/*
+ * The global TODO list also resides in this file.
+ * The items listed here are ideas rather than goals to be achieved in the
+ * next release.
+ */
+
+// TODO: fire
+// TODO: new levels
+// TODO: many heroes
+// TODO: hero kinds
+// TODO: zones
+// TODO: lights
+// TODO: clean-up TODOs
+// TODO: README: GIFs, speedrun, screenshots, installation, building, controls
+// TODO: add/remove rectangle collision targets to global bitmap when possible
+// TODO: render in another thread and make physics framerate higher
+// TODO: replace float with long double in physics calculations
+// TODO: textures, main menu: launcher, help, options, exit
+// TODO: replace OpenGL ES with Vulkan
+// TODO: replace OpenAL with libsoundio
+// TODO: make packages, at least for OpenBSD
+// TODO: solve the problem of level transition and same input
