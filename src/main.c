@@ -199,3 +199,17 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 // TODO: replace OpenAL with libsoundio
 // TODO: make packages, at least for OpenBSD
 // TODO: solve the problem of level transition and same input
+// TODO: level making tutorial
+// TODO: documentation
+    // lib/lib.h: r
+    // lib/lib.h: batch
+    // lib/lib.h: audio
+    // lib/coll.c
+    // lib/r.c
+    // lib/batch.c
+    // lib/audio.c
+    // src/s.h
+    // src/data.c
+    // src/op.c
+    // src/draw.c
+    // src/tick.c
