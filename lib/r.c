@@ -69,35 +69,14 @@ void rClear(const float *c) {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v){
+void rDrawIndexedTriangles(size_t ni,const uint32_t *i,const RVertex *v){
     glEnableVertexAttribArray(aPos);
     glEnableVertexAttribArray(aClr);
 
     glVertexAttribPointer(aPos, 2, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
     glVertexAttribPointer(aClr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(*v), &v->r);
 
-    switch (mode) {
-    case R_DRAW_MODE_POINTS:
-        glDrawElements(GL_POINTS, ni, GL_UNSIGNED_INT, i);
-        break;
-    case R_DRAW_MODE_LINES:
-        glDrawElements(GL_LINES, ni, GL_UNSIGNED_INT, i);
-        break;
-    case R_DRAW_MODE_LINE_LOOP:
-        glDrawElements(GL_LINE_LOOP, ni, GL_UNSIGNED_INT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLES:
-        glDrawElements(GL_TRIANGLES, ni, GL_UNSIGNED_INT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLE_STRIP:
-        glDrawElements(GL_TRIANGLE_STRIP, ni, GL_UNSIGNED_INT, i);
-        break;
-    case R_DRAW_MODE_TRIANGLE_FAN:
-        glDrawElements(GL_TRIANGLE_FAN, ni, GL_UNSIGNED_INT, i);
-        break;
-    default:
-        break;
-    }
+    glDrawElements(GL_TRIANGLES, ni, GL_UNSIGNED_INT, i);
 
     glDisableVertexAttribArray(aClr);
     glDisableVertexAttribArray(aPos);

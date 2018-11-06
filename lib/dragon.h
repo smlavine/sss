@@ -93,27 +93,16 @@ CollPen collRect(CollRect a, CollRect b);
 
 // ===========================================================================
 
-typedef enum {
-    R_DRAW_MODE_POINTS,
-    R_DRAW_MODE_LINES,
-    R_DRAW_MODE_LINE_LOOP,
-    R_DRAW_MODE_TRIANGLES,
-    R_DRAW_MODE_TRIANGLE_STRIP,
-    R_DRAW_MODE_TRIANGLE_FAN
-} RDrawMode;
-
 typedef struct {
     float x, y;
     uint8_t r, g, b, a;
 } RVertex;
 
-// ===========================================================================
-
 void rInit(void);
 void rExit(void);
 void rPipe(float mulX, float mulY, float addX, float addY, float divX);
 void rClear(const float *c);
-void rDrawIndexed(RDrawMode mode,size_t ni,const uint32_t *i,const RVertex *v);
+void rDrawIndexedTriangles(size_t ni,const uint32_t *i,const RVertex *v);
 void rViewport(int x, int y, int w, int h);
 
 // ===========================================================================

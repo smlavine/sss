@@ -41,7 +41,7 @@ void sDraw(int winW, int winH) {
 
     rClear(CLEAR_COLOR);
 
-    rDrawIndexed(R_DRAW_MODE_TRIANGLES,s.draw.bg.ni,s.draw.bg.i,s.draw.bg.v);
+    rDrawIndexedTriangles(s.draw.bg.ni,s.draw.bg.i,s.draw.bg.v);
 
     for (size_t i = 0; i < s.plat.n; ++i) {
         batchRect(&s.draw.fg, sOpPlat(i), COLOR_PLAT);
@@ -100,7 +100,7 @@ void sDraw(int winW, int winH) {
 
     batchRect(&s.draw.fg, s.hero.r, COLOR_HERO);
 
-    rDrawIndexed(R_DRAW_MODE_TRIANGLES,s.draw.fg.ni,s.draw.fg.i,s.draw.fg.v);
+    rDrawIndexedTriangles(s.draw.fg.ni,s.draw.fg.i,s.draw.fg.v);
 
     batchClear(&s.draw.fg);
 }
