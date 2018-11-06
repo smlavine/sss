@@ -60,8 +60,8 @@ void rPipe(float mulX, float mulY, float addX, float addY) {
     glUniform2f(uAdd, addX, addY);
 }
 
-void rClear(const float *c) {
-    glClearColor(c?c[0]:0, c?c[1]:0, c?c[2]:0, c?c[3]:0);
+void rClear(uint8_t r, uint8_t g, uint8_t b) {
+    glClearColor(r / 255.0, g / 255.0, b / 255.0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

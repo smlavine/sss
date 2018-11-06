@@ -22,7 +22,7 @@
                                                      {   0, 255,   0, 255 }, \
                                                      {   0, 255,   0, 255 } }
 #define KEY_ANTILOCK_LINE_THICKNESS 0.1
-#define CLEAR_COLOR (const float[]){1, 1, 1, 1}
+#define CLEAR_COLOR 255, 255, 255
 
 void sDraw(int winW, int winH) {
     rViewport(0, 0, winW, winH);
