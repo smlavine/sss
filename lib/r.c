@@ -2,7 +2,7 @@
 
 #include <GLES2/gl2.h>
 
-static GLuint prog, aPos, aClr, uMat;
+static GLuint prog, aPos, aClr, uMul, uAdd;
 
 void rInit(void) {
     const char *VERT =
@@ -10,9 +10,9 @@ void rInit(void) {
     "attribute vec2 aPos;\n"
     "attribute vec3 aClr;\n"
     "varying vec3 vClr;\n"
-    "uniform mat4 uMat;\n"
+    "uniform vec2 uMul, uAdd;\n"
     "void main(void) {\n"
-    "    gl_Position = uMat * vec4(aPos.xy, 0, 1);\n"
+    "    gl_Position = vec4(aPos * uMul + uAdd, 0, 1);\n"
     "    vClr = aClr / 255.0;\n"
     "}\n";
 
@@ -43,10 +43,11 @@ void rInit(void) {
 
     aPos = glGetAttribLocation(prog, "aPos");
     aClr = glGetAttribLocation(prog, "aClr");
-    uMat = glGetUniformLocation(prog, "uMat");
+    uMul = glGetUniformLocation(prog, "uMul");
+    uAdd = glGetUniformLocation(prog, "uAdd");
 
-    float m[] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-    glUniformMatrix4fv(uMat, 1, GL_FALSE, m);
+    glUniform2f(uMul, 1, 1);
+    glUniform2f(uAdd, 0, 0);
 }
 
 void rExit(void) {
@@ -54,14 +55,9 @@ void rExit(void) {
     glDeleteProgram(prog);
 }
 
-void rPipe(float mulX, float mulY, float addX, float addY, float divX) {
-    float m[16] = {
-        mulX / divX,    0, 0, addX,
-                  0, mulY, 0, addY,
-                  0,    0, 1, 0,
-                  0,    0, 0, 1
-    };
-    glUniformMatrix4fv(uMat, 1, GL_TRUE, m);
+void rPipe(float mulX, float mulY, float addX, float addY) {
+    glUniform2f(uMul, mulX, mulY);
+    glUniform2f(uAdd, addX, addY);
 }
 
 void rClear(const float *c) {

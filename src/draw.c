@@ -31,12 +31,12 @@ void sDraw(int winW, int winH) {
         float mul = 2.0 / s.lvl.h;
         float tilesPerUnit = s.lvl.h / 2.0;
         float offset = -(s.lvl.w / tilesPerUnit) / (2 * ar);
-        rPipe(mul, mul, offset, -1, ar);
+        rPipe(mul / ar, mul, offset, -1);
     } else {
         float mul = 2.0 * ar / s.lvl.w;
         float tilesPerUnit = s.lvl.w / (ar * 2);
         float offset = -(s.lvl.h / tilesPerUnit) / 2;
-        rPipe(mul, mul, -1, offset, ar);
+        rPipe(mul / ar, mul, -1, offset);
     }
 
     rClear(CLEAR_COLOR);
