@@ -1,4 +1,4 @@
-#include "dragon.h"
+#include "lib.h"
 
 #include <GLES2/gl2.h>
 

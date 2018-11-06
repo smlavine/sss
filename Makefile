@@ -21,7 +21,7 @@ $(DST): $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 
 # Dependencies on headers
-$(OBJ): lib/dragon.h
+$(OBJ): lib/lib.h
 $(SRC_OBJ): src/s.h
 
 # Inference rules

@@ -1,4 +1,4 @@
-#include "dragon.h"
+#include "lib.h"
 
 #include <stdlib.h>
 

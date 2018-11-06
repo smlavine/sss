@@ -1,4 +1,4 @@
-#include "../lib/dragon.h"
+#include "../lib/lib.h"
 
 #define S_SHRINKING_TICKS 20
 

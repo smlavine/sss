@@ -1,4 +1,4 @@
-#include "dragon.h"
+#include "lib.h"
 
 CollPen collBmpRect(const Bmp b, CollRect r) {
     if (r.x<0 || r.y<0 || r.x+r.w>=b.w || r.y+r.h>=b.h || r.w<=0 || r.h<=0) {
