@@ -109,7 +109,7 @@ CollPen collRect(CollRect a, CollRect b);
  *    uint32_t i[] = {0, 1, 2,  2, 3, 0};
  *    rDrawIndexedTriangles(6, i, v);
  *
- * Now say we want to draw a red sqaure from the middle of the screen to the
+ * Now say we want to draw a red square from the middle of the screen to the
  * top right corner without changing any vertices. Let's use the "pipeline"!
  * You see, every vertex (point) goes through a pipeline. In that pipeline,
  * every X coordinate is multiplied my mulX, and every Y coordinate - by mulY.
@@ -121,6 +121,15 @@ CollPen collRect(CollRect a, CollRect b);
  *     ...
  *
  * Tah-dah! There we have it.
+ * Oh, and what I forgot to mention is that the screen is not the actual
+ * screen, it's the virtual screen which is a portion of the real screen.
+ * Let's say you have a window that is 800x600. Then the virtual screen
+ * can be any rectangle on that window. You can (and should) set the virtual
+ * screen to be exactly the same as the actual screen (x=0,y=0,w=800,h=600)
+ * with rViewport() before drawing anything.
+ *
+ *     rViewport(0, 0, windowW, windowH); // virtual screen = actual screen
+ *     ... // draw stuff
  */
 
 /*
@@ -156,10 +165,7 @@ void rExit(void);
 void rPipe(float mulX, float mulY, float addX, float addY);
 
 /*
- * Clears the screen with specified color.
- * Same as drawing a screen-rectangle (x=-1, y=-1, w=2, h=2), but easier.
- * Should be called right after rInit() and rViewport() and then periodically
- * right after glfwSwapBuffers() and rViewport(), and never in other cases.
+ * Clears the real, whole, actual screen with specified color.
  * r, g, b - the specified color to clear the screen with.
  */
 void rClear(uint8_t r, uint8_t g, uint8_t b);
@@ -167,34 +173,85 @@ void rClear(uint8_t r, uint8_t g, uint8_t b);
 /*
  * Draws indexed triangles.
  * ni - number of indices.
- * i - array of indices.
+ * i - array of indices that reference the vertices.
  * v - array of vertices.
  */
 void rDrawIndexedTriangles(size_t ni, const uint32_t *i, const RVertex *v);
 
 /*
- * Oh, and by the way, OpenGL renderers stuff on a virtual screen that goes
- * from -1 to 1 to in both directions. And the virtual screen is a rectangle
- * on the real screen / window, which you specify with this function.
- * Just call it right after rInit() and then periodically right after
- * glfwSwapBuffers(), with x - 0, y - 0 and w - window framebuffer width and
- * h - window framebuffer height, all measured in pixels.
+ * Set the virtual screen rectangle, which is a portion of the actual screen.
+ * Use rViewport(0, 0, windowW, windowH) to make it equal to the real screen.
+ * x, y - the coordinates of the lower left corner of the virtual screen
+          rectangle. By default both are 0.
+ * w, h - the size of the virtual screen rectangle. By default are the initial
+ *        size of the actual screen, but don't count on that.
  */
 void rViewport(int x, int y, int w, int h);
 
 // ===========================================================================
 
+/*
+ * A batch is two dynamic arrays - one of vertices and one of indices.
+ *     typedef struct {
+ *         vector<uint32_t> i;
+ *         vector<RVertex> v;
+ *     } Batch;
+ * To allocate a new one simply calloc the structure or zero-out one on stack.
+ * ni - the actual number of indices in the index array.
+ * nv - the actual number of vertices in the vertex array.
+ * mi - the number of indices the index array has memory to contain.
+ * mv - the number of vertices the vertex array has memory to contain.
+ * i - the index array.
+ * v - the vertex array.
+ */
 typedef struct {
-    float w, h, l;
     size_t ni, mi, nv, mv;
     uint32_t *i;
     RVertex *v;
 } Batch;
 
+/*
+ * Deletes a batch.
+ * This is the only batch function that actually deallocates memory.
+ * b - pointer to the batch to be deleted.
+ * freeHandle - whether to free(b) as well.
+ * Always returns NULL.
+ */
 Batch *batchDel(Batch *b, bool freeHandle);
+
+/*
+ * Batches indices and vertices.
+ * b - the batch to batch (add) indices and vertices to.
+ * ni - the number of indices to add to the batch.
+ * i - the index array to batch the indices from or NULL to just allocate
+       memory for at least ni additional indices (batch.ni isn't incremented).
+ * nv - the number of vertices to add to the batch.
+ * v - the vertex array to batch the vertices from or NULL to just allocate
+ *     memory for at least nv additional vertices (batch.nv isn't incremented)
+ */
 void batch(Batch*b, size_t ni, const uint32_t*i, size_t nv, const RVertex*v);
+
+/*
+ * Assign batch.ni and batcn.nv to 0 (no memory is de-allocated).
+ */
 void batchClear(Batch *b);
+
+/*
+ * Batches four vertices and six indices to draw a rectangle.
+ * b - the batch to batch the vertices and indices to.
+ * r - the rectangle to draw.
+ * rgb - the color of vertices.
+ */
 void batchRect(Batch *b, CollRect r, const uint8_t *rgb);
+
+/*
+ * Batches four rectangles to draw the outline of the rectangle.
+ * b - the batch to batch the outline of of the rectangle to.
+ * r - the rectangle to batch the outline of.
+ * ti - the thickness of the lines going inside the specified rectangle.
+ * to - the thickness of the lines going outside the specified rectangle.
+ * rgb - the color of the vertices.
+ */
 void batchRectLine(Batch *b,CollRect r,float ti,float to,const uint8_t *rgb);
 
 // ===========================================================================
