@@ -76,12 +76,6 @@ void audioSoundStop(const AudioSound *sound) {
     alSourceStop(sound->source);
 }
 
-bool audioSoundPlaying(const AudioSound *sound) {
-    ALint state;
-    alGetSourcei(sound->source, AL_SOURCE_STATE, &state);
-    return (state == AL_PLAYING);
-}
-
 AudioMusic *audioMusicLoad(const char *path) {
     AudioMusic *music = malloc(sizeof(*music));
     alGenSources(1, &music->source);
@@ -135,12 +129,6 @@ void audioMusicPause(const AudioMusic *music) {
 void audioMusicStop(const AudioMusic *music) {
     alSourceStop(music->source);
     alSourcei(music->source, AL_BUFFER, 0);
-}
-
-bool audioMusicPlaying(const AudioMusic *music) {
-    ALint state;
-    alGetSourcei(music->source, AL_SOURCE_STATE, &state);
-    return (state == AL_PLAYING);
 }
 
 static ALuint loadOGG(const char *path) {
