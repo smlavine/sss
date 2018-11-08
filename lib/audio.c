@@ -122,10 +122,6 @@ void audioMusicStream(AudioMusic *music) {
     if (bytesLoaded == MUSIC_BUFFER_SIZE && processedBufferCount > 1) audioMusicStream(music);
 }
 
-void audioMusicPause(const AudioMusic *music) {
-    alSourcePause(music->source);
-}
-
 void audioMusicStop(const AudioMusic *music) {
     alSourceStop(music->source);
     alSourcei(music->source, AL_BUFFER, 0);

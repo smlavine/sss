@@ -201,9 +201,6 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 // TODO: solve the problem of level transition and same input
 // TODO: level making tutorial
 // TODO: documentation
-    // lib/lib.h: r
-    // lib/lib.h: batch
-    // lib/lib.h: audio
     // lib/coll.c
     // lib/r.c
     // lib/batch.c

@@ -256,18 +256,106 @@ void batchRectLine(Batch *b,CollRect r,float ti,float to,const uint8_t *rgb);
 
 // ===========================================================================
 
+/*
+ * The audio module is a cute little wrapper around OpenAL.
+ * There were some functions that were deleted because they were unused in
+ * this particular game but could have been utilized in some other scenarios:
+ *     audioMusicPlaying() - to check whether the music has finished
+ *     audioMusicPause() - to pause the music
+ */
+
+/*
+ * An opaque sound type.
+ * Used to store small sound bites.
+ * Do not use it for big audio files!
+ * All the audio samples are stored in heap memory (RAM).
+ * One minute is 44100Hz * 2 channels * 2 bytes per sample * 60 seconds = 10MB.
+ */
 typedef struct AudioSound AudioSound;
+
+/*
+ * An opaque music type.
+ * Used to store music.
+ * Instead of storing all the samples in memory, it loads the audio in chunks.
+ * Do not use it for small audio files!
+ * It will cause unneccesary overhead.
+ */
 typedef struct AudioMusic AudioMusic;
 
+/*
+ * Initializes the audio system.
+ * Prerequisite for all the other audio functions.
+ */
 void audioInit(void);
+
+/*
+ * Terminates the audio system.
+ * Call this when you're done with audio.
+ */
 void audioExit(void);
+
+/*
+ * Loads a small OGG audio file into an AudioSound type.
+ * path - the location of said file.
+ */
 AudioSound *audioSoundLoad(const char *path);
+
+/*
+ * Frees the AudioSound type.
+ * sound - the sound to be freed.
+ */
 void audioSoundFree(AudioSound *sound);
+
+/*
+ * Plays the specified sound.
+ * sound - the sound to be played.
+ */
 void audioSoundPlay(const AudioSound *sound);
+
+/*
+ * Stops the specified sound from being played, if it was being played.
+ * sound - the sound to be stopped.
+ */
 void audioSoundStop(const AudioSound *sound);
+
+/*
+ * Opens the music OGG audio file for streaming.
+ * Stores the required data for streaming in the AudioMusic type.
+ * path - the location of the audio file.
+ */
 AudioMusic *audioMusicLoad(const char *path);
+
+/*
+ * Closes the streamed music OGG audio file.
+ * Frees all the book-keeping data that was required to stream it.
+ * music - the music to be closed and freed.
+ */
 void audioMusicFree(AudioMusic *music);
+
+/*
+ * Plays the specified music once, or loops it repeatedly.
+ * It should be called once.
+ * Then audioMusicStream() should be called periodically.
+ * music - the music to be played
+ * repeat - when the audioMusicStream() will run out of audio chunks to
+ *          stream, whether to start over from the beginning or ignore.
+ */
 void audioMusicPlay(AudioMusic *music, bool repeat);
+
+/*
+ * Streams the music that is already played, so it would not run out of chunks
+ * of audio to play. Should be called periodically after audioMusicPlay().
+ * music - the music to stream.
+ */
 void audioMusicStream(AudioMusic *music);
-void audioMusicPause(const AudioMusic *music);
+
+/*
+ * Stops the music.
+ * Should be called if and only if audioMusicPlay() was called beforehand.
+ * There may be intervening audioMusicStream() calls.
+ * This function should be called before audioMusicFree() if audioMusicPlay()
+ * was called as well.
+ * After audioMusicStop() you can audioMusicPlay() again but I didn't test it.
+ * music - the music to stop.
+ */
 void audioMusicStop(const AudioMusic *music);
