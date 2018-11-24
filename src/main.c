@@ -25,7 +25,7 @@
 
 // Level parameters, used to (re)load levels
 #define LVL_FIRST 1 // The number of the first level to be loaded
-#define LVL_LAST 26 // The number of the last level to be loaded
+#define LVL_LAST 27 // The number of the last level to be loaded
 #define LVL_PATH_BUFFER_SIZE 11 // The size of the level path buffer
 #define LVL_PATH_FMTS "rsc/%d.ppm" // Format string passed to snprintf()
 
@@ -196,7 +196,7 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 // TODO: replace float with long double in physics calculations
 // TODO: textures, main menu: launcher, help, options, exit
 // TODO: replace OpenGL ES with Vulkan
-// TODO: replace OpenAL with libsoundio
+// TODO: replace OpenAL with libsoundio or sndio
 // TODO: make packages, at least for OpenBSD
 // TODO: solve the problem of level transition and same input
 // TODO: level making tutorial

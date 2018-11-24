@@ -69,7 +69,7 @@ CollPen sOpColl(const CollRect r) {
 
 int sOpGameOver(void) {
     CollRect r = s.hero.r;
-    if (r.x < 0 || r.y < 0 || r.x >= s.lvl.w - 1 || r.y >= s.lvl.h - 1) {
+    if (r.x < 0 || r.y < 0 || r.x >= s.lvl.w - r.w || r.y >= s.lvl.h - r.h) {
         return -1; // out of bounds
     }
 
