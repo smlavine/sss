@@ -18,10 +18,11 @@ extern struct S {
         float lastTime;
     } tick;
 
-    Bmp lvl;
+    Bmp lvl, tab;
 
     struct {
-        CollRect r;
+        size_t n, i;
+        CollRect *arr;
         float vVel, envVelX, envVelY;
     } hero;
 
@@ -100,7 +101,7 @@ void sLoad(const char *path);
 void sFree(void);
 
 // tick.c
-int sTick(Saudio audio,double t,bool kUp,bool kLeft,bool kRight,bool kR);
+int sTick(Saudio audio, double t, const bool *kUpLeftRightRShftTab);
 
 // draw.c
 void sDraw(int winW, int winH);
@@ -111,7 +112,8 @@ CollRect sOpShrinker(size_t i);
 CollRect sOpKeyLock(size_t i, size_t j);
 CollRect sOpKeyAntilock(size_t i, size_t j);
 CollRect sOpPlat(size_t i);
-CollPen sOpColl(const CollRect r);
+CollPen sOpColl(CollRect r);
 int sOpGameOver(void);
-bool sOpBumpCollision(const CollPen p);
+bool sOpBumpCollision(CollPen p);
 void sOpEnvEnergy(float *velX, float *velY);
+bool sOpSwitch(CollPen p, bool kShft, bool kTab);

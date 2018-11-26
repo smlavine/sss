@@ -55,7 +55,7 @@ struct S s;
 
 static void skipComments(FILE *f, bool skipLeadingWhitespaceToo);
 static RectArr getRectArr(int w, int h, int *p, int px, int d);
-static Plat getPlat(int w, const int *p, Rect r, Dir d);
+static Plat getPlat(Bmp tab, const int *p, Rect r, Dir d);
 
 void sLoad(const char *path) {
     int w, h, dump;
@@ -82,10 +82,15 @@ void sLoad(const char *path) {
     memset(&s, 0, sizeof(s));
 
     RectArr hero = getRectArr(w, h, p, P_HERO, P_NONE);
-    s.hero.r.x = hero.arr[0].x;
-    s.hero.r.y = hero.arr[0].y;
-    s.hero.r.w = hero.arr[0].w;
-    s.hero.r.h = hero.arr[0].h;
+    s.hero.n = hero.n;
+    s.hero.i = 0;
+    s.hero.arr = malloc(s.hero.n * sizeof(*s.hero.arr));
+    for (size_t i = 0; i < s.hero.n; ++i) {
+        s.hero.arr[i].x = hero.arr[i].x;
+        s.hero.arr[i].y = hero.arr[i].y;
+        s.hero.arr[i].w = hero.arr[i].w;
+        s.hero.arr[i].h = hero.arr[i].h;
+    }
     free(hero.arr);
 
     s.lvl = (Bmp){w, h, malloc(w * h * sizeof(*s.lvl.b))};
@@ -93,6 +98,8 @@ void sLoad(const char *path) {
         bool bit = (p[i] == P_WALL || p[i] == P_EJECTOR);
         bmpSet(s.lvl, i % w, i / w, bit);
     }
+
+    s.tab = (Bmp){w, h, calloc(w * h, sizeof(*s.lvl.b))};
 
     RectArr wall = getRectArr(w, h, p, P_WALL, P_NONE);
     for (size_t i = 0; i < wall.n; ++i) {
@@ -116,11 +123,13 @@ void sLoad(const char *path) {
     s.pulsator.arr = malloc(s.pulsator.n * sizeof(*s.pulsator.arr));
     for (size_t i = 0; i < pulsatorC.n; ++i) {
         Rect r = pulsatorC.arr[i];
+        bmpSetR(s.tab, r.x, r.y, r.w, r.h, true);
         s.pulsator.arr[i].offset = PULSATOR_CONTRACTED_OFFSET;
         s.pulsator.arr[i].r = (CollRect){r.x, r.y, r.w, r.h};
     }
     for (size_t i = 0; i < pulsatorE.n; ++i) {
         Rect r = pulsatorE.arr[i];
+        bmpSetR(s.tab, r.x, r.y, r.w, r.h, true);
         s.pulsator.arr[i + pulsatorC.n].offset = PULSATOR_EXPANDED_OFFSET;
         s.pulsator.arr[i + pulsatorC.n].r = (CollRect){r.x, r.y, r.w, r.h};
     }
@@ -132,6 +141,7 @@ void sLoad(const char *path) {
     s.shrinker.arr = malloc(s.shrinker.n * sizeof(*s.shrinker.arr));
     for (size_t i = 0; i < s.shrinker.n; ++i) {
         Rect r = shrinker.arr[i];
+        bmpSetR(s.tab, r.x, r.y, r.w, r.h, true);
         s.shrinker.arr[i].ticksLeft = -1;
         s.shrinker.arr[i].r = (CollRect){r.x, r.y, r.w, r.h};
     }
@@ -176,6 +186,7 @@ void sLoad(const char *path) {
                                     * sizeof(*s.key.arr[i].lock.arr));
             for (size_t j = 0; j < s.key.arr[i].lock.n; ++j) {
                 Rect r = keyLock[i].arr[j];
+                bmpSetR(s.tab, r.x, r.y, r.w, r.h, true);
                 s.key.arr[i].lock.arr[j] = (CollRect){r.x, r.y, r.w, r.h};
             }
             s.key.arr[i].antilock.n = keyAntilock[i].n;
@@ -183,6 +194,7 @@ void sLoad(const char *path) {
                                         * sizeof(*s.key.arr[i].antilock.arr));
             for (size_t j = 0; j < s.key.arr[i].antilock.n; ++j) {
                 Rect r = keyAntilock[i].arr[j];
+                bmpSetR(s.tab, r.x, r.y, r.w, r.h, true);
                 s.key.arr[i].antilock.arr[j] = (CollRect){r.x, r.y, r.w, r.h};
             }
         }
@@ -198,19 +210,19 @@ void sLoad(const char *path) {
     size_t platN = platWest.n + platEast.n + platSouth.n + platNorth.n;
     Plat *plat = malloc(platN * sizeof(*plat));
     for (size_t i = 0; i < platWest.n; ++i) {
-        Plat pl = getPlat(w, p, platWest.arr[i], DIR_WEST);
+        Plat pl = getPlat(s.tab, p, platWest.arr[i], DIR_WEST);
         plat[i] = pl;
     }
     for (size_t i = 0; i < platEast.n; ++i) {
-        Plat pl = getPlat(w, p, platEast.arr[i], DIR_EAST);
+        Plat pl = getPlat(s.tab, p, platEast.arr[i], DIR_EAST);
         plat[i + platWest.n] = pl;
     }
     for (size_t i = 0; i < platSouth.n; ++i) {
-        Plat pl = getPlat(w, p, platSouth.arr[i], DIR_SOUTH);
+        Plat pl = getPlat(s.tab, p, platSouth.arr[i], DIR_SOUTH);
         plat[i + platWest.n + platEast.n] = pl;
     }
     for (size_t i = 0; i < platNorth.n; ++i) {
-        Plat pl = getPlat(w, p, platNorth.arr[i], DIR_NORTH);
+        Plat pl = getPlat(s.tab, p, platNorth.arr[i], DIR_NORTH);
         plat[i + platWest.n + platEast.n + platSouth.n] = pl;
     }
     s.plat.n = platN;
@@ -240,6 +252,8 @@ void sFree(void) {
     batchDel(&s.draw.bg, false);
     batchDel(&s.draw.fg, false);
     free(s.lvl.b);
+    free(s.tab.b);
+    free(s.hero.arr);
     free(s.ejector.arr);
     free(s.pulsator.arr);
     free(s.shrinker.arr);
@@ -271,6 +285,7 @@ static void skipComments(FILE *f, bool skipLeadingWhitespaceToo) {
 }
 
 static RectArr getRectArr(int w, int h, int *p, int px, int d) {
+    // TODO: replace dynamic array with pre-allocation
     size_t m = 16;
     RectArr r = {0, malloc(m * sizeof(*r.arr))};
 
@@ -316,7 +331,8 @@ static RectArr getRectArr(int w, int h, int *p, int px, int d) {
 }
 
 // TODO: some error checking?
-static Plat getPlat(int w, const int *p, Rect r, Dir d) {
+static Plat getPlat(Bmp tab, const int *p, Rect r, Dir d) {
+    // TODO: replace dynamic array with pre-allocation
     size_t m = 16;
     Plat plat = {r.w, r.h, 0, malloc(m * sizeof(*plat.arr))};
 
@@ -338,7 +354,7 @@ static Plat getPlat(int w, const int *p, Rect r, Dir d) {
         int newY = y + vy;
         for (int xi = newX; xi < newX + r.w; ++xi) {
             for (int yi = newY; yi < newY + r.h; ++yi) {
-                int px = p[yi * w + xi];
+                int px = p[yi * tab.w + xi];
                 switch (px) {
                     case P_DIR[DIR_WEST]:
                         vx = -1;
@@ -365,6 +381,8 @@ static Plat getPlat(int w, const int *p, Rect r, Dir d) {
         newX = x + vx;
         newY = y + vy;
 
+        bmpSetR(tab, newX, newY, r.w, r.h, true);
+
         for (int i = 0; i < PLAT_SPEED; ++i) {
             plat.arr[plat.n].x = x + (float)vx * (float)i / (float)PLAT_SPEED;
             plat.arr[plat.n].y = y + (float)vy * (float)i / (float)PLAT_SPEED;
@@ -380,7 +398,7 @@ static Plat getPlat(int w, const int *p, Rect r, Dir d) {
         x = newX;
         y = newY;
 
-        if (x < 0 || y < 0) exit(0);
+        if (x < 0 || y < 0) exit(0); // TODO: remove; no error checks!
 
     } while (x != r.x || y != r.y);
 

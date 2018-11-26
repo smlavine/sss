@@ -10,6 +10,7 @@
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, \
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, \
     0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0     }
+#define MIN_SWITCH_CLEARANCE 0.01
 
 static CollRect multipliedRect(CollRect r, float m);
 static CollPen maxPen(CollPen a, CollPen b);
@@ -45,7 +46,7 @@ CollRect sOpPlat(size_t i) {
     return (CollRect){x, y, s.plat.arr[i].w, s.plat.arr[i].h};
 }
 
-CollPen sOpColl(const CollRect r) {
+CollPen sOpColl(CollRect r) {
     CollPen p = collBmpRect(s.lvl, r);
     for (size_t i = 0; i < s.pulsator.n; ++i) {
         p = maxPen(p, collRect(r, sOpPulsator(i)));
@@ -64,16 +65,22 @@ CollPen sOpColl(const CollRect r) {
     for (size_t i = 0; i < s.plat.n; ++i) {
         p = maxPen(p, collRect(r, sOpPlat(i)));
     }
+    for (size_t i = 0; i < s.hero.n; ++i) {
+        if (i == s.hero.i) {
+            continue;
+        }
+        p = maxPen(p, collRect(r, s.hero.arr[i]));
+    }
     return p;
 }
 
 int sOpGameOver(void) {
-    CollRect r = s.hero.r;
+    CollRect r = s.hero.arr[s.hero.i];
     if (r.x < 0 || r.y < 0 || r.x >= s.lvl.w - r.w || r.y >= s.lvl.h - r.h) {
         return -1; // out of bounds
     }
 
-    CollPen p = collBmpRect(s.lvl, s.hero.r);
+    CollPen p = collBmpRect(s.lvl, s.hero.arr[s.hero.i]);
     if ((p.south > 0 && p.north > 0) || (p.west > 0 && p.east > 0)) {
         return -1; // crushed
     }
@@ -91,7 +98,7 @@ int sOpGameOver(void) {
     return 0; // not over
 }
 
-bool sOpBumpCollision(const CollPen p) {
+bool sOpBumpCollision(CollPen p) {
     if ((p.is &&  s.graviton.invertedGravity && s.hero.vVel>=0 && p.north>0)
       ||(p.is && !s.graviton.invertedGravity && s.hero.vVel<=0 && p.south>0)){
         return true;
@@ -104,22 +111,22 @@ void sOpEnvEnergy(float *velX, float *velY) {
 
     for (size_t i = 0; i < s.pulsator.n; ++i) {
         CollRect r0 = sOpPulsator(i);
-        if (!sOpBumpCollision(collRect(s.hero.r, r0))) {
+        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
             continue;
         }
         s.tick.tick++;
-        addRectV(s.hero.r, r0, sOpPulsator(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i], r0, sOpPulsator(i), velX, velY);
         s.tick.tick--;
     }
 
     for (size_t i = 0; i < s.shrinker.n; ++i) {
         CollRect r0 = sOpShrinker(i);
         if (s.shrinker.arr[i].ticksLeft < 1
-         || !sOpBumpCollision(collRect(s.hero.r, r0))) {
+         || !sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
             continue;
         }
         s.shrinker.arr[i].ticksLeft--;
-        addRectV(s.hero.r, r0, sOpShrinker(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i], r0, sOpShrinker(i), velX, velY);
         s.shrinker.arr[i].ticksLeft++;
     }
 
@@ -130,36 +137,51 @@ void sOpEnvEnergy(float *velX, float *velY) {
 
         for (size_t j = 0; j < s.key.arr[i].lock.n; ++j) {
             CollRect r0 = sOpKeyLock(i, j);
-            if (!sOpBumpCollision(collRect(s.hero.r, r0))) {
+            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
                 continue;
             }
             s.key.arr[i].ticksLeft--;
-            addRectV(s.hero.r, r0, sOpKeyLock(i, j), velX, velY);
+            addRectV(s.hero.arr[s.hero.i], r0, sOpKeyLock(i, j), velX, velY);
             s.key.arr[i].ticksLeft++;
 
         }
 
         for (size_t j = 0; j < s.key.arr[i].antilock.n; ++j) {
             CollRect r0 = sOpKeyAntilock(i, j);
-            if (!sOpBumpCollision(collRect(s.hero.r, r0))) {
+            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
                 continue;
             }
             s.key.arr[i].ticksLeft--;
-            addRectV(s.hero.r, r0, sOpKeyAntilock(i, j), velX,velY);
+            addRectV(s.hero.arr[s.hero.i], r0, sOpKeyAntilock(i, j), velX,velY);
             s.key.arr[i].ticksLeft++;
         }
     }
 
     for (size_t i = 0; i < s.plat.n; ++i) {
         CollRect r0 = sOpPlat(i);
-        if (!sOpBumpCollision(collRect(s.hero.r, r0))) {
+        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
             continue;
         }
         s.tick.tick++;
-        addRectV(s.hero.r, r0, sOpPlat(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i], r0, sOpPlat(i), velX, velY);
         s.tick.tick--;
     }
 
+}
+
+bool sOpSwitch(CollPen p, bool kShft, bool kTab) {
+    CollRect r = s.hero.arr[s.hero.i];
+    if (s.hero.n<2||!kTab||!sOpBumpCollision(p)||collBmpRect(s.tab,r).is) {
+        return false;
+    }
+    CollRect R = kShft
+               ? s.hero.arr[s.hero.i ? s.hero.i - 1 : s.hero.n - 1]
+               : s.hero.arr[(s.hero.i + 1) % s.hero.n];
+   if (r.x + r.w >= R.x && r.x <= R.x + R.w && r.y + r.h / 2 >= R.y + R.h / 2
+    && r.y <= R.y + R.h + MIN_SWITCH_CLEARANCE) {
+       return false;
+   }
+    return true;
 }
 
 static CollRect multipliedRect(CollRect r, float m) {

@@ -11,13 +11,13 @@
 #define EJECTION_VEL            0.33
 #define TERM_VEL                0.50
 
-static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR);
+static int tick(Saudio audio, const bool *kUpLeftRightRShftTab);
 static void sleepSome(double t);
 
-int sTick(Saudio audio,double t,bool kUp,bool kLeft,bool kRight,bool kR){
+int sTick(Saudio audio, double t, const bool *kUpLeftRightRShftTab){
     audioMusicStream(audio.music);
     while (t - s.tick.lastTime > TICK_DURATION) {
-        int r = tick(audio, kUp, kLeft, kRight, kR);
+        int r = tick(audio, kUpLeftRightRShftTab);
         if (r != 0) {
             return r;
         }
@@ -26,21 +26,21 @@ int sTick(Saudio audio,double t,bool kUp,bool kLeft,bool kRight,bool kR){
     return 0;
 }
 
-static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
+static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
     // Advance time
     ++s.tick.tick;
     s.tick.lastTime += TICK_DURATION;
 
     // Update hero position
-    if (kRight) {
-        s.hero.r.x += HERO_HOR_VEL;
+    if (kUpLeftRightRShftTab[1]) {
+        s.hero.arr[s.hero.i].x -= HERO_HOR_VEL;
     }
-    if (kLeft) {
-        s.hero.r.x -= HERO_HOR_VEL;
+    if (kUpLeftRightRShftTab[2]) {
+        s.hero.arr[s.hero.i].x += HERO_HOR_VEL;
     }
-    s.hero.r.y += s.hero.vVel;
-    s.hero.r.x += s.hero.envVelX;
-    s.hero.r.y += s.hero.envVelY;
+    s.hero.arr[s.hero.i].y += s.hero.vVel;
+    s.hero.arr[s.hero.i].x += s.hero.envVelX;
+    s.hero.arr[s.hero.i].y += s.hero.envVelY;
 
     // Update environmental velocity
     sOpEnvEnergy(&s.hero.envVelX, &s.hero.envVelY);
@@ -52,7 +52,7 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
             --s.ejector.arr[i].cooldown;
         }
         if (!s.ejector.arr[i].cooldown) {
-            CollPen p = collRect(s.hero.r, s.ejector.arr[i].r);
+            CollPen p = collRect(s.hero.arr[s.hero.i], s.ejector.arr[i].r);
             if (sOpBumpCollision(p)) {
                 ejected = true;
                 s.ejector.arr[i].cooldown = EJECTOR_COOLDOWN_TICKS;
@@ -66,22 +66,22 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
             --s.shrinker.arr[i].ticksLeft;
             continue;
         }
-        if (sOpBumpCollision(collRect(s.hero.r, sOpShrinker(i)))) {
+        if (sOpBumpCollision(collRect(s.hero.arr[s.hero.i], sOpShrinker(i)))) {
             s.shrinker.arr[i].ticksLeft = S_SHRINKING_TICKS;
         }
     }
 
     // Fix hero position
-    CollPen p = sOpColl(s.hero.r);
-    s.hero.r.y += p.south;
-    s.hero.r.y -= p.north;
-    s.hero.r.x += p.west;
-    s.hero.r.x -= p.east;
+    CollPen p = sOpColl(s.hero.arr[s.hero.i]);
+    s.hero.arr[s.hero.i].y += p.south;
+    s.hero.arr[s.hero.i].y -= p.north;
+    s.hero.arr[s.hero.i].x += p.west;
+    s.hero.arr[s.hero.i].x -= p.east;
 
     // Collect coins
     bool coin = false;
     for (size_t i = 0; i < s.coin.n; ++i) {
-        if (!s.coin.arr[i].taken && collRect(s.hero.r, s.coin.arr[i].r).is) {
+        if (!s.coin.arr[i].taken && collRect(s.hero.arr[s.hero.i], s.coin.arr[i].r).is) {
             s.coin.arr[i].taken = true;
             coin = true;
         }
@@ -91,7 +91,7 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
     bool graviton = false;
     for (size_t i = 0; i < s.graviton.n; ++i) {
         if (!s.graviton.arr[i].taken
-         && collRect(s.hero.r, s.graviton.arr[i].r).is) {
+         && collRect(s.hero.arr[s.hero.i], s.graviton.arr[i].r).is) {
             s.graviton.arr[i].taken = true;
             s.graviton.invertedGravity = !s.graviton.invertedGravity;
             graviton = true;
@@ -110,7 +110,7 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
         bool allKeysTaken = true;
         for (size_t j = 0; j < s.key.arr[i].n; ++j) {
             if (!s.key.arr[i].arr[j].taken
-             && collRect(s.hero.r, s.key.arr[i].arr[j].r).is) {
+             && collRect(s.hero.arr[s.hero.i], s.key.arr[i].arr[j].r).is) {
                 s.key.arr[i].arr[j].taken = true;
                 key = true;
             } else {
@@ -123,7 +123,7 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
     }
 
     // Update vertical velocity
-    bool jumped = kUp && sOpBumpCollision(p);
+    bool jumped = kUpLeftRightRShftTab[0] && sOpBumpCollision(p);
     if (p.south > 0 && s.hero.vVel < 0) {
         s.hero.vVel = 0;
     }
@@ -145,9 +145,16 @@ static int tick(Saudio audio, bool kUp, bool kLeft, bool kRight, bool kR) {
         s.hero.vVel = TERM_VEL;
     }
 
-    // Check whether the game is over
-    int r = kR ? -1 : sOpGameOver();
+    if (sOpSwitch(p, kUpLeftRightRShftTab[4], kUpLeftRightRShftTab[5])) {
+        s.hero.i = kUpLeftRightRShftTab[4]
+                 ? s.hero.i ? s.hero.i - 1 : s.hero.n - 1
+                 : s.hero.i + 1 >= s.hero.n ? 0 : s.hero.i + 1;
+    }
 
+    // Check whether the game is over
+    int r = kUpLeftRightRShftTab[3] ? -1 : sOpGameOver();
+
+    /// TODO: add switch sound
     // Play audio
     if (r > 0) {
         audioSoundPlay(audio.win);

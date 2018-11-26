@@ -25,7 +25,7 @@
 
 // Level parameters, used to (re)load levels
 #define LVL_FIRST 1 // The number of the first level to be loaded
-#define LVL_LAST 27 // The number of the last level to be loaded
+#define LVL_LAST 28 // The number of the last level to be loaded
 #define LVL_PATH_BUFFER_SIZE 11 // The size of the level path buffer
 #define LVL_PATH_FMTS "rsc/%d.ppm" // Format string passed to snprintf()
 
@@ -63,6 +63,7 @@ int main(void) {
     glfwInit();
     GLFWwindow *win = mkW(WIN_W, WIN_H, WIN_T, OGL_API, OGL_V, VSYNC, AA);
     glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(win, GLFW_STICKY_KEYS, GLFW_TRUE);
     rInit();
 
     // Initialize the audio system
@@ -92,11 +93,14 @@ int main(void) {
 
             // Perform logic - call sTick()
             float t = glfwGetTime();
-            bool kUp = glfwGetKey(win, GLFW_KEY_UP);
-            bool kLeft = glfwGetKey(win, GLFW_KEY_LEFT);
-            bool kRight = glfwGetKey(win, GLFW_KEY_RIGHT);
-            bool kR = glfwGetKey(win, GLFW_KEY_R);
-            int r = sTick(audio, t, kUp, kLeft, kRight, kR);
+            bool kUpLeftRightRShftTab[6];
+            kUpLeftRightRShftTab[0] = glfwGetKey(win, GLFW_KEY_UP);
+            kUpLeftRightRShftTab[1] = glfwGetKey(win, GLFW_KEY_LEFT);
+            kUpLeftRightRShftTab[2] = glfwGetKey(win, GLFW_KEY_RIGHT);
+            kUpLeftRightRShftTab[3] = glfwGetKey(win, GLFW_KEY_R);
+            kUpLeftRightRShftTab[4] = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT);
+            kUpLeftRightRShftTab[5] = glfwGetKey(win, GLFW_KEY_TAB);
+            int r = sTick(audio, t, kUpLeftRightRShftTab);
 
             // Render the current state - call sDraw().
             int winW, winH;
@@ -177,36 +181,13 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     return win;
 }
 
-/*
- * The global TODO list also resides in this file.
- * The items listed here are ideas rather than goals to be achieved in the
- * next release.
- */
+// v1.1:
+// 1. Hero kinds.
+// 2. Zones.
+// 3. Lights.
+// 4. Alternative keys.
+// 5. Bug: level transition - same input & repetitive level restart.
+// 6. TUI.
+// 7. Clean-up. Refactoring. Polishing. Documentation. Porting. Promoting.
 
-// TODO: fire
-// TODO: new levels
-// TODO: many heroes
-// TODO: hero kinds
-// TODO: zones
-// TODO: lights
-// TODO: clean-up TODOs
-// TODO: README: GIFs, speedrun, screenshots, installation, building, controls
-// TODO: add/remove rectangle collision targets to global bitmap when possible
-// TODO: render in another thread and make physics framerate higher
-// TODO: replace float with long double in physics calculations
-// TODO: textures, main menu: launcher, help, options, exit
-// TODO: replace OpenGL ES with Vulkan
-// TODO: replace OpenAL with libsoundio or sndio
-// TODO: make packages, at least for OpenBSD
-// TODO: solve the problem of level transition and same input
-// TODO: level making tutorial
-// TODO: documentation
-    // lib/coll.c
-    // lib/r.c
-    // lib/batch.c
-    // lib/audio.c
-    // src/s.h
-    // src/data.c
-    // src/op.c
-    // src/draw.c
-    // src/tick.c
+// TODO: allow jumping after falling off the edge for a few frames

@@ -26,6 +26,14 @@ static inline void bmpSet(Bmp b, size_t x, size_t y, bool v) {
     b.b[y * b.w + x] = v;
 }
 
+static inline void bmpSetR(Bmp b,size_t x,size_t y,size_t w,size_t h,size_t v){
+    for (size_t xi = x; xi < x + w; ++xi) {
+        for (size_t yi = y; yi < y + h; ++yi) {
+            bmpSet(b, xi, yi, v);
+        }
+    }
+}
+
 // ===========================================================================
 
 /*
