@@ -94,6 +94,8 @@ extern struct S {
         } *arr;
     } plat;
 
+    bool releasekUpLeftRightRShftTab[6];
+
 } s; // (data.c)
 
 // data.c

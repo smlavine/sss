@@ -245,6 +245,10 @@ void sLoad(const char *path) {
 
     free(p);
 
+    for (int i = 0; i < 6; ++ i) {
+        s.releasekUpLeftRightRShftTab[i] = true;
+    }
+
     // TODO: environmental velocity
 }
 

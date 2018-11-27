@@ -27,15 +27,24 @@ int sTick(Saudio audio, double t, const bool *kUpLeftRightRShftTab){
 }
 
 static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
+    // Release keys
+    bool k[6];
+    for (int i = 0; i < 6; ++i) {
+        if (!kUpLeftRightRShftTab[i]) {
+            s.releasekUpLeftRightRShftTab[i] = false;
+        }
+        k[i] = kUpLeftRightRShftTab[i] && !s.releasekUpLeftRightRShftTab[i];
+    }
+
     // Advance time
     ++s.tick.tick;
     s.tick.lastTime += TICK_DURATION;
 
     // Update hero position
-    if (kUpLeftRightRShftTab[1]) {
+    if (k[1]) {
         s.hero.arr[s.hero.i].x -= HERO_HOR_VEL;
     }
-    if (kUpLeftRightRShftTab[2]) {
+    if (k[2]) {
         s.hero.arr[s.hero.i].x += HERO_HOR_VEL;
     }
     s.hero.arr[s.hero.i].y += s.hero.vVel;
@@ -123,7 +132,7 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
     }
 
     // Update vertical velocity
-    bool jumped = kUpLeftRightRShftTab[0] && sOpBumpCollision(p);
+    bool jumped = k[0] && sOpBumpCollision(p);
     if (p.south > 0 && s.hero.vVel < 0) {
         s.hero.vVel = 0;
     }
@@ -145,14 +154,15 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
         s.hero.vVel = TERM_VEL;
     }
 
-    if (sOpSwitch(p, kUpLeftRightRShftTab[4], kUpLeftRightRShftTab[5])) {
-        s.hero.i = kUpLeftRightRShftTab[4]
+    if (sOpSwitch(p, k[4], k[5])) {
+        s.hero.i = k[4]
                  ? s.hero.i ? s.hero.i - 1 : s.hero.n - 1
                  : s.hero.i + 1 >= s.hero.n ? 0 : s.hero.i + 1;
+        s.releasekUpLeftRightRShftTab[5] = true;
     }
 
     // Check whether the game is over
-    int r = kUpLeftRightRShftTab[3] ? -1 : sOpGameOver();
+    int r = k[3] ? -1 : sOpGameOver();
 
     /// TODO: add switch sound
     // Play audio

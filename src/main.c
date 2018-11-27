@@ -186,8 +186,11 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 // 2. Zones.
 // 3. Lights.
 // 4. Alternative keys.
-// 5. Bug: level transition - same input & repetitive level restart.
-// 6. TUI.
-// 7. Clean-up. Refactoring. Polishing. Documentation. Porting. Promoting.
+// 5. TUI.
+// 6. Clean-up. Refactoring. Polishing. Documentation. Porting. Promoting.
 
 // TODO: allow jumping after falling off the edge for a few frames
+// TODO: make kDown do something - either squash hero or make it dive
+// TODO: death particles
+// TODO: jumping animation
+// TODO: tail/trail gfx?
