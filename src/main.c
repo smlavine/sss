@@ -25,7 +25,7 @@
 
 // Level parameters, used to (re)load levels
 #define LVL_FIRST 1 // The number of the first level to be loaded
-#define LVL_LAST 28 // The number of the last level to be loaded
+#define LVL_LAST 29 // The number of the last level to be loaded
 #define LVL_PATH_BUFFER_SIZE 11 // The size of the level path buffer
 #define LVL_PATH_FMTS "rsc/%d.ppm" // Format string passed to snprintf()
 
