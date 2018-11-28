@@ -154,10 +154,8 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
         s.hero.vVel = TERM_VEL;
     }
 
-    if (sOpSwitch(p, k[4], k[5])) {
-        s.hero.i = k[4]
-                 ? s.hero.i ? s.hero.i - 1 : s.hero.n - 1
-                 : s.hero.i + 1 >= s.hero.n ? 0 : s.hero.i + 1;
+    if (sOpSwitch(p, k[4], k[5]) >= 0) {
+        s.hero.i = sOpSwitch(p, k[4], k[5]);
         s.releasekUpLeftRightRShftTab[5] = true;
     }
 

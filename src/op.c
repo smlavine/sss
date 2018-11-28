@@ -169,19 +169,13 @@ void sOpEnvEnergy(float *velX, float *velY) {
 
 }
 
-bool sOpSwitch(CollPen p, bool kShft, bool kTab) {
+int sOpSwitch(CollPen p, bool kShft, bool kTab) {
     CollRect r = s.hero.arr[s.hero.i];
     if (s.hero.n<2||!kTab||!sOpBumpCollision(p)||collBmpRect(s.tab,r).is) {
-        return false;
+        return -1;
     }
-    CollRect R = kShft
-               ? s.hero.arr[s.hero.i ? s.hero.i - 1 : s.hero.n - 1]
-               : s.hero.arr[(s.hero.i + 1) % s.hero.n];
-   if (r.x + r.w >= R.x && r.x <= R.x + R.w && r.y + r.h / 2 >= R.y + R.h / 2
-    && r.y <= R.y + R.h + MIN_SWITCH_CLEARANCE) {
-       return false;
-   }
-    return true;
+    // TODO: check which other hero does not have any other hero above/below
+    return kShft ? s.hero.i ? s.hero.i-1 : s.hero.n-1 : (s.hero.i+1)%s.hero.n;
 }
 
 static CollRect multipliedRect(CollRect r, float m) {

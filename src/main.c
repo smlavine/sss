@@ -182,15 +182,18 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 }
 
 // v1.1:
-// 1. Hero kinds.
-// 2. Zones.
-// 3. Lights.
-// 4. Alternative keys.
-// 5. TUI.
-// 6. Clean-up. Refactoring. Polishing. Documentation. Porting. Promoting.
+// 1. 30 levels.
+// 2. Alternative keys.
+// 3. Clean-up.
+// 4. README.
+// 5. Packages.
 
-// TODO: allow jumping after falling off the edge for a few frames
-// TODO: make kDown do something - either squash hero or make it dive
-// TODO: death particles
-// TODO: jumping animation
-// TODO: tail/trail gfx?
+// IDEA: TUI
+// IDEA: hero kinds.
+// IDEA: zones.
+// IDEA: lights.
+// IDEA: allow jumping after falling off the edge for a few frames
+// IDEA: make kDown do something - either squash hero or make it dive
+// IDEA: death particles
+// IDEA: jumping animation
+// IDEA: tail/trail gfx?

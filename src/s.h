@@ -118,4 +118,4 @@ CollPen sOpColl(CollRect r);
 int sOpGameOver(void);
 bool sOpBumpCollision(CollPen p);
 void sOpEnvEnergy(float *velX, float *velY);
-bool sOpSwitch(CollPen p, bool kShft, bool kTab);
+int sOpSwitch(CollPen p, bool kShft, bool kTab);
