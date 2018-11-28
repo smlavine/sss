@@ -14,6 +14,8 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#define LEN(x) sizeof(x)/sizeof(x[0])
+
 // Window and OpenGL context parameters given to GLFW
 #define WIN_W 0 // Window width (0 if fullscreen)
 #define WIN_H 0 // Window height (0 if fullscreen)
@@ -24,20 +26,32 @@
 #define AA 4 // Sample count if multisample anti-aliased, 0 otherwise
 
 // Level parameters, used to (re)load levels
-#define LVL_FIRST 1 // The number of the first level to be loaded
-#define LVL_LAST 31 // The number of the last level to be loaded
-#define LVL_PATH_BUFFER_SIZE 11 // The size of the level path buffer
-#define LVL_PATH_FMTS "rsc/%d.ppm" // Format string passed to snprintf()
+#define LVL_FIRST 1
+#define LVL_LAST 31
+#define LVL_PATH_BUFFER_SIZE 11
+#define LVL_PATH_FMTS "rsc/%d.ppm"
 
 // Paths to audio files
-#define OGG_MUSIC    "rsc/music.ogg"    // The music that loops all the time
-#define OGG_COIN     "rsc/coin.ogg"     // The sound of picking up a coin
-#define OGG_GRAVITON "rsc/graviton.ogg" // The sound of picking up a graviton
-#define OGG_KEY      "rsc/key.ogg"      // The sound of picking up a key
-#define OGG_JUMP     "rsc/jump.ogg"     // The sound of jumping
-#define OGG_EJECT    "rsc/eject.ogg"    // The sound of being ejected
-#define OGG_DIE      "rsc/die.ogg"      // The sound of failure
-#define OGG_WIN      "rsc/win.ogg"      // The sound of victory
+#define OGG_MUSIC    "rsc/music.ogg"
+#define OGG_COIN     "rsc/coin.ogg"
+#define OGG_GRAVITON "rsc/graviton.ogg"
+#define OGG_KEY      "rsc/key.ogg"
+#define OGG_JUMP     "rsc/jump.ogg"
+#define OGG_EJECT    "rsc/eject.ogg"
+#define OGG_DIE      "rsc/die.ogg"
+#define OGG_WIN      "rsc/win.ogg"
+
+// Key bindings
+#define K_UP (const int[]) \
+{GLFW_KEY_UP,GLFW_KEY_W,GLFW_KEY_H,GLFW_KEY_KP_2,GLFW_KEY_KP_5,GLFW_KEY_SPACE}
+#define K_LEFT (const int[]) \
+{GLFW_KEY_LEFT,GLFW_KEY_A,GLFW_KEY_J,GLFW_KEY_KP_4}
+#define K_RIGHT (const int[]) \
+{GLFW_KEY_RIGHT,GLFW_KEY_D,GLFW_KEY_K,GLFW_KEY_KP_6}
+#define K_R (const int[]) {GLFW_KEY_R}
+#define K_SHFT (const int[]) {GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT}
+#define K_TAB (const int[]) {GLFW_KEY_TAB}
+#define K_Q (const int[]) {GLFW_KEY_Q, GLFW_KEY_ESCAPE}
 
 /*
  * mkW - make window.
@@ -52,6 +66,15 @@
  * Returns a window handle.
  */
 static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa);
+
+/*
+ * getKey - gets key state.
+ * Runs glfwGetKey(win, k[i]) for each key and returns true if any is pressed.
+ * win - the window to query key state in.
+ * n - the number of keys in the array k.
+ * k - the array of keys.
+ */
+static bool getKey(GLFWwindow *win, size_t n, const int *k);
 
 /*
  * The main function.
@@ -94,12 +117,15 @@ int main(void) {
             // Perform logic - call sTick()
             float t = glfwGetTime();
             bool kUpLeftRightRShftTab[6];
-            kUpLeftRightRShftTab[0] = glfwGetKey(win, GLFW_KEY_UP);
-            kUpLeftRightRShftTab[1] = glfwGetKey(win, GLFW_KEY_LEFT);
-            kUpLeftRightRShftTab[2] = glfwGetKey(win, GLFW_KEY_RIGHT);
-            kUpLeftRightRShftTab[3] = glfwGetKey(win, GLFW_KEY_R);
-            kUpLeftRightRShftTab[4] = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT);
-            kUpLeftRightRShftTab[5] = glfwGetKey(win, GLFW_KEY_TAB);
+            kUpLeftRightRShftTab[0] = getKey(win, LEN(K_UP), K_UP);
+            kUpLeftRightRShftTab[1] = getKey(win, LEN(K_LEFT), K_LEFT);
+            kUpLeftRightRShftTab[2] = getKey(win, LEN(K_RIGHT), K_RIGHT);
+            kUpLeftRightRShftTab[3] = getKey(win, LEN(K_R), K_R);
+            kUpLeftRightRShftTab[4] = getKey(win, LEN(K_SHFT), K_SHFT);
+            kUpLeftRightRShftTab[5] = getKey(win, LEN(K_TAB), K_TAB);
+            if (getKey(win, LEN(K_Q), K_Q)) {
+                glfwSetWindowShouldClose(win, true);
+            }
             int r = sTick(audio, t, kUpLeftRightRShftTab);
 
             // Render the current state - call sDraw().
@@ -181,12 +207,20 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
     return win;
 }
 
+static bool getKey(GLFWwindow *win, size_t n, const int *k) {
+    for (size_t i = 0; i < n; ++i) {
+        if (glfwGetKey(win, k[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // v1.1:
 // 1. 35 levels.
-// 2. Alternative keys.
-// 3. Clean-up.
-// 4. README.
-// 5. Packages.
+// 2. Clean-up.
+// 3. README.
+// 4. Packages.
 
 // IDEA: TUI
 // IDEA: hero kinds.
