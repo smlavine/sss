@@ -25,7 +25,7 @@
 
 // Level parameters, used to (re)load levels
 #define LVL_FIRST 1 // The number of the first level to be loaded
-#define LVL_LAST 29 // The number of the last level to be loaded
+#define LVL_LAST 31 // The number of the last level to be loaded
 #define LVL_PATH_BUFFER_SIZE 11 // The size of the level path buffer
 #define LVL_PATH_FMTS "rsc/%d.ppm" // Format string passed to snprintf()
 
@@ -182,7 +182,7 @@ static GLFWwindow*mkW(int w,int h,const char*t,int api,int v,bool vs,int aa) {
 }
 
 // v1.1:
-// 1. 30 levels.
+// 1. 35 levels.
 // 2. Alternative keys.
 // 3. Clean-up.
 // 4. README.
