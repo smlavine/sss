@@ -4,7 +4,7 @@
 
 typedef struct {
     AudioMusic *music;
-    AudioSound *coin, *graviton, *key, *jump, *eject, *die, *win;
+    AudioSound *coin, *graviton, *key, *jump, *eject, *switchh, *die, *win;
 } Saudio;
 
 extern struct S {

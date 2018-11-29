@@ -154,9 +154,11 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
         s.hero.vVel = TERM_VEL;
     }
 
+    bool switchh = false;
     if (sOpSwitch(p, k[4], k[5]) >= 0) {
         s.hero.i = sOpSwitch(p, k[4], k[5]);
         s.releasekUpLeftRightRShftTab[5] = true;
+        switchh = true;
     }
 
     // Check whether the game is over
@@ -168,6 +170,8 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
         audioSoundPlay(audio.win);
     } else if (r < 0) {
         audioSoundPlay(audio.die);
+    } else if (switchh) {
+        audioSoundPlay(audio.switchh);
     } else if (ejected) {
         audioSoundPlay(audio.eject);
     } else if (jumped) {

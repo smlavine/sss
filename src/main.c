@@ -38,6 +38,7 @@
 #define OGG_KEY      "rsc/key.ogg"
 #define OGG_JUMP     "rsc/jump.ogg"
 #define OGG_EJECT    "rsc/eject.ogg"
+#define OGG_SWITCHH  "rsc/switchh.ogg"
 #define OGG_DIE      "rsc/die.ogg"
 #define OGG_WIN      "rsc/win.ogg"
 
@@ -98,6 +99,7 @@ int main(void) {
     audio.key = audioSoundLoad(OGG_KEY);
     audio.jump = audioSoundLoad(OGG_JUMP);
     audio.eject = audioSoundLoad(OGG_EJECT);
+    audio.switchh = audioSoundLoad(OGG_SWITCHH);
     audio.die = audioSoundLoad(OGG_DIE);
     audio.win = audioSoundLoad(OGG_WIN);
     audioMusicPlay(audio.music, true);
@@ -166,6 +168,7 @@ int main(void) {
     audioSoundFree(audio.key);
     audioSoundFree(audio.jump);
     audioSoundFree(audio.eject);
+    audioSoundFree(audio.switchh);
     audioSoundFree(audio.die);
     audioSoundFree(audio.win);
     audioExit();
