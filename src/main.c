@@ -27,7 +27,7 @@
 
 // Level parameters, used to (re)load levels
 #define LVL_FIRST 1
-#define LVL_LAST 31
+#define LVL_LAST 32
 #define LVL_PATH_BUFFER_SIZE 11
 #define LVL_PATH_FMTS "rsc/%d.ppm"
 
