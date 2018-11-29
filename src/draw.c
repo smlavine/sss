@@ -1,6 +1,5 @@
 #include "s.h"
 
-// TODO: make key, lock, antilock colors more distinguishable
 #define COLOR_ACTIVE_HERO     (const uint8_t[]) { 255,   0,   0, 255 }
 #define COLOR_PASSIVE_HERO    (const uint8_t[]) { 128,   0,   0, 255 }
 #define COLOR_ACTIVE_EJECTOR  (const uint8_t[]) { 255, 128, 128, 255 }
@@ -26,7 +25,6 @@
 #define CLEAR_COLOR 255, 255, 255
 
 void sDraw(int winW, int winH) {
-    /// TODO: draw switch poly (if s.hero.n >= 3)
     rViewport(0, 0, winW, winH);
     float ar = (float)winW / winH;
     if (ar > (float)s.lvl.w / s.lvl.h) {

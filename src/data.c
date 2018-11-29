@@ -289,7 +289,6 @@ static void skipComments(FILE *f, bool skipLeadingWhitespaceToo) {
 }
 
 static RectArr getRectArr(int w, int h, int *p, int px, int d) {
-    // TODO: replace dynamic array with pre-allocation
     size_t m = 16;
     RectArr r = {0, malloc(m * sizeof(*r.arr))};
 
@@ -334,9 +333,7 @@ static RectArr getRectArr(int w, int h, int *p, int px, int d) {
     return r;
 }
 
-// TODO: some error checking?
 static Plat getPlat(Bmp tab, const int *p, Rect r, Dir d) {
-    // TODO: replace dynamic array with pre-allocation
     size_t m = 16;
     Plat plat = {r.w, r.h, 0, malloc(m * sizeof(*plat.arr))};
 
@@ -401,8 +398,6 @@ static Plat getPlat(Bmp tab, const int *p, Rect r, Dir d) {
 
         x = newX;
         y = newY;
-
-        if (x < 0 || y < 0) exit(0); // TODO: remove; no error checks!
 
     } while (x != r.x || y != r.y);
 

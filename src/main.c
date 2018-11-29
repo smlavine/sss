@@ -231,3 +231,5 @@ static bool getKey(GLFWwindow *win, size_t n, const int *k) {
 // IDEA: death particles
 // IDEA: jumping animation
 // IDEA: tail/trail gfx?
+// IDEA: make key, lock, antilock colors more distinguishable
+// IDEA: draw switch poly (if s.hero.n >= 3)
