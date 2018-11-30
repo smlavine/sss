@@ -30,6 +30,47 @@ Together, through the power of friendship and teamwork, they show how many can s
 
 # Controls
 
+Jump:
+* Arrow key up
+* W
+* H (vi style)
+* Space
+* Numpad 2
+* Numpad 5
+
+Go left:
+* Arrow key left
+* A
+* J (vi style)
+* Numpad 4
+
+Go right:
+* Arrow key right
+* D
+* K (vi style)
+* Numpad 6
+
+Restart
+* R
+
+Switch to next hero
+* Tab
+
+Quit:
+* Q
+* Escape
+
 # Dependencies
 
+* libc
+* GLFW
+* OpenGL ES 2.0
+* OpenAL
+* libvorbisfile
+
 # Building
+
+On a fresh Ubuntu install, in the directory you extracted the game:
+
+    sudo apt-get install build-essential libglfw3-dev libgles2-mesa-dev libopenal-dev libvorbis-dev
+    make
