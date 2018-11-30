@@ -26,6 +26,8 @@ Together, through the power of friendship and teamwork, they show how many can s
 
 # Gallery
 
+![7](etc/7.gif)
+
 # Controls
 
 # Dependencies
