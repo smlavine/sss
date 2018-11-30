@@ -236,3 +236,4 @@ static bool getKey(GLFWwindow *win, size_t n, const int *k) {
 // IDEA: tail/trail gfx?
 // IDEA: make key, lock, antilock colors more distinguishable
 // IDEA: draw switch poly (if s.hero.n >= 3)
+// IDEA: press shift to slow you down horizontally

@@ -164,7 +164,6 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
     // Check whether the game is over
     int r = k[3] ? -1 : sOpGameOver();
 
-    /// TODO: add switch sound
     // Play audio
     if (r > 0) {
         audioSoundPlay(audio.win);
