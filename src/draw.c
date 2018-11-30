@@ -100,9 +100,9 @@ void sDraw(int winW, int winH) {
 
     for (size_t i = 0; i < s.hero.n; ++i) {
         if (i == s.hero.i) {
-            batchRect(&s.draw.fg, s.hero.arr[i], COLOR_ACTIVE_HERO);
+            batchRect(&s.draw.fg, s.hero.arr[i].r, COLOR_ACTIVE_HERO);
         } else {
-            batchRect(&s.draw.fg, s.hero.arr[i], COLOR_PASSIVE_HERO);
+            batchRect(&s.draw.fg, s.hero.arr[i].r, COLOR_PASSIVE_HERO);
         }
     }
 

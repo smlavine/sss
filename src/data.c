@@ -84,12 +84,12 @@ void sLoad(const char *path) {
     RectArr hero = getRectArr(w, h, p, P_HERO, P_NONE);
     s.hero.n = hero.n;
     s.hero.i = 0;
-    s.hero.arr = malloc(s.hero.n * sizeof(*s.hero.arr));
+    s.hero.arr = calloc(s.hero.n, sizeof(*s.hero.arr));
     for (size_t i = 0; i < s.hero.n; ++i) {
-        s.hero.arr[i].x = hero.arr[i].x;
-        s.hero.arr[i].y = hero.arr[i].y;
-        s.hero.arr[i].w = hero.arr[i].w;
-        s.hero.arr[i].h = hero.arr[i].h;
+        s.hero.arr[i].r.x = hero.arr[i].x;
+        s.hero.arr[i].r.y = hero.arr[i].y;
+        s.hero.arr[i].r.w = hero.arr[i].w;
+        s.hero.arr[i].r.h = hero.arr[i].h;
     }
     free(hero.arr);
 
@@ -249,7 +249,7 @@ void sLoad(const char *path) {
         s.releasekUpLeftRightRShftTab[i] = true;
     }
 
-    s.hero.arr[s.hero.i].y -= 0.001;
+    s.hero.arr[s.hero.i].r.y -= 0.001;
     sOpEnvEnergy(&s.hero.envVelX, &s.hero.envVelY);
 }
 

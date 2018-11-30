@@ -69,18 +69,18 @@ CollPen sOpColl(CollRect r) {
         if (i == s.hero.i) {
             continue;
         }
-        p = maxPen(p, collRect(r, s.hero.arr[i]));
+        p = maxPen(p, collRect(r, s.hero.arr[i].r));
     }
     return p;
 }
 
 int sOpGameOver(void) {
-    CollRect r = s.hero.arr[s.hero.i];
+    CollRect r = s.hero.arr[s.hero.i].r;
     if (r.x < 0 || r.y < 0 || r.x >= s.lvl.w - r.w || r.y >= s.lvl.h - r.h) {
         return -1; // out of bounds
     }
 
-    CollPen p = collBmpRect(s.lvl, s.hero.arr[s.hero.i]);
+    CollPen p = collBmpRect(s.lvl, s.hero.arr[s.hero.i].r);
     if ((p.south > 0 && p.north > 0) || (p.west > 0 && p.east > 0)) {
         return -1; // crushed
     }
@@ -111,22 +111,22 @@ void sOpEnvEnergy(float *velX, float *velY) {
 
     for (size_t i = 0; i < s.pulsator.n; ++i) {
         CollRect r0 = sOpPulsator(i);
-        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
+        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i].r, r0))) {
             continue;
         }
         s.tick.tick++;
-        addRectV(s.hero.arr[s.hero.i], r0, sOpPulsator(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i].r, r0, sOpPulsator(i), velX, velY);
         s.tick.tick--;
     }
 
     for (size_t i = 0; i < s.shrinker.n; ++i) {
         CollRect r0 = sOpShrinker(i);
         if (s.shrinker.arr[i].ticksLeft < 1
-         || !sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
+         || !sOpBumpCollision(collRect(s.hero.arr[s.hero.i].r, r0))) {
             continue;
         }
         s.shrinker.arr[i].ticksLeft--;
-        addRectV(s.hero.arr[s.hero.i], r0, sOpShrinker(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i].r, r0, sOpShrinker(i), velX, velY);
         s.shrinker.arr[i].ticksLeft++;
     }
 
@@ -137,45 +137,77 @@ void sOpEnvEnergy(float *velX, float *velY) {
 
         for (size_t j = 0; j < s.key.arr[i].lock.n; ++j) {
             CollRect r0 = sOpKeyLock(i, j);
-            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
+            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i].r, r0))) {
                 continue;
             }
             s.key.arr[i].ticksLeft--;
-            addRectV(s.hero.arr[s.hero.i], r0, sOpKeyLock(i, j), velX, velY);
+            addRectV(s.hero.arr[s.hero.i].r, r0, sOpKeyLock(i, j), velX, velY);
             s.key.arr[i].ticksLeft++;
 
         }
 
         for (size_t j = 0; j < s.key.arr[i].antilock.n; ++j) {
             CollRect r0 = sOpKeyAntilock(i, j);
-            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
+            if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i].r, r0))) {
                 continue;
             }
             s.key.arr[i].ticksLeft--;
-            addRectV(s.hero.arr[s.hero.i], r0, sOpKeyAntilock(i, j), velX,velY);
+            addRectV(s.hero.arr[s.hero.i].r, r0, sOpKeyAntilock(i, j), velX,velY);
             s.key.arr[i].ticksLeft++;
         }
     }
 
     for (size_t i = 0; i < s.plat.n; ++i) {
         CollRect r0 = sOpPlat(i);
-        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i], r0))) {
+        if (!sOpBumpCollision(collRect(s.hero.arr[s.hero.i].r, r0))) {
             continue;
         }
         s.tick.tick++;
-        addRectV(s.hero.arr[s.hero.i], r0, sOpPlat(i), velX, velY);
+        addRectV(s.hero.arr[s.hero.i].r, r0, sOpPlat(i), velX, velY);
         s.tick.tick--;
     }
 
 }
 
 int sOpSwitch(CollPen p, bool kShft, bool kTab) {
-    CollRect r = s.hero.arr[s.hero.i];
+    CollRect r = s.hero.arr[s.hero.i].r;
     if (s.hero.n<2||!kTab||!sOpBumpCollision(p)||collBmpRect(s.tab,r).is) {
         return -1;
     }
-    // TODO: check which other hero does not have any other hero above/below
-    return kShft ? s.hero.i ? s.hero.i-1 : s.hero.n-1 : (s.hero.i+1)%s.hero.n;
+
+    int dir = kShft ? -1 : 1;
+    for (int i = 1; i < (int)s.hero.n; ++i) {
+        int index = (int)s.hero.i + i * dir;
+        index = index < 0 ? (int)s.hero.n + index : index % (int)s.hero.n;
+        CollRect R = s.hero.arr[index].r;
+
+        bool ok = true;
+        for (int j = 0; j < (int)s.hero.n; ++j) {
+            if (j == index) {
+                continue;
+            }
+
+            r = s.hero.arr[j].r;
+            bool outside = r.x + r.w <= R.x || r.x >= R.x + R.w;
+            bool below=r.y+r.h/2>=R.y+R.h/2&&r.y<=R.y+R.h+MIN_SWITCH_CLEARANCE;
+            bool above=r.y+r.h/2<=R.y+R.h/2&&r.y+r.h>=R.y-MIN_SWITCH_CLEARANCE;
+
+            if (!s.hero.arr[index].invertedGravity && (!outside && below)) {
+                ok = false;
+                break;
+            } else if (s.hero.arr[index].invertedGravity&&(!outside&&above)) {
+                ok = false;
+                break;
+            }
+
+        }
+
+        if (ok) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 static CollRect multipliedRect(CollRect r, float m) {

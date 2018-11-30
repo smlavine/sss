@@ -22,7 +22,10 @@ extern struct S {
 
     struct {
         size_t n, i;
-        CollRect *arr;
+        struct {
+            CollRect r;
+            bool invertedGravity;
+        } *arr;
         float vVel, envVelX, envVelY;
     } hero;
 
