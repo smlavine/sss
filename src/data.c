@@ -249,7 +249,8 @@ void sLoad(const char *path) {
         s.releasekUpLeftRightRShftTab[i] = true;
     }
 
-    // TODO: environmental velocity
+    s.hero.arr[s.hero.i].y -= 0.001;
+    sOpEnvEnergy(&s.hero.envVelX, &s.hero.envVelY);
 }
 
 void sFree(void) {
