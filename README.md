@@ -24,16 +24,10 @@ Deeper into the game the focus drifts from Sally to her many friends, different 
 
 Together, through the power of friendship and teamwork, they show how many can solve challenging puzzles that Sally alone could not.
 
+# Gallery
 
+# Controls
 
-<!-- TODO: Gallery -->
-<!-- TODO: Controls -->
-<!-- TODO: Dependencies -->
-<!-- TODO: Building -->
+# Dependencies
 
-<!-- TODO: speed-run video -->
-<!-- TODO: screenshots -->
-<!-- TODO: packages -->
-<!-- TODO: installation instructions -->
-<!-- TODO: keybindings -->
-<!-- TODO: dependencies -->
+# Building
