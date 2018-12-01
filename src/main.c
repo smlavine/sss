@@ -219,20 +219,16 @@ static bool getKey(GLFWwindow *win, size_t n, const int *k) {
     return false;
 }
 
-// v1.1:
-// 1. 35 levels.
-// 2. Clean-up.
-// 3. README.
-// 4. Packages.
+// v1.2
+// 1. Phantom jump.
+// 2. Hero kinds. Zones.
+// 3. 50 levels.
+// 4. Animation.
+// 5. Particles.
+// 6. Lights.
 
 // IDEA: TUI
-// IDEA: hero kinds.
-// IDEA: zones.
-// IDEA: lights.
-// IDEA: allow jumping after falling off the edge for a few frames
 // IDEA: make kDown do something - either squash hero or make it dive
-// IDEA: death particles
-// IDEA: jumping animation
 // IDEA: tail/trail gfx?
 // IDEA: make key, lock, antilock colors more distinguishable
 // IDEA: draw switch poly (if s.hero.n >= 3)
