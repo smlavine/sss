@@ -223,10 +223,10 @@ static bool getKey(GLFWwindow *win, size_t n, const int *k) {
 // 1. Phantom jump.
 // 2. Hero kinds. Zones.
 // 3. 50 levels.
-// 4. Animation.
-// 5. Particles.
-// 6. Lights.
 
+// IDEA: animation.
+// IDEA: particles.
+// IDEA: lights.
 // IDEA: TUI
 // IDEA: make kDown do something - either squash hero or make it dive
 // IDEA: tail/trail gfx?
