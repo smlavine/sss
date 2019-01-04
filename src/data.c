@@ -320,8 +320,7 @@ static RectArr getRectArr(int w, int h, int *p, int px, int d) {
                     }
                 }
 
-                r.arr[r.n] = (Rect){x, y, rw, rh};
-                ++r.n;
+                r.arr[r.n++] = (Rect){x, y, rw, rh};
 
                 if (r.n == m) {
                     m *= 2;
