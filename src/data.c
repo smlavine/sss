@@ -48,8 +48,14 @@ typedef enum {
     DIR_SOUTH,
     DIR_NORTH
 } Dir;
-#define P_DIR  (const int[]){0xfefefe, 0xfdfdfd, 0xfcfcfc, 0xfbfbfb}
-#define P_PLAT (const int[]){0x010101, 0x020202, 0x030303, 0x040404}
+#define P_DIR_WEST 0xfefefe
+#define P_DIR_EAST 0xfdfdfd
+#define P_DIR_SOUTH 0xfcfcfc
+#define P_DIR_NORTH 0xfbfbfb
+#define P_PLAT_WEST 0x010101
+#define P_PLAT_EAST 0x020202
+#define P_PLAT_SOUTH 0x030303
+#define P_PLAT_NORTH 0x040404
 
 struct S s;
 
@@ -203,10 +209,10 @@ void sLoad(const char *path) {
         free(keyAntilock[i].arr);
     }
 
-    RectArr platWest = getRectArr(w, h, p, P_PLAT[DIR_WEST], P_NONE);
-    RectArr platEast = getRectArr(w, h, p, P_PLAT[DIR_EAST], P_NONE);
-    RectArr platSouth = getRectArr(w, h, p, P_PLAT[DIR_SOUTH], P_NONE);
-    RectArr platNorth = getRectArr(w, h, p, P_PLAT[DIR_NORTH], P_NONE);
+    RectArr platWest = getRectArr(w, h, p, P_PLAT_WEST, P_NONE);
+    RectArr platEast = getRectArr(w, h, p, P_PLAT_EAST, P_NONE);
+    RectArr platSouth = getRectArr(w, h, p, P_PLAT_SOUTH, P_NONE);
+    RectArr platNorth = getRectArr(w, h, p, P_PLAT_NORTH, P_NONE);
     size_t platN = platWest.n + platEast.n + platSouth.n + platNorth.n;
     Plat *plat = malloc(platN * sizeof(*plat));
     for (size_t i = 0; i < platWest.n; ++i) {
@@ -357,19 +363,19 @@ static Plat getPlat(Bmp tab, const int *p, Rect r, Dir d) {
             for (int yi = newY; yi < newY + r.h; ++yi) {
                 int px = p[yi * tab.w + xi];
                 switch (px) {
-                    case P_DIR[DIR_WEST]:
+                    case P_DIR_WEST:
                         vx = -1;
                         vy =  0;
                         break;
-                    case P_DIR[DIR_EAST]:
+                    case P_DIR_EAST:
                         vx =  1;
                         vy =  0;
                         break;
-                    case P_DIR[DIR_SOUTH]:
+                    case P_DIR_SOUTH:
                         vx =  0;
                         vy = -1;
                         break;
-                    case P_DIR[DIR_NORTH]:
+                    case P_DIR_NORTH:
                         vx =  0;
                         vy =  1;
                         break;
