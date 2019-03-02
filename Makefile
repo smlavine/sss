@@ -6,7 +6,7 @@
 
 # Flag macros
 CC=cc
-CFLAGS=-c -O -g -I/usr/local/include -I/usr/X11R6/include -Wall -Wextra -std=c99
+CFLAGS=-c -O -g -I/usr/local/include -I/usr/X11R6/include -Wall -Wextra -Wpedantic -std=c99
 LDFLAGS=-L/usr/local/lib -L/usr/X11R6/lib
 LDLIBS=-lglfw -lGLESv2 -lopenal -lvorbisfile -lm
 

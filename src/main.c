@@ -117,7 +117,6 @@ int main(void) {
             glfwPollEvents();
 
             // Perform logic - call sTick()
-            float t = glfwGetTime();
             bool kUpLeftRightRShftTab[6];
             kUpLeftRightRShftTab[0] = getKey(win, LEN(K_UP), K_UP);
             kUpLeftRightRShftTab[1] = getKey(win, LEN(K_LEFT), K_LEFT);
@@ -128,7 +127,7 @@ int main(void) {
             if (getKey(win, LEN(K_Q), K_Q)) {
                 glfwSetWindowShouldClose(win, true);
             }
-            int r = sTick(audio, t, kUpLeftRightRShftTab);
+            int r = sTick(audio, (float)glfwGetTime(), kUpLeftRightRShftTab);
 
             // Render the current state - call sDraw().
             int winW, winH;

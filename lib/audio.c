@@ -137,7 +137,7 @@ static ALuint loadOGG(const char *path) {
     void *b = malloc(totalBytes);
     int currentSection;
     while (remaining > 0) {
-        long ret = ov_read(&vf, b + offset, totalBytes, AUDIO_IS_BIG_ENDIAN, AUDIO_SAMPLE_SIZE, AUDIO_IS_SIGNED, &currentSection);
+        long ret = ov_read(&vf, (char*)b + offset, totalBytes, AUDIO_IS_BIG_ENDIAN, AUDIO_SAMPLE_SIZE, AUDIO_IS_SIGNED, &currentSection);
         offset += ret;
         remaining -= ret;
     }
@@ -157,7 +157,7 @@ static size_t loadBuffer(void *buffer, size_t bufferSize, OggVorbis_File *f, boo
     int currentSection;
     size_t offset = 0;
     while (offset < bufferSize) {
-        long ret = ov_read(f, buffer + offset, bufferSize - offset, 0, 2, 1, &currentSection);
+        long ret = ov_read(f, (char*)buffer + offset, bufferSize - offset, 0, 2, 1, &currentSection);
         if (ret == 0) {
             if (repeat) ov_pcm_seek_lap(f, 0);
             else break;

@@ -12,9 +12,9 @@
 #define TERM_VEL                0.50
 
 static int tick(Saudio audio, const bool *kUpLeftRightRShftTab);
-static void sleepSome(double t);
+static void sleepSome(float t);
 
-int sTick(Saudio audio, double t, const bool *kUpLeftRightRShftTab){
+int sTick(Saudio audio, float t, const bool *kUpLeftRightRShftTab){
     audioMusicStream(audio.music);
     while (t - s.tick.lastTime > TICK_DURATION) {
         int r = tick(audio, kUpLeftRightRShftTab);
@@ -187,7 +187,7 @@ static int tick(Saudio audio, const bool *kUpLeftRightRShftTab) {
     return r;
 }
 
-static void sleepSome(double t) {
+static void sleepSome(float t) {
     time_t seconds = (time_t)t;
     unsigned long long nanoseconds = (t - seconds) * 1000000000;
     struct timespec needed = {seconds, nanoseconds};

@@ -106,7 +106,7 @@ void sLoad(const char *path);
 void sFree(void);
 
 // tick.c
-int sTick(Saudio audio, double t, const bool *kUpLeftRightRShftTab);
+int sTick(Saudio audio, float t, const bool *kUpLeftRightRShftTab);
 
 // draw.c
 void sDraw(int winW, int winH);
