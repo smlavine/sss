@@ -1,3 +1,17 @@
+# What is this repo?
+
+This is a game created by Mark Weston. I noticed when attempting a
+```git pull```
+that the [GitHub repository](https://Mark-Weston/sss) where
+it was hosted was gone. It appears that at some point Mark deleted his GitHub
+account, making this and his other projects unavailable.
+
+To be honest, I can't remember ever playing the game. I haven't even read over
+the code before making this repo. I just hope that by making this available,
+anyone who wants it can see it. Don't expect me to maintain it or know anything
+about it. Everything in this repo except this section of the README.md was
+created by Mark or other prior contributors.
+
 # Sassy Square Sally
 
 Sassy Square Sally is a free and open-source 2D platformer.
