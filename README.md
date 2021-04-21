@@ -2,7 +2,7 @@
 
 This is a game created by Mark Weston. I noticed when attempting a
 ```git pull```
-that the [GitHub repository](https://Mark-Weston/sss) where
+that the [GitHub repository](https://github.com/Mark-Weston/sss) where
 it was hosted was gone. It appears that at some point Mark deleted his GitHub
 account, making this and his other projects unavailable.
 
